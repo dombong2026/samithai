@@ -26,6 +26,15 @@ class ApplyLocale
         if ($explicit && in_array($explicit,$available,true) && $request->hasSession()) {
             $request->session()->put('samith_locale',$explicit);
         }
+        if (! app()->runningUnitTests() && ! $explicit && in_array($saved,$available,true)
+            && $request->isMethod('GET')) {
+            $path = '/'.ltrim($request->path(),'/');
+            if ($path === '/' || preg_match('#^/(prompts|categories|blog|policies|support-center)(/|$)#',$path)) {
+                $target = '/'.$locale.($path === '/' ? '' : $path);
+                if ($request->getQueryString()) $target .= '?'.$request->getQueryString();
+                return redirect($target);
+            }
+        }
         return $next($request);
     }
 }
