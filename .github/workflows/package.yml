@@ -1,0 +1,54 @@
+name: Build cPanel and aaPanel release ZIP
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, fileinfo, pdo_mysql, sqlite3, xml, openssl
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install runtime dependencies
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
+      - name: Compile production frontend assets
+        run: |
+          npm install --ignore-scripts
+          npm run build
+      - name: Assemble protected customer package
+        run: |
+          set -Eeuo pipefail
+          RELEASE="$RUNNER_TEMP/Samith-AI"
+          mkdir -p "$RELEASE"
+          rsync -a --exclude='.git/' --exclude='.github/' --exclude='node_modules/' --exclude='tests/' --exclude='.env' --exclude='.env.*.local' --exclude='phpunit.xml' --exclude='storage/logs/*.log' ./ "$RELEASE/"
+          rm -f "$RELEASE/README.md" "$RELEASE/INSTALLATION.md" "$RELEASE/storage/app/installed.lock" "$RELEASE/storage/app/installing.lock"
+          test -f "$RELEASE/vendor/autoload.php"
+          test -f "$RELEASE/public/build/manifest.json"
+          test -f "$RELEASE/public/assets/app.css"
+          test -f "$RELEASE/INSTALLATION.txt"
+          test -f "$RELEASE/.env.example"
+          test ! -e "$RELEASE/.env"
+          test ! -e "$RELEASE/.git"
+          cd "$RUNNER_TEMP"
+          zip -qr "$GITHUB_WORKSPACE/Samith-AI-v0.0.1.zip" "Samith-AI"
+          sha256sum "$GITHUB_WORKSPACE/Samith-AI-v0.0.1.zip" > "$GITHUB_WORKSPACE/Samith-AI-v0.0.1.sha256"
+      - name: Upload release package
+        uses: actions/upload-artifact@v4
+        with:
+          name: samith-ai-v0.0.1-customer-package
+          path: |
+            Samith-AI-v0.0.1.zip
+            Samith-AI-v0.0.1.sha256
+          retention-days: 14

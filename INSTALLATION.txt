@@ -1,0 +1,40 @@
+SAMITH AI v0.0.1 — HOSTING INSTALLATION
+
+Project: https://samithai.com
+Author: Ton Samith | https://tonsamith.com
+Framework: Laravel 13 / Tailwind CSS / JavaScript
+License: Proprietary. Read LICENSE.txt.
+
+IMPORTANT
+This build contains the real Laravel app, Composer vendor dependencies and compiled frontend assets.
+The installer is functional but requires independent cPanel and aaPanel acceptance before selling or deploying to customers.
+Live financial transactions and paid checkout are NOT enabled.
+
+SHARED HOSTING / CPANEL / AAPANEL
+1. Unzip the complete package to an application directory OUTSIDE the public document root.
+2. Point the domain document root to the application's public/ directory, never to the project root.
+3. Select PHP 8.3 or newer. Enable PDO MySQL, OpenSSL, Mbstring, XML and Fileinfo.
+4. Ensure the application can write its .env, storage/ and bootstrap/cache/ directories.
+5. Create a fresh EMPTY MySQL database and user in the hosting panel. Grant appropriate privileges.
+6. Visit https://your-domain/installer .
+7. Open the private .env file with your hosting File Manager and copy the generated INSTALL_TOKEN.
+8. Enter the INSTALL_TOKEN, website URL, MySQL connection, administrator identity and password.
+9. Click Install Samith AI. The wizard migrates the database, creates the administrator and locks setup.
+10. Sign in at /login. Administrator dashboard: /dashboard. Customer account: /account.
+
+SECURITY
+Never publish .env, the installation token or MySQL credentials.
+Never delete storage/app/installed.lock to reinstall an existing site.
+Keep HTTPS enabled and confirm server permissions and login restrictions.
+Do not activate paid purchases without a verified provider and end-to-end entitlement tests.
+
+FEATURES CURRENTLY IMPLEMENTED
+Prompt catalog, category browsing, authentication, account workspace, creator prompt drafts,
+admin approval, category CRUD, cart, free checkout, order records and private library.
+
+FEATURES NOT YET IMPLEMENTED
+Payments, full multilingual UI, password reset, media manager, policy CMS, support center,
+complete admin modules, refund processing, regional taxation, production-grade rich HTML editor,
+merchant compliance, user payouts and independently tested host upgrades.
+
+For source and development notes: https://github.com/dombong2026/samithai
