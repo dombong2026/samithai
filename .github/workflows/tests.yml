@@ -1,0 +1,35 @@
+name: Laravel acceptance checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  laravel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, fileinfo, pdo_sqlite, sqlite3, xml, openssl
+          coverage: none
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Initialize test environment
+        run: |
+          cp -n .env.example .env
+          php artisan key:generate
+      - name: PHP syntax validation
+        run: find app bootstrap config database routes tests -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Laravel feature tests
+        run: php artisan test
+      - name: Build Tailwind assets
+        run: |
+          npm install --ignore-scripts
+          npm run build
