@@ -39,6 +39,51 @@
     }
   });
 
+
+  // Rich editor: the hidden HTML field is always the submitted source of truth.
+  document.addEventListener('mousedown', (event) => {
+    if (event.target.closest('[data-rich-command]')) event.preventDefault();
+  });
+  document.addEventListener('click', (event) => {
+    const command = event.target.closest('[data-rich-command]');
+    if (command) {
+      const editor = document.getElementById('entry-rich-editor');
+      if (!editor || editor.hidden) return;
+      editor.focus();
+      document.execCommand(command.dataset.richCommand, false, command.dataset.richValue || null);
+      document.getElementById('entry-body').value = editor.innerHTML;
+      return;
+    }
+    const toggle = event.target.closest('[data-rich-source-toggle]');
+    if (toggle) {
+      const editor = document.getElementById('entry-rich-editor');
+      const field = document.getElementById('entry-body');
+      if (!editor || !field) return;
+      if (field.hidden) {
+        field.value = editor.innerHTML;
+        field.hidden = false;
+        editor.hidden = true;
+        toggle.textContent = 'Visual editor';
+      } else {
+        // A raw source edit must be saved, sanitized and reloaded before visual preview.
+        // Do not inject untrusted HTML directly into contenteditable.
+        toggle.textContent = 'HTML source (save to preview)';
+      }
+    }
+  });
+  document.addEventListener('input', (event) => {
+    if (event.target?.id === 'entry-rich-editor') {
+      document.getElementById('entry-body').value = event.target.innerHTML;
+    }
+  });
+  document.addEventListener('submit', (event) => {
+    if (event.target?.matches('form[data-resource-form]') && event.target.querySelector('#entry-body')) {
+      const editor = document.getElementById('entry-rich-editor');
+      const source = document.getElementById('entry-body');
+      if (source.hidden) source.value = editor.innerHTML;
+    }
+  });
+
   document.querySelectorAll('[data-theme-name]').forEach(el => el.textContent = next === 'dark' ? 'Light mode' : 'Dark mode');
       return;
     }
@@ -60,6 +105,15 @@
           const attr = 'field' + field.dataset.fill.charAt(0).toUpperCase() + field.dataset.fill.slice(1);
           if (open.dataset[attr] !== undefined) field.value = open.dataset[attr];
         });
+      }
+      if (dialog.id === 'content-modal') {
+        const editor = document.getElementById('entry-rich-editor');
+        const source = document.getElementById('entry-body');
+        editor.innerHTML = source.value;
+        source.hidden = true;
+        editor.hidden = false;
+        const sourceToggle = dialog.querySelector('[data-rich-source-toggle]');
+        if (sourceToggle) sourceToggle.textContent = 'HTML source';
       }
       dialog.showModal();
       return;
