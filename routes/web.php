@@ -14,6 +14,7 @@ use App\Http\Controllers\Dashboard\ContentController;
 use App\Http\Controllers\PublicContentController;
 use App\Http\Controllers\Dashboard\FooterController;
 use App\Http\Controllers\SupportController;
+use App\Http\Controllers\Dashboard\FinanceController;
 
 Route::get('/installer', [InstallerController::class, 'show'])->name('installer.show');
 Route::post('/installer', [InstallerController::class, 'install'])->middleware('throttle:4,1')->name('installer.install');
@@ -55,6 +56,10 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/account/prompts/{prompt}', [PromptController::class, 'update'])->name('account.prompts.update');
     Route::delete('/account/prompts/{prompt}', [PromptController::class, 'destroy'])->name('account.prompts.destroy');
     Route::post('/account/prompts/{prompt}/submit', [PromptController::class, 'submit'])->name('account.prompts.submit');
+
+    Route::get('/account/orders', [FinanceController::class, 'index'])->name('account.orders');
+    Route::get('/dashboard/finance', [FinanceController::class, 'index'])->name('dashboard.finance');
+    Route::get('/orders/{order}', [FinanceController::class, 'show'])->name('orders.show');
 
     Route::get('/account/support', [SupportController::class, 'tickets'])->name('account.support');
     Route::get('/dashboard/support', [SupportController::class, 'tickets'])->name('dashboard.support');
