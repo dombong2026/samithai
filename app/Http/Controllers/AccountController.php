@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Prompt;
+use App\Support\AuditTrail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class AccountController extends Controller
@@ -75,6 +77,10 @@ class AccountController extends Controller
         $user->name = $data['name'];
         $user->email = strtolower(trim($data['email']));
         $user->save();
+        AuditTrail::record($request,'account.profile.update',$user);
+        if ($user->email_verified_at === null && config('samith.email_delivery_enabled')) {
+            $user->sendEmailVerificationNotification();
+        }
 
         return back()->with('success', 'Account details saved.');
     }
@@ -88,7 +94,8 @@ class AccountController extends Controller
         if (! Hash::check($data['current_password'], $request->user()->password)) {
             return back()->withErrors(['current_password' => 'The current password is incorrect.']);
         }
-        $request->user()->update(['password' => $data['password']]);
+        $request->user()->update(['password' => $data['password'], 'remember_token' => Str::random(60)]);
+        AuditTrail::record($request,'account.password.update',$request->user());
 
         return back()->with('success', 'Password changed successfully.');
     }

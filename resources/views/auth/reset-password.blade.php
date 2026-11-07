@@ -1,0 +1,11 @@
+<!doctype html><html lang="{{ app()->getLocale() }}" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Set a new password — Samith AI</title><link rel="stylesheet" href="{{ asset('assets/app.css') }}"><script defer src="{{ asset('assets/app.js') }}"></script></head><body><main class="auth-screen"><section class="auth-card">
+<a href="{{ route('home') }}" class="brand"><span class="brand-mark">S</span><span>Samith <strong>AI</strong></span></a>
+<h1>Choose a new password</h1><p>Your new password must contain at least 12 characters, including letters and numbers.</p>
+<form method="post" action="{{ route('password.update') }}">@csrf
+<input type="hidden" name="token" value="{{ $token }}">
+<div class="floating"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><input type="email" id="email" name="email" value="{{ old('email',$email) }}" placeholder=" " required autocomplete="email"><label for="email">Email address</label></div>
+<div class="floating"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><input id="password" name="password" type="password" placeholder=" " required minlength="12" autocomplete="new-password"><label for="password">New password</label><button type="button" class="eye" data-password-toggle="password" aria-label="Show password">◉</button></div>
+<div class="floating"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><input id="password_confirmation" name="password_confirmation" type="password" placeholder=" " required minlength="12" autocomplete="new-password"><label for="password_confirmation">Confirm new password</label><button type="button" class="eye" data-password-toggle="password_confirmation" aria-label="Show password">◉</button></div>
+<button type="submit" class="btn primary">Update password</button></form>
+<div class="auth-bottom"><a href="{{ route('login') }}">Back to sign in</a></div>
+</section></main>@include('partials.feedback')</body></html>

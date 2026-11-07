@@ -10,6 +10,7 @@
 <button type="button" class="eye" aria-label="Show password" data-password-toggle="password">◉</button></div>
 <div class="flex"><label class="flex"><input type="checkbox" name="remember" value="1">Remember me</label></div>
 <button type="submit" class="btn primary">Sign in</button>
+<a class="tiny" href="{{ route('password.request') }}">Forgot your password?</a>
 </form><div class="auth-bottom">New to Samith AI? <a href="{{ route('register') }}">Create account</a></div>
 </section></main>@include('partials.feedback')
 </body></html>

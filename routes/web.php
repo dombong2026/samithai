@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuthSecurityController;
+use App\Http\Middleware\RequireVerifiedEmailWhenEnabled;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\Dashboard\CategoryController;
@@ -54,6 +56,10 @@ Route::get('/categories/{category:slug}', [MarketplaceController::class, 'catego
 Route::get('/prompts/{prompt:slug}', [MarketplaceController::class, 'show'])->name('prompts.show');
 
 Route::middleware('guest')->group(function (): void {
+    Route::get('/forgot-password', [AuthSecurityController::class, 'forgot'])->name('password.request');
+    Route::post('/forgot-password', [AuthSecurityController::class, 'sendReset'])->middleware('throttle:3,1')->name('password.email');
+    Route::get('/reset-password/{token}', [AuthSecurityController::class, 'resetForm'])->name('password.reset');
+    Route::post('/reset-password', [AuthSecurityController::class, 'reset'])->middleware('throttle:5,1')->name('password.update');
     Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
     Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:8,1')->name('login.submit');
@@ -61,6 +67,11 @@ Route::middleware('guest')->group(function (): void {
 });
 
 Route::middleware('auth')->group(function (): void {
+    Route::get('/email/verify', [AuthSecurityController::class, 'notice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [AuthSecurityController::class, 'verify'])
+        ->middleware(['signed','throttle:6,1'])->name('verification.verify');
+    Route::post('/email/verification-notification', [AuthSecurityController::class, 'resend'])
+        ->middleware('throttle:3,1')->name('verification.send');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/account', [AccountController::class, 'index'])->name('account');
     Route::get('/account/library', [AccountController::class, 'library'])->name('account.library');
@@ -68,12 +79,12 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/account/settings', [AccountController::class, 'settings'])->name('account.settings');
     Route::put('/account/settings', [AccountController::class, 'saveSettings'])->name('account.settings.update');
     Route::put('/account/password', [AccountController::class, 'changePassword'])->name('account.password.update');
-    Route::post('/account/creator', [AccountController::class, 'becomeCreator'])->name('account.creator');
+    Route::post('/account/creator', [AccountController::class, 'becomeCreator'])->middleware(RequireVerifiedEmailWhenEnabled::class)->name('account.creator');
     Route::get('/account/prompts', [PromptController::class, 'index'])->name('account.prompts');
-    Route::post('/account/prompts', [PromptController::class, 'store'])->name('account.prompts.store');
+    Route::post('/account/prompts', [PromptController::class, 'store'])->middleware(RequireVerifiedEmailWhenEnabled::class)->name('account.prompts.store');
     Route::put('/account/prompts/{prompt}', [PromptController::class, 'update'])->name('account.prompts.update');
     Route::delete('/account/prompts/{prompt}', [PromptController::class, 'destroy'])->name('account.prompts.destroy');
-    Route::post('/account/prompts/{prompt}/submit', [PromptController::class, 'submit'])->name('account.prompts.submit');
+    Route::post('/account/prompts/{prompt}/submit', [PromptController::class, 'submit'])->middleware(RequireVerifiedEmailWhenEnabled::class)->name('account.prompts.submit');
 
     Route::get('/account/orders', [FinanceController::class, 'index'])->name('account.orders');
     Route::get('/dashboard/users', [UsersController::class, 'index'])->name('dashboard.users');
@@ -98,11 +109,11 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/{prompt}', [CartController::class, 'add'])->name('cart.add');
     Route::delete('/cart/items/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
-    Route::post('/checkout', [CartController::class, 'checkout'])->middleware('throttle:10,1')->name('checkout');
+    Route::post('/checkout', [CartController::class, 'checkout'])->middleware('throttle:10,1')->middleware(RequireVerifiedEmailWhenEnabled::class)->name('checkout');
 
     Route::get('/account/media', [MediaController::class, 'index'])->name('account.media');
     Route::get('/dashboard/media', [MediaController::class, 'index'])->name('dashboard.media');
-    Route::post('/media/upload', [MediaController::class, 'upload'])->middleware('throttle:30,1')->name('media.upload');
+    Route::post('/media/upload', [MediaController::class, 'upload'])->middleware('throttle:30,1')->middleware(RequireVerifiedEmailWhenEnabled::class)->name('media.upload');
     Route::post('/media/reference', [MediaController::class, 'reference'])->name('media.reference');
     Route::put('/media/{mediaAsset}', [MediaController::class, 'update'])->name('media.update');
     Route::delete('/media/{mediaAsset}', [MediaController::class, 'destroy'])->name('media.destroy');

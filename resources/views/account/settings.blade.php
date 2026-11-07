@@ -5,6 +5,7 @@
 @section('subtitle','Update your account and security details.')
 @section('toolbar')<a href="{{ route('account') }}" class="btn">Back to account</a>@endsection
 @section('content')
+@if(!auth()->user()->hasVerifiedEmail())<div class="notice warning" style="margin-bottom:18px">Email not verified. <a href="{{ route('verification.notice') }}">Review email verification</a></div>@endif
 <div class="form-grid">
 <div class="panel"><h2>Profile</h2><form class="stack" action="{{ route('account.settings.update') }}" method="post">@csrf @method('PUT')
 <div class="field-group"><label for="name">Full name</label><input class="field" id="name" name="name" maxlength="100" required value="{{ old('name', auth()->user()->name) }}"></div>

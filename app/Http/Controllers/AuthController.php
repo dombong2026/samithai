@@ -59,6 +59,9 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
         AuditTrail::record($request,'auth.register',$user);
+        if (config('samith.email_delivery_enabled')) {
+            $user->sendEmailVerificationNotification();
+        }
 
         return redirect()->route('account')->with('success', 'Your account was created.');
     }
