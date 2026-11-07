@@ -8,6 +8,10 @@ use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\PromptController;
 use App\Http\Controllers\Dashboard\OverviewController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InstallerController;
+
+Route::get('/installer', [InstallerController::class, 'show'])->name('installer.show');
+Route::post('/installer', [InstallerController::class, 'install'])->middleware('throttle:4,1')->name('installer.install');
 
 Route::get('/', [MarketplaceController::class, 'home'])->name('home');
 Route::get('/prompts', [MarketplaceController::class, 'index'])->name('prompts.index');
