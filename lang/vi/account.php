@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'dashboard' => 'Bảng điều khiển',
+    'my_orders' => 'Đơn hàng của tôi',
+    'support_tickets' => 'Yêu cầu hỗ trợ',
+    'my_media' => 'Thư viện phương tiện',
+    'my_prompts' => 'Prompt của tôi',
+    'categories' => 'Danh mục',
+    'account_settings' => 'Cài đặt tài khoản',
+    'save_profile' => 'Lưu hồ sơ',
+    'change_password' => 'Đổi mật khẩu',
+    'current_password' => 'Mật khẩu hiện tại',
+    'new_password' => 'Mật khẩu mới',
+    'confirm_password' => 'Xác nhận mật khẩu',
+    'full_name' => 'Họ và tên',
+    'email_address' => 'Địa chỉ email',
+    'remember_me' => 'Ghi nhớ tôi',
+    'forgot_password' => 'Quên mật khẩu?',
+    'create_account' => 'Tạo tài khoản',
+    'password' => 'Mật khẩu',
+    'confirm_account_password' => 'Xác nhận mật khẩu',
+    'request_reset' => 'Yêu cầu liên kết đặt lại',
+    'back_to_login' => 'Quay lại đăng nhập',
+];

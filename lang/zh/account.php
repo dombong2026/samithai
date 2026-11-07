@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'dashboard' => '仪表板',
+    'my_orders' => '我的订单',
+    'support_tickets' => '支持工单',
+    'my_media' => '我的媒体',
+    'my_prompts' => '我的提示词',
+    'categories' => '分类',
+    'account_settings' => '账户设置',
+    'save_profile' => '保存资料',
+    'change_password' => '修改密码',
+    'current_password' => '当前密码',
+    'new_password' => '新密码',
+    'confirm_password' => '确认密码',
+    'full_name' => '姓名',
+    'email_address' => '电子邮箱',
+    'remember_me' => '记住我',
+    'forgot_password' => '忘记密码？',
+    'create_account' => '创建账户',
+    'password' => '密码',
+    'confirm_account_password' => '确认密码',
+    'request_reset' => '请求重置链接',
+    'back_to_login' => '返回登录',
+];

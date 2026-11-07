@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'dashboard' => 'Panel de control',
+    'my_orders' => 'Mis pedidos',
+    'support_tickets' => 'Solicitudes de ayuda',
+    'my_media' => 'Mis archivos',
+    'my_prompts' => 'Mis prompts',
+    'categories' => 'Categorías',
+    'account_settings' => 'Configuración de la cuenta',
+    'save_profile' => 'Guardar perfil',
+    'change_password' => 'Cambiar contraseña',
+    'current_password' => 'Contraseña actual',
+    'new_password' => 'Nueva contraseña',
+    'confirm_password' => 'Confirmar contraseña',
+    'full_name' => 'Nombre completo',
+    'email_address' => 'Correo electrónico',
+    'remember_me' => 'Recordarme',
+    'forgot_password' => '¿Olvidaste tu contraseña?',
+    'create_account' => 'Crear cuenta',
+    'password' => 'Contraseña',
+    'confirm_account_password' => 'Confirmar contraseña',
+    'request_reset' => 'Solicitar enlace de restablecimiento',
+    'back_to_login' => 'Volver al inicio de sesión',
+];

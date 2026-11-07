@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'dashboard' => 'แดชบอร์ด',
+    'my_orders' => 'คำสั่งซื้อของฉัน',
+    'support_tickets' => 'คำขอความช่วยเหลือ',
+    'my_media' => 'สื่อของฉัน',
+    'my_prompts' => 'พรอมป์ของฉัน',
+    'categories' => 'หมวดหมู่',
+    'account_settings' => 'ตั้งค่าบัญชี',
+    'save_profile' => 'บันทึกโปรไฟล์',
+    'change_password' => 'เปลี่ยนรหัสผ่าน',
+    'current_password' => 'รหัสผ่านปัจจุบัน',
+    'new_password' => 'รหัสผ่านใหม่',
+    'confirm_password' => 'ยืนยันรหัสผ่าน',
+    'full_name' => 'ชื่อและนามสกุล',
+    'email_address' => 'ที่อยู่อีเมล',
+    'remember_me' => 'จดจำฉัน',
+    'forgot_password' => 'ลืมรหัสผ่าน?',
+    'create_account' => 'สร้างบัญชี',
+    'password' => 'รหัสผ่าน',
+    'confirm_account_password' => 'ยืนยันรหัสผ่าน',
+    'request_reset' => 'ขอลิงก์รีเซ็ต',
+    'back_to_login' => 'กลับไปเข้าสู่ระบบ',
+];

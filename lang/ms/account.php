@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'dashboard' => 'Papan pemuka',
+    'my_orders' => 'Pesanan saya',
+    'support_tickets' => 'Tiket sokongan',
+    'my_media' => 'Media saya',
+    'my_prompts' => 'Prompt saya',
+    'categories' => 'Kategori',
+    'account_settings' => 'Tetapan akaun',
+    'save_profile' => 'Simpan profil',
+    'change_password' => 'Tukar kata laluan',
+    'current_password' => 'Kata laluan semasa',
+    'new_password' => 'Kata laluan baharu',
+    'confirm_password' => 'Sahkan kata laluan',
+    'full_name' => 'Nama penuh',
+    'email_address' => 'Alamat e-mel',
+    'remember_me' => 'Ingat saya',
+    'forgot_password' => 'Lupa kata laluan?',
+    'create_account' => 'Cipta akaun',
+    'password' => 'Kata laluan',
+    'confirm_account_password' => 'Sahkan kata laluan',
+    'request_reset' => 'Minta pautan tetapan semula',
+    'back_to_login' => 'Kembali log masuk',
+];

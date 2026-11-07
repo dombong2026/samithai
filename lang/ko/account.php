@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'dashboard' => '대시보드',
+    'my_orders' => '내 주문',
+    'support_tickets' => '지원 문의',
+    'my_media' => '내 미디어',
+    'my_prompts' => '내 프롬프트',
+    'categories' => '카테고리',
+    'account_settings' => '계정 설정',
+    'save_profile' => '프로필 저장',
+    'change_password' => '비밀번호 변경',
+    'current_password' => '현재 비밀번호',
+    'new_password' => '새 비밀번호',
+    'confirm_password' => '비밀번호 확인',
+    'full_name' => '이름',
+    'email_address' => '이메일 주소',
+    'remember_me' => '로그인 유지',
+    'forgot_password' => '비밀번호를 잊으셨나요?',
+    'create_account' => '계정 만들기',
+    'password' => '비밀번호',
+    'confirm_account_password' => '비밀번호 확인',
+    'request_reset' => '재설정 링크 요청',
+    'back_to_login' => '로그인으로 돌아가기',
+];

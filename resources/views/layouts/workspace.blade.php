@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ app()->getLocale() }}" data-theme="light">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" data-theme="light">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>@yield('title', 'Workspace') — {{ \App\Models\SiteSetting::text('site_name','Samith AI') }}</title>
@@ -33,23 +33,29 @@
 <a class="side-link {{ request()->routeIs('dashboard.system') ? 'active' : '' }}" href="{{ route('dashboard.system') }}">System Center</a>
 @endif
 <div class="side-title">My account</div>
-<a class="side-link {{ request()->routeIs('account') ? 'active' : '' }}" href="{{ route('account') }}">Dashboard</a>
-<a class="side-link {{ request()->routeIs('account.orders') ? 'active' : '' }}" href="{{ route('account.orders') }}">My orders</a>
-<a class="side-link {{ request()->routeIs('account.support') ? 'active' : '' }}" href="{{ route('account.support') }}">Support tickets</a>
+<a class="side-link {{ request()->routeIs('account') ? 'active' : '' }}" href="{{ route('account') }}">{{ __('account.dashboard') }}</a>
+<a class="side-link {{ request()->routeIs('account.orders') ? 'active' : '' }}" href="{{ route('account.orders') }}">{{ __('account.my_orders') }}</a>
+<a class="side-link {{ request()->routeIs('account.support') ? 'active' : '' }}" href="{{ route('account.support') }}">{{ __('account.support_tickets') }}</a>
 <a class="side-link {{ request()->routeIs('account.library*') ? 'active' : '' }}" href="{{ route('account.library') }}">My library</a>
 @if(auth()->user()->isCreator())
-<a class="side-link {{ request()->routeIs('account.media') ? 'active' : '' }}" href="{{ route('account.media') }}">My media</a>
-<a class="side-link {{ request()->routeIs('account.prompts*') ? 'active' : '' }}" href="{{ route('account.prompts') }}">My prompts</a>
+<a class="side-link {{ request()->routeIs('account.media') ? 'active' : '' }}" href="{{ route('account.media') }}">{{ __('account.my_media') }}</a>
+<a class="side-link {{ request()->routeIs('account.prompts*') ? 'active' : '' }}" href="{{ route('account.prompts') }}">{{ __('account.my_prompts') }}</a>
 @endif
 <a class="side-link {{ request()->routeIs('cart.*') ? 'active' : '' }}" href="{{ route('cart.index') }}">My cart</a>
-<a class="side-link {{ request()->routeIs('account.settings*') ? 'active' : '' }}" href="{{ route('account.settings') }}">Settings</a>
+<a class="side-link {{ request()->routeIs('account.settings*') ? 'active' : '' }}" href="{{ route('account.settings') }}">{{ __('account.account_settings') }}</a>
 <div class="side-title">Marketplace</div>
 <a class="side-link" href="{{ route('prompts.index') }}">Explore prompts</a>
 </nav></aside>
 <div class="workspace-main">
 <header class="workspace-top">
 <span class="muted">Samith AI / @yield('breadcrumb', 'Workspace')</span>
-<div class="flex"><button class="icon-btn" type="button" data-theme-toggle aria-label="Switch light or dark mode">◐</button>
+<div class="flex">
+<details class="profile-menu"><summary class="btn small" aria-label="Language">{{ strtoupper(app()->getLocale()) }} ▾</summary>
+<div class="dropdown" style="max-height:320px;overflow-y:auto">
+@foreach(config('samith.locales') as $code=>$name)
+<a href="{{ route('language.switch',$code) }}" lang="{{ $code }}">{{ $name }}</a>
+@endforeach</div></details>
+<button class="icon-btn" type="button" data-theme-toggle aria-label="Switch light or dark mode">◐</button>
 <details class="profile-menu"><summary class="btn" aria-label="Open profile menu">{{ auth()->user()->name }} ▾</summary>
 <div class="dropdown"><a href="{{ route('account.settings') }}">Account settings</a><a href="{{ route('home') }}">View marketplace</a><form method="post" action="{{ route('logout') }}">@csrf<button type="submit">Sign out</button></form></div></details>
 </div></header>

@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'dashboard' => 'Dasbor',
+    'my_orders' => 'Pesanan saya',
+    'support_tickets' => 'Tiket dukungan',
+    'my_media' => 'Media saya',
+    'my_prompts' => 'Prompt saya',
+    'categories' => 'Kategori',
+    'account_settings' => 'Pengaturan akun',
+    'save_profile' => 'Simpan profil',
+    'change_password' => 'Ubah kata sandi',
+    'current_password' => 'Kata sandi saat ini',
+    'new_password' => 'Kata sandi baru',
+    'confirm_password' => 'Konfirmasi kata sandi',
+    'full_name' => 'Nama lengkap',
+    'email_address' => 'Alamat email',
+    'remember_me' => 'Ingat saya',
+    'forgot_password' => 'Lupa kata sandi?',
+    'create_account' => 'Buat akun',
+    'password' => 'Kata sandi',
+    'confirm_account_password' => 'Konfirmasi kata sandi',
+    'request_reset' => 'Minta tautan pengaturan ulang',
+    'back_to_login' => 'Kembali masuk',
+];

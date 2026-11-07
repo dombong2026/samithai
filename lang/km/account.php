@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'dashboard' => 'ផ្ទាំងគ្រប់គ្រង',
+    'my_orders' => 'ការបញ្ជាទិញរបស់ខ្ញុំ',
+    'support_tickets' => 'សំណើជំនួយ',
+    'my_media' => 'មេឌៀរបស់ខ្ញុំ',
+    'my_prompts' => 'ប្រមុខបញ្ជារបស់ខ្ញុំ',
+    'categories' => 'ប្រភេទ',
+    'account_settings' => 'ការកំណត់គណនី',
+    'save_profile' => 'រក្សាទុកប្រវត្តិរូប',
+    'change_password' => 'ប្ដូរពាក្យសម្ងាត់',
+    'current_password' => 'ពាក្យសម្ងាត់បច្ចុប្បន្ន',
+    'new_password' => 'ពាក្យសម្ងាត់ថ្មី',
+    'confirm_password' => 'បញ្ជាក់ពាក្យសម្ងាត់',
+    'full_name' => 'ឈ្មោះពេញ',
+    'email_address' => 'អាសយដ្ឋានអ៊ីមែល',
+    'remember_me' => 'ចងចាំខ្ញុំ',
+    'forgot_password' => 'ភ្លេចពាក្យសម្ងាត់មែនទេ?',
+    'create_account' => 'បង្កើតគណនី',
+    'password' => 'ពាក្យសម្ងាត់',
+    'confirm_account_password' => 'បញ្ជាក់ពាក្យសម្ងាត់',
+    'request_reset' => 'ស្នើតំណកំណត់ឡើងវិញ',
+    'back_to_login' => 'ត្រឡប់ទៅចូលគណនី',
+];

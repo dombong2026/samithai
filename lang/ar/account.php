@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'dashboard' => 'لوحة التحكم',
+    'my_orders' => 'طلباتي',
+    'support_tickets' => 'تذاكر الدعم',
+    'my_media' => 'وسائطي',
+    'my_prompts' => 'مطالباتي',
+    'categories' => 'الفئات',
+    'account_settings' => 'إعدادات الحساب',
+    'save_profile' => 'حفظ الملف الشخصي',
+    'change_password' => 'تغيير كلمة المرور',
+    'current_password' => 'كلمة المرور الحالية',
+    'new_password' => 'كلمة المرور الجديدة',
+    'confirm_password' => 'تأكيد كلمة المرور',
+    'full_name' => 'الاسم الكامل',
+    'email_address' => 'البريد الإلكتروني',
+    'remember_me' => 'تذكرني',
+    'forgot_password' => 'هل نسيت كلمة المرور؟',
+    'create_account' => 'إنشاء حساب',
+    'password' => 'كلمة المرور',
+    'confirm_account_password' => 'تأكيد كلمة المرور',
+    'request_reset' => 'طلب رابط إعادة التعيين',
+    'back_to_login' => 'العودة لتسجيل الدخول',
+];
