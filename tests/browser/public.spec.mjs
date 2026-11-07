@@ -30,6 +30,8 @@ test('a new customer can register, browse account, switch theme and create a sup
 
   await expect(page).toHaveURL(/\/account$/);
   await expect(page.getByRole('heading', { name:'Account dashboard' })).toBeVisible();
+  const screenWidth = await page.evaluate(() => ({ viewport: window.innerWidth, body: document.body.scrollWidth, html: document.documentElement.scrollWidth }));
+  expect(screenWidth.html).toBeLessThanOrEqual(screenWidth.viewport + 3);
   await page.locator('[data-theme-toggle]').first().click();
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
 

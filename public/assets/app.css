@@ -18,3 +18,20 @@ dialog{border:1px solid var(--line);border-radius:20px;background:var(--panel);c
    Keep only the explicit dismiss button interactive. */
 .toast-stack,.toast{pointer-events:none}
 .toast button[data-toast-dismiss]{pointer-events:auto}
+
+/* Mobile workspace is a stacked document, not an intrinsic-width CSS grid.
+   Keep the horizontal sidebar navigation entirely inside its own scrollport. */
+@media(max-width:760px){
+  .workspace{display:block;width:100%;max-width:100%;min-width:0}
+  .workspace-aside{position:relative;display:block;max-width:100%;min-width:0;overflow:hidden}
+  .workspace-aside nav{display:flex;flex-wrap:nowrap;width:100%;max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+  .workspace-aside .side-link{flex:0 0 auto;max-width:none}
+  .workspace-main{display:block;position:relative;width:100%;max-width:100%;min-width:0;clear:both}
+  .workspace-top{position:relative;z-index:1;width:100%;max-width:100%;min-width:0;flex-wrap:wrap}
+  .workspace-body{max-width:100%;min-width:0;overflow-wrap:anywhere}
+  .workspace-body>.stats{width:100%;min-width:0}
+  .workspace-body>.panel{max-width:100%}
+  .page-heading{min-width:0}
+  .table-scroll{max-width:100%}
+  .row-menu{max-width:calc(100vw - 20px)}
+}
