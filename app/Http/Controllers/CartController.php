@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CartItem;
+use App\Support\AuditTrail;
 use App\Models\Order;
 use App\Models\Prompt;
 use App\Models\PromptEntitlement;
@@ -90,6 +91,7 @@ class CartController extends Controller
             return $order;
         }, 3);
 
+        AuditTrail::record($request,'order.free_checkout',$order,['amount'=>'0.00','currency'=>'USD']);
         return redirect()->route('account.library')
             ->with('success', 'Free checkout complete. Order '.$order->number.' is in your library.');
     }

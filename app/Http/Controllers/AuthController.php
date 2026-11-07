@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\AuditTrail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +37,7 @@ class AuthController extends Controller
         }
 
         $request->session()->regenerate();
+        AuditTrail::record($request,'auth.login',$request->user());
 
         return redirect()->intended(auth()->user()->isAdmin() ? route('dashboard') : route('account'))
             ->with('success', 'Signed in successfully.');
@@ -56,12 +58,14 @@ class AuthController extends Controller
         ]);
         Auth::login($user);
         $request->session()->regenerate();
+        AuditTrail::record($request,'auth.register',$user);
 
         return redirect()->route('account')->with('success', 'Your account was created.');
     }
 
     public function logout(Request $request): RedirectResponse
     {
+        AuditTrail::record($request,'auth.logout',$request->user());
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

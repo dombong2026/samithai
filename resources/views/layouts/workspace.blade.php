@@ -3,7 +3,7 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>@yield('title', 'Workspace') — {{ \App\Models\SiteSetting::text('site_name','Samith AI') }}</title>
-<style>:root{--primary:{{ \App\Models\SiteSetting::text('primary_color','#ED702B') }};--secondary:{{ \App\Models\SiteSetting::text('secondary_color','#246BD0') }}}</style>
+<style>:root{--primary:{{ \App\Models\SiteSetting::text('primary_color','#ED702B') }} !important;--secondary:{{ \App\Models\SiteSetting::text('secondary_color','#246BD0') }} !important}</style>
 <link rel="stylesheet" href="{{ asset('assets/app.css') }}"><script defer src="{{ asset('assets/app.js') }}"></script>
 </head><body>
 <div class="workspace">

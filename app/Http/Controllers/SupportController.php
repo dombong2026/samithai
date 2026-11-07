@@ -79,6 +79,7 @@ class SupportController extends Controller
         abort_unless($ticket->status === 'open', 422);
         $data = $request->validate(['body'=>['required','string','min:2','max:10000']]);
         $ticket->messages()->create(['user_id'=>$request->user()->id,'body'=>$data['body']]);
+        $ticket->touch();
         AuditTrail::record($request,'support.ticket.reply',$ticket);
         return back()->with('success','Reply added.');
     }

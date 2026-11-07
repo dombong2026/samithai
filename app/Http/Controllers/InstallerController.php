@@ -24,6 +24,7 @@ class InstallerController extends Controller
             'Mbstring' => extension_loaded('mbstring'),
             'Fileinfo' => extension_loaded('fileinfo'),
             'XML' => extension_loaded('xml'),
+            'DOM HTML sanitizer' => extension_loaded('dom'),
             'Storage writable' => is_writable(storage_path('app')) && is_writable(storage_path('framework')),
             'Bootstrap cache writable' => is_writable(base_path('bootstrap/cache')),
             'Environment writable' => is_writable(base_path('.env')),

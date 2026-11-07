@@ -27,6 +27,11 @@ jobs:
           php artisan key:generate
       - name: PHP syntax validation
         run: find app bootstrap config database routes tests -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Compile all Laravel Blade templates and inspect routes
+        run: |
+          php artisan route:list --except-vendor
+          php artisan view:cache
+          php artisan view:clear
       - name: Laravel feature tests
         run: php artisan test
       - name: Build Tailwind assets

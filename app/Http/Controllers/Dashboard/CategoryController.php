@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Support\AuditTrail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -51,7 +52,8 @@ class CategoryController extends Controller
         if (Category::where('slug', $slug)->exists()) {
             return back()->withErrors(['name' => 'This category already exists.']);
         }
-        Category::create($data + ['slug' => $slug]);
+        $category = Category::create($data + ['slug' => $slug]);
+        AuditTrail::record($request,'category.create',$category);
 
         return back()->with('success', 'Category created.');
     }
@@ -73,6 +75,7 @@ class CategoryController extends Controller
             return back()->withErrors(['name' => 'Another category already uses this URL.']);
         }
         $category->update($data + ['slug' => $slug]);
+        AuditTrail::record($request,'category.update',$category);
 
         return back()->with('success', 'Category updated.');
     }
@@ -84,6 +87,7 @@ class CategoryController extends Controller
             return back()->withErrors(['category' => 'Move or remove the prompts in this category before deleting it.']);
         }
         $category->delete();
+        AuditTrail::record(request(),'category.delete',$category);
 
         return back()->with('success', 'Category deleted.');
     }
