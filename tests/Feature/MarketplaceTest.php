@@ -102,4 +102,26 @@ class MarketplaceTest extends TestCase
         $this->actingAs($customer)->post(route('checkout'))->assertSessionHasErrors('cart');
         $this->assertDatabaseMissing('prompt_entitlements', ['user_id' => $customer->id, 'prompt_id' => $paid->id]);
     }
+    public function test_licensed_customer_keeps_the_original_prompt_after_creator_changes(): void
+    {
+        $creator = User::factory()->create();
+        $creator->forceFill(['role'=>'creator'])->save();
+        $customer = User::factory()->create();
+        $prompt = $this->publishedPrompt($creator, $this->category());
+
+        $this->actingAs($customer)->post(route('cart.add',$prompt))->assertRedirect();
+        $this->actingAs($customer)->post(route('checkout'))->assertRedirect();
+        $this->assertDatabaseHas('prompt_entitlements',[
+            'user_id'=>$customer->id,
+            'prompt_id'=>$prompt->id,
+            'content_snapshot'=>'SECRET_LICENSED_PROMPT_BODY',
+        ]);
+
+        $prompt->update(['content'=>'NEW_CREATOR_DRAFT_CONTENT','status'=>'draft']);
+        $this->actingAs($customer)->get(route('account.library.show',$prompt))
+            ->assertOk()
+            ->assertSee('SECRET_LICENSED_PROMPT_BODY')
+            ->assertDontSee('NEW_CREATOR_DRAFT_CONTENT');
+    }
+
 }
