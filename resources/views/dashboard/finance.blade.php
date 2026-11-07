@@ -5,6 +5,12 @@
 @section('subtitle','Real order records and verified transaction status.')
 @section('toolbar')<a href="{{ route('prompts.index') }}" class="btn primary">Browse marketplace</a>@endsection
 @section('content')
+@if($admin)
+<div class="panel" style="margin-bottom:18px"><h2>Payment release checks</h2>
+<p>Release status is derived from configured, reviewed capabilities—not sample payments.</p>
+@foreach($paymentReadiness as $name => $passed)
+<div class="flex between" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>{{ $name }}</span><strong class="{{ $passed ? 'status-pass' : 'status-fail' }}">{{ $passed ? 'Ready' : 'Not ready' }}</strong></div>
+@endforeach</div>@endif
 <div class="notice warning">Paid checkout, payment verification, refunds and payouts are disabled. No financial transactions can be created from this workspace. Only completed free orders are currently supported.</div>
 <form class="filter-bar" action="{{ $admin ? route('dashboard.finance') : route('account.orders') }}" method="get">
 <label class="sr-only" for="order-q">Search orders</label><input id="order-q" name="q" placeholder="Search order number" value="{{ request('q') }}">

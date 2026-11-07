@@ -27,6 +27,13 @@ class FinanceController extends Controller
             'orders' => $query->latest()->paginate(10)->withQueryString(),
             'admin' => $admin,
             'transactions' => $admin ? PaymentTransaction::with('order')->latest()->limit(10)->get() : collect(),
+            'paymentReadiness' => [
+                'Provider registered' => in_array(config('payments.provider'), config('payments.supported_providers', []), true),
+                'Payments flag enabled' => config('payments.enabled'),
+                'Payout integration available' => false,
+                'Refund integration available' => false,
+                'Tax invoicing verified' => false,
+            ],
         ]);
     }
 

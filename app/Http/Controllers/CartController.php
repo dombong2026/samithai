@@ -80,6 +80,7 @@ class CartController extends Controller
                     'title' => $item->prompt->title,
                     'unit_price' => 0,
                     'license_type' => $item->prompt->license_type,
+                    'content_snapshot' => $item->prompt->content,
                 ]);
                 PromptEntitlement::firstOrCreate(
                     ['user_id' => $user->id, 'prompt_id' => $item->prompt_id],
