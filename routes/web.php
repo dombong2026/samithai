@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthSecurityController;
+use App\Http\Controllers\Dashboard\LegalController;
 use App\Http\Middleware\RequireVerifiedEmailWhenEnabled;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\MarketplaceController;
@@ -36,6 +37,8 @@ Route::prefix('{locale}')->where(['locale'=>'en|zh|ko|ja|de|km|vi|th|id|ms|ar|fr
     Route::get('/support-center', [SupportController::class, 'center'])->name('locale.support.center');
     Route::get('/support-center/articles/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('article',$slug))->name('locale.support.articles.show');
 });
+
+Route::get('/legal/{kind}', [LegalController::class,'public'])->name('legal.show');
 
 Route::get('/installer', [InstallerController::class, 'show'])->name('installer.show');
 Route::post('/installer', [InstallerController::class, 'install'])->middleware('throttle:4,1')->name('installer.install');
@@ -92,6 +95,12 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/dashboard/users/{user}/role', [UsersController::class, 'role'])->name('dashboard.users.role');
     Route::get('/dashboard/appearance', [AppearanceController::class, 'index'])->name('dashboard.appearance');
     Route::put('/dashboard/appearance', [AppearanceController::class, 'update'])->name('dashboard.appearance.update');
+
+    Route::get('/dashboard/legal', [LegalController::class,'index'])->name('dashboard.legal');
+    Route::post('/dashboard/legal', [LegalController::class,'store'])->name('dashboard.legal.store');
+    Route::put('/dashboard/legal/{document}', [LegalController::class,'update'])->name('dashboard.legal.update');
+    Route::post('/dashboard/legal/{document}/publish', [LegalController::class,'publish'])->name('dashboard.legal.publish');
+    Route::post('/dashboard/legal/{document}/retire', [LegalController::class,'retire'])->name('dashboard.legal.retire');
 
     Route::get('/dashboard/security', [PlatformController::class, 'security'])->name('dashboard.security');
     Route::get('/dashboard/system', [PlatformController::class, 'system'])->name('dashboard.system');
