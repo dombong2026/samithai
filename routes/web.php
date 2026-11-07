@@ -15,6 +15,22 @@ use App\Http\Controllers\PublicContentController;
 use App\Http\Controllers\Dashboard\FooterController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\Dashboard\FinanceController;
+use App\Http\Controllers\Dashboard\PlatformController;
+use App\Http\Controllers\LanguageController;
+
+Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
+Route::prefix('{locale}')->where(['locale'=>'en|zh|ko|ja|de|km|vi|th|id|ms|ar|fr|es'])->group(function (): void {
+    Route::get('/', [MarketplaceController::class, 'home'])->name('locale.home');
+    Route::get('/prompts', [MarketplaceController::class, 'index'])->name('locale.prompts.index');
+    Route::get('/prompts/{prompt:slug}', [MarketplaceController::class, 'show'])->name('locale.prompts.show');
+    Route::get('/categories/{category:slug}', [MarketplaceController::class, 'category'])->name('locale.categories.show');
+    Route::get('/blog', [PublicContentController::class, 'posts'])->name('locale.blog.index');
+    Route::get('/blog/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('post',$slug))->name('locale.blog.show');
+    Route::get('/policies', [PublicContentController::class, 'policies'])->name('locale.policies.index');
+    Route::get('/policies/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('policy',$slug))->name('locale.policies.show');
+    Route::get('/support-center', [SupportController::class, 'center'])->name('locale.support.center');
+    Route::get('/support-center/articles/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('article',$slug))->name('locale.support.articles.show');
+});
 
 Route::get('/installer', [InstallerController::class, 'show'])->name('installer.show');
 Route::post('/installer', [InstallerController::class, 'install'])->middleware('throttle:4,1')->name('installer.install');
@@ -58,6 +74,10 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/account/prompts/{prompt}/submit', [PromptController::class, 'submit'])->name('account.prompts.submit');
 
     Route::get('/account/orders', [FinanceController::class, 'index'])->name('account.orders');
+    Route::get('/dashboard/security', [PlatformController::class, 'security'])->name('dashboard.security');
+    Route::get('/dashboard/system', [PlatformController::class, 'system'])->name('dashboard.system');
+    Route::get('/dashboard/languages', [PlatformController::class, 'language'])->name('dashboard.languages');
+
     Route::get('/dashboard/finance', [FinanceController::class, 'index'])->name('dashboard.finance');
     Route::get('/orders/{order}', [FinanceController::class, 'show'])->name('orders.show');
 

@@ -14,7 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: [\App\Http\Middleware\RequireInstallation::class]);
+        $middleware->web(append: [\App\Http\Middleware\RequireInstallation::class, \App\Http\Middleware\ApplyLocale::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
