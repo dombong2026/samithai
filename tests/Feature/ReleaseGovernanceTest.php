@@ -92,12 +92,13 @@ class ReleaseGovernanceTest extends TestCase
             ->assertForbidden();
         $this->actingAs($admin)->put(route('dashboard.translations.update',[$entry,'fr']),$data)
             ->assertRedirect();
-        $this->get('/fr/pages/about')->assertNotFound(); // Pages only on unprefixed public route at this stage.
+        $this->get('/fr/pages/about')->assertOk()->assertSee('English body')->assertDontSee('Corps français');
         $this->get(route('pages.show','about'))->assertSee('English body');
         $translation=ContentTranslation::firstOrFail();
         $this->assertSame('draft',$translation->status);
         $this->post(route('dashboard.translations.review',[$entry,'fr']),['decision'=>'approve'])
             ->assertRedirect();
         $this->assertSame('published',$translation->fresh()->status);
+        $this->get('/fr/pages/about')->assertOk()->assertSee('Corps français')->assertDontSee('English body');
     }
 }

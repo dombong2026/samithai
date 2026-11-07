@@ -30,6 +30,7 @@ Route::prefix('{locale}')->where(['locale'=>'en|zh|ko|ja|de|km|vi|th|id|ms|ar|fr
     Route::get('/prompts', [MarketplaceController::class, 'index'])->name('locale.prompts.index');
     Route::get('/prompts/{prompt:slug}', [MarketplaceController::class, 'show'])->name('locale.prompts.show');
     Route::get('/categories/{category:slug}', [MarketplaceController::class, 'category'])->name('locale.categories.show');
+    Route::get('/pages/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('page',$slug))->name('locale.pages.show');
     Route::get('/blog', [PublicContentController::class, 'posts'])->name('locale.blog.index');
     Route::get('/blog/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('post',$slug))->name('locale.blog.show');
     Route::get('/policies', [PublicContentController::class, 'policies'])->name('locale.policies.index');
