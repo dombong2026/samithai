@@ -12,6 +12,7 @@ use App\Http\Controllers\InstallerController;
 use App\Http\Controllers\Dashboard\MediaController;
 use App\Http\Controllers\Dashboard\ContentController;
 use App\Http\Controllers\PublicContentController;
+use App\Http\Controllers\Dashboard\FooterController;
 
 Route::get('/installer', [InstallerController::class, 'show'])->name('installer.show');
 Route::post('/installer', [InstallerController::class, 'install'])->middleware('throttle:4,1')->name('installer.install');
@@ -62,6 +63,14 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/media/reference', [MediaController::class, 'reference'])->name('media.reference');
     Route::put('/media/{mediaAsset}', [MediaController::class, 'update'])->name('media.update');
     Route::delete('/media/{mediaAsset}', [MediaController::class, 'destroy'])->name('media.destroy');
+
+    Route::get('/dashboard/footer', [FooterController::class, 'index'])->name('dashboard.footer');
+    Route::post('/dashboard/footer', [FooterController::class, 'store'])->name('dashboard.footer.store');
+    Route::put('/dashboard/footer/{column}', [FooterController::class, 'update'])->name('dashboard.footer.update');
+    Route::delete('/dashboard/footer/{column}', [FooterController::class, 'destroy'])->name('dashboard.footer.destroy');
+    Route::post('/dashboard/footer/{column}/links', [FooterController::class, 'storeLink'])->name('dashboard.footer.links.store');
+    Route::put('/dashboard/footer/links/{link}', [FooterController::class, 'updateLink'])->name('dashboard.footer.links.update');
+    Route::delete('/dashboard/footer/links/{link}', [FooterController::class, 'destroyLink'])->name('dashboard.footer.links.destroy');
 
     Route::get('/dashboard/{section}', [ContentController::class, 'index'])->whereIn('section', ['posts','pages','policies'])->name('dashboard.content');
     Route::post('/dashboard/content/{kind}', [ContentController::class, 'store'])->whereIn('kind',['post','page','policy'])->name('dashboard.content.store');

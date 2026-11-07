@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\FooterColumn;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -98,6 +99,10 @@ class InstallerController extends Controller
                 ]);
                 $admin->role = 'admin';
                 $admin->save();
+                foreach (['Marketplace' => '/prompts', 'Account' => '/account', 'Blog' => '/blog', 'Legal' => '/policies'] as $title => $link) {
+                    $column = FooterColumn::create(['title'=>$title,'position'=>FooterColumn::count()+1,'enabled'=>true]);
+                    $column->links()->create(['label'=>$title === 'Marketplace' ? 'Browse prompts' : ($title === 'Legal' ? 'Marketplace policies' : $title), 'url'=>$link,'position'=>1]);
+                }
             } catch (Throwable $e) {
                 report($e);
                 return back()->withErrors(['installer' => 'Migration or administrator creation failed. Check server logs before retrying.']);

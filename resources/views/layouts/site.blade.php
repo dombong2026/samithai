@@ -41,10 +41,13 @@
 <footer class="footer">
 <div class="container footer-grid">
 <div class="footer-col"><a class="brand" href="{{ route('home') }}"><span class="brand-mark">S</span><span>Samith <strong>AI</strong></span></a><p>Discover useful prompts for work, creativity and learning.</p></div>
-<div class="footer-col"><h3>Marketplace</h3><a href="{{ route('prompts.index') }}">Browse prompts</a><a href="{{ route('cart.index') }}">Cart</a></div>
-<div class="footer-col"><h3>Account</h3><a href="{{ route('account') }}">Dashboard</a><a href="{{ route('account.library') }}">Library</a></div>
-<div class="footer-col"><h3>Creators</h3>@auth @if(auth()->user()->isCreator())<a href="{{ route('account.prompts') }}">My prompts</a>@else<a href="{{ route('account') }}">Become a creator</a>@endif @else<a href="{{ route('register') }}">Become a creator</a>@endauth<a href="{{ route('account.settings') }}">Settings</a></div>
-<div class="footer-col"><h3>Company</h3><a href="https://tonsamith.com" rel="noopener">About the author</a></div>
+@foreach(\App\Models\FooterColumn::where('enabled', true)->with('links')->orderBy('position')->orderBy('id')->limit(5)->get() as $footerColumn)
+<div class="footer-col"><h3>{{ $footerColumn->title }}</h3>
+@foreach($footerColumn->links as $footerLink)
+<a href="{{ str_starts_with($footerLink->url,'/') ? url($footerLink->url) : $footerLink->url }}" @if(!str_starts_with($footerLink->url,'/')) target="_blank" rel="noopener noreferrer" @endif>{{ $footerLink->label }}</a>
+@endforeach
+</div>
+@endforeach
 </div>
 <div class="footer-bottom"><div class="container"><span>Copyright © {{ date('Y') }} | Samith AI</span><div class="socials"><a href="https://tonsamith.com" rel="noopener">Ton Samith</a></div></div></div>
 </footer>
