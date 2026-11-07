@@ -17,6 +17,7 @@
 @else
 <form action="{{ route('cart.add', $prompt) }}" method="post">@csrf<button type="submit" class="btn primary">Add to cart</button></form>
 @endif</div>
+@if($legal=\App\Models\LegalVersion::current($prompt->license_type))<p class="tiny"><a href="{{ route('legal.show',$prompt->license_type) }}" target="_blank" rel="noopener">Read the published {{ ucfirst($prompt->license_type) }} License (v{{ $legal->version }})</a></p>@endif
 <div class="notice">The complete prompt text is available only to its creator, administrators, and customers with a valid entitlement. Purchasing a license does not transfer copyright.</div>
 @if(!$prompt->isFree())<p class="tiny" style="margin-top:12px">Paid checkout remains disabled until a verified payment provider is configured. No payment will be collected.</p>@endif
 </div></div></section>

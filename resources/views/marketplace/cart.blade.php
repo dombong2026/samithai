@@ -15,7 +15,19 @@
 @endforeach
 <div class="flex between"><strong>Total</strong><b class="price">USD {{ number_format($total,2) }}</b></div>
 @if($hasPaid)<div class="notice warning">Paid checkout is not yet enabled. Remove paid prompts to complete a free checkout. Your cart has not been charged.</div>
-@else<form method="post" action="{{ route('checkout') }}">@csrf<button type="submit" class="btn primary">Complete free checkout</button></form>@endif
+@elseif($legalGate && $legalDocs->contains(fn ($doc) => $doc === null))
+<div class="notice warning">Checkout cannot proceed until the required legal documents are published. No payment is collected.</div>
+@else
+<form method="post" action="{{ route('checkout') }}" class="stack">@csrf
+@if($legalGate)
+<div class="notice">Review these published terms before accepting your free order:
+@foreach($legalDocs as $kind=>$doc)
+<a href="{{ route('legal.show',$kind) }}" target="_blank" rel="noopener noreferrer">{{ $doc->title }} (v{{ $doc->version }})</a>@if(!$loop->last) · @endif
+@endforeach</div>
+<label class="flex"><input type="checkbox" name="accept_legal_terms" value="1" required> I have read and accept the linked terms.</label>
+@endif
+<button type="submit" class="btn primary">Complete free checkout</button></form>
+@endif
 </div>
 @endif
 @endsection

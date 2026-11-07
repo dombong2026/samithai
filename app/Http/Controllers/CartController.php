@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\CartItem;
+use App\Models\LegalVersion;
+use App\Models\LegalAcceptance;
 use App\Support\AuditTrail;
 use App\Models\Order;
 use App\Models\Prompt;
@@ -24,6 +26,9 @@ class CartController extends Controller
             'items' => $items,
             'total' => $items->sum(fn ($item) => (float) $item->prompt->price),
             'hasPaid' => $items->contains(fn ($item) => (float) $item->prompt->price > 0),
+            'legalGate' => config('samith.require_legal_acceptance'),
+            'legalDocs' => collect(['marketplace_terms', ...$items->pluck('prompt.license_type')->unique()->all()])
+                ->unique()->mapWithKeys(fn ($kind)=>[$kind=>LegalVersion::current($kind)]),
         ]);
     }
 
@@ -49,8 +54,25 @@ class CartController extends Controller
     public function checkout(Request $request): RedirectResponse
     {
         $user = $request->user();
+        $legalDocs = collect();
+        if (config('samith.require_legal_acceptance')) {
+            $types=CartItem::where('user_id',$user->id)->with('prompt')
+                ->get()->pluck('prompt.license_type')->filter()->unique()->all();
+            foreach (array_unique(['marketplace_terms',...$types]) as $type) {
+                $document=LegalVersion::current($type);
+                if (! $document) {
+                    throw ValidationException::withMessages([
+                        'cart'=>'Checkout is unavailable until the required legal terms have been reviewed and published.',
+                    ]);
+                }
+                $legalDocs->push($document);
+            }
+            if (! $request->boolean('accept_legal_terms')) {
+                throw ValidationException::withMessages(['cart'=>'Review and accept the published legal terms to continue.']);
+            }
+        }
 
-        $order = DB::transaction(function () use ($user): Order {
+        $order = DB::transaction(function () use ($user, $legalDocs, $request): Order {
             $items = CartItem::query()->where('user_id', $user->id)
                 ->with('prompt')->lockForUpdate()->get();
 
@@ -86,6 +108,15 @@ class CartController extends Controller
                     ['user_id' => $user->id, 'prompt_id' => $item->prompt_id],
                     ['order_id' => $order->id, 'license_type' => $item->prompt->license_type, 'content_snapshot' => $item->prompt->content]
                 );
+            }
+            foreach ($legalDocs as $document) {
+                LegalAcceptance::create([
+                    'user_id'=>$user->id,
+                    'order_id'=>$order->id,
+                    'legal_version_id'=>$document->id,
+                    'ip_hash'=>$request->ip() ? hash_hmac('sha256',$request->ip(),(string) config('app.key')) : null,
+                    'accepted_at'=>now(),
+                ]);
             }
             CartItem::where('user_id', $user->id)->delete();
 

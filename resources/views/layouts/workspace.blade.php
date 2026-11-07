@@ -21,6 +21,7 @@
 <a class="side-link {{ request()->is('dashboard/media') ? 'active' : '' }}" href="{{ route('dashboard.media') }}">Media Library</a>
 <a class="side-link {{ request()->is('dashboard/posts') ? 'active' : '' }}" href="{{ route('dashboard.content','posts') }}">Post Manager</a>
 <a class="side-link {{ request()->is('dashboard/pages') ? 'active' : '' }}" href="{{ route('dashboard.content','pages') }}">Page Manager</a>
+<a class="side-link {{ request()->routeIs('dashboard.legal') ? 'active' : '' }}" href="{{ route('dashboard.legal') }}">License & Legal Review</a>
 <a class="side-link {{ request()->is('dashboard/policies') ? 'active' : '' }}" href="{{ route('dashboard.content','policies') }}">Policy Center</a>
 <a class="side-link {{ request()->is('dashboard/knowledge') ? 'active' : '' }}" href="{{ route('dashboard.content','knowledge') }}">Knowledge Base</a>
 <a class="side-link {{ request()->routeIs('dashboard.footer') ? 'active' : '' }}" href="{{ route('dashboard.footer') }}">Global Footer</a>
