@@ -1,0 +1,52 @@
+import { test, expect } from '@playwright/test';
+
+test('the storefront and authentication screens render on the actual browser', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: /Find the right prompt/i })).toBeVisible();
+  await expect(page.locator('header .brand')).toBeVisible();
+  await expect(page.locator('form[role="search"] input')).toBeVisible();
+
+  await page.goto('/prompts');
+  await expect(page.getByRole('heading', { name: /AI prompt marketplace/i })).toBeVisible();
+
+  await page.goto('/login');
+  await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
+  await expect(page.locator('#password')).toHaveAttribute('type','password');
+  await page.locator('[data-password-toggle="password"]').click();
+  await expect(page.locator('#password')).toHaveAttribute('type','text');
+
+  await page.goto('/register');
+  await expect(page.getByRole('heading', { name: 'Create an account' })).toBeVisible();
+});
+
+test('a new customer can register, browse account, switch theme and create a support ticket', async ({ page }) => {
+  await page.goto('/register');
+  const email = 'acceptance-' + Date.now() + '-' + Math.floor(Math.random()*1000000) + '@example.test';
+  await page.locator('#name').fill('CI Customer');
+  await page.locator('#email').fill(email);
+  await page.locator('#password').fill('SecurePass12345');
+  await page.locator('#password_confirmation').fill('SecurePass12345');
+  await page.getByRole('button', { name: 'Create account' }).click();
+
+  await expect(page).toHaveURL(/\/account$/);
+  await expect(page.getByRole('heading', { name:'Account dashboard' })).toBeVisible();
+  await page.locator('[data-theme-toggle]').first().click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+
+  await page.goto('/account/support');
+  await page.getByRole('button',{ name:/Open ticket/i }).click();
+  await page.locator('#ticket-subject').fill('Browser acceptance question');
+  await page.locator('#ticket-body').fill('Can I access an approved free prompt after checkout?');
+  await page.getByRole('button',{name:'Open ticket'}).last().click();
+  await expect(page).toHaveURL(/\/support\/tickets\/\d+$/);
+  await expect(page.getByText('Browser acceptance question')).toBeVisible();
+});
+
+test('locale URLs retain supported languages and block unknown codes', async ({ page }) => {
+  await page.goto('/km');
+  await expect(page.locator('html')).toHaveAttribute('lang','km');
+  await page.goto('/ar/prompts');
+  await expect(page.locator('html')).toHaveAttribute('lang','ar');
+  await page.goto('/xx/prompts');
+  await expect(page.getByText(/404|not found/i).first()).toBeVisible();
+});

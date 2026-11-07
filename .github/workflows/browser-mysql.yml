@@ -1,0 +1,70 @@
+name: Browser and MySQL integration acceptance
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-and-mysql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: samith_ci
+          MYSQL_ROOT_PASSWORD: test_only_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -ptest_only_password"
+          --health-interval=10s --health-timeout=5s --health-retries=12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, fileinfo, pdo_sqlite, pdo_mysql, sqlite3, xml, openssl
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare isolated application environment
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress
+          cp .env.example .env
+          touch database/database.sqlite
+          php artisan key:generate
+          php artisan migrate --force
+          mkdir -p storage/app
+          printf "CI integration only\n" > storage/app/installed.lock
+      - name: Smoke-check MySQL 8 schema compatibility
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: samith_ci
+          DB_USERNAME: root
+          DB_PASSWORD: test_only_password
+        run: |
+          php artisan migrate:fresh --force
+          php artisan migrate:status
+      - name: Install browser dependencies
+        run: |
+          npm install --ignore-scripts
+          npm install --no-save @playwright/test@^1.56
+          npx playwright install chromium --with-deps
+      - name: Desktop and mobile browser smoke
+        run: npx playwright test --config=playwright.config.mjs
+      - name: Upload browser traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: samith-ai-browser-failure-traces
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 5
