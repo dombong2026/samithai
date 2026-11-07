@@ -14,11 +14,27 @@
 <a class="side-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Overview</a>
 <a class="side-link {{ request()->routeIs('dashboard.prompts') ? 'active' : '' }}" href="{{ route('dashboard.prompts') }}">Prompt moderation</a>
 <a class="side-link {{ request()->routeIs('dashboard.categories') ? 'active' : '' }}" href="{{ route('dashboard.categories') }}">Categories</a>
+<div class="side-title">Content & appearance</div>
+<a class="side-link {{ request()->is('dashboard/media') ? 'active' : '' }}" href="{{ route('dashboard.media') }}">Media Library</a>
+<a class="side-link {{ request()->is('dashboard/posts') ? 'active' : '' }}" href="{{ route('dashboard.content','posts') }}">Post Manager</a>
+<a class="side-link {{ request()->is('dashboard/pages') ? 'active' : '' }}" href="{{ route('dashboard.content','pages') }}">Page Manager</a>
+<a class="side-link {{ request()->is('dashboard/policies') ? 'active' : '' }}" href="{{ route('dashboard.content','policies') }}">Policy Center</a>
+<a class="side-link {{ request()->is('dashboard/knowledge') ? 'active' : '' }}" href="{{ route('dashboard.content','knowledge') }}">Knowledge Base</a>
+<a class="side-link {{ request()->routeIs('dashboard.footer') ? 'active' : '' }}" href="{{ route('dashboard.footer') }}">Global Footer</a>
+<div class="side-title">Operations</div>
+<a class="side-link {{ request()->routeIs('dashboard.finance') ? 'active' : '' }}" href="{{ route('dashboard.finance') }}">Finance Manager</a>
+<a class="side-link {{ request()->routeIs('dashboard.support') ? 'active' : '' }}" href="{{ route('dashboard.support') }}">Support Center</a>
+<a class="side-link {{ request()->routeIs('dashboard.languages') ? 'active' : '' }}" href="{{ route('dashboard.languages') }}">Language Manager</a>
+<a class="side-link {{ request()->routeIs('dashboard.security') ? 'active' : '' }}" href="{{ route('dashboard.security') }}">Security Center</a>
+<a class="side-link {{ request()->routeIs('dashboard.system') ? 'active' : '' }}" href="{{ route('dashboard.system') }}">System Center</a>
 @endif
 <div class="side-title">My account</div>
 <a class="side-link {{ request()->routeIs('account') ? 'active' : '' }}" href="{{ route('account') }}">Dashboard</a>
+<a class="side-link {{ request()->routeIs('account.orders') ? 'active' : '' }}" href="{{ route('account.orders') }}">My orders</a>
+<a class="side-link {{ request()->routeIs('account.support') ? 'active' : '' }}" href="{{ route('account.support') }}">Support tickets</a>
 <a class="side-link {{ request()->routeIs('account.library*') ? 'active' : '' }}" href="{{ route('account.library') }}">My library</a>
 @if(auth()->user()->isCreator())
+<a class="side-link {{ request()->routeIs('account.media') ? 'active' : '' }}" href="{{ route('account.media') }}">My media</a>
 <a class="side-link {{ request()->routeIs('account.prompts*') ? 'active' : '' }}" href="{{ route('account.prompts') }}">My prompts</a>
 @endif
 <a class="side-link {{ request()->routeIs('cart.*') ? 'active' : '' }}" href="{{ route('cart.index') }}">My cart</a>
