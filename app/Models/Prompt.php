@@ -8,7 +8,7 @@ class Prompt extends Model
 {
     protected $fillable = [
         'user_id', 'category_id', 'title', 'slug', 'summary',
-        'content', 'price', 'status', 'license_type', 'published_at',
+        'content', 'price', 'status', 'license_type', 'published_at', 'featured_media_id',
     ];
 
     protected function casts(): array
@@ -30,6 +30,8 @@ class Prompt extends Model
     {
         return $query->where('status', 'published');
     }
+
+    public function featuredMedia() { return $this->belongsTo(MediaAsset::class, 'featured_media_id'); }
 
     public function isFree(): bool
     {
