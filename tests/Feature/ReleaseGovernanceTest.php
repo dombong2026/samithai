@@ -100,5 +100,6 @@ class ReleaseGovernanceTest extends TestCase
             ->assertRedirect();
         $this->assertSame('published',$translation->fresh()->status);
         $this->get('/fr/pages/about')->assertOk()->assertSee('Corps français')->assertDontSee('English body');
+        $this->get('/ar/pages/about')->assertOk()->assertSee('English body');
     }
 }

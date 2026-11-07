@@ -11,6 +11,7 @@ use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\PromptController;
 use App\Http\Controllers\Dashboard\OverviewController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\InstallerController;
 use App\Http\Controllers\Dashboard\MediaController;
 use App\Http\Controllers\Dashboard\ContentController;
@@ -26,17 +27,17 @@ use App\Http\Controllers\Dashboard\AppearanceController;
 
 Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
 Route::prefix('{locale}')->where(['locale'=>'en|zh|ko|ja|de|km|vi|th|id|ms|ar|fr|es'])->group(function (): void {
-    Route::get('/', [MarketplaceController::class, 'home'])->name('locale.home');
-    Route::get('/prompts', [MarketplaceController::class, 'index'])->name('locale.prompts.index');
-    Route::get('/prompts/{prompt:slug}', [MarketplaceController::class, 'show'])->name('locale.prompts.show');
-    Route::get('/categories/{category:slug}', [MarketplaceController::class, 'category'])->name('locale.categories.show');
-    Route::get('/pages/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('page',$slug))->name('locale.pages.show');
-    Route::get('/blog', [PublicContentController::class, 'posts'])->name('locale.blog.index');
-    Route::get('/blog/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('post',$slug))->name('locale.blog.show');
-    Route::get('/policies', [PublicContentController::class, 'policies'])->name('locale.policies.index');
-    Route::get('/policies/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('policy',$slug))->name('locale.policies.show');
-    Route::get('/support-center', [SupportController::class, 'center'])->name('locale.support.center');
-    Route::get('/support-center/articles/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('article',$slug))->name('locale.support.articles.show');
+    Route::get('/', fn (string $locale) => app(MarketplaceController::class)->home())->name('locale.home');
+    Route::get('/prompts', fn (Request $request, string $locale) => app(MarketplaceController::class)->index($request))->name('locale.prompts.index');
+    Route::get('/prompts/{prompt:slug}', fn (string $locale, \App\Models\Prompt $prompt) => app(MarketplaceController::class)->show($prompt))->name('locale.prompts.show');
+    Route::get('/categories/{category:slug}', fn (string $locale, \App\Models\Category $category) => app(MarketplaceController::class)->category($category))->name('locale.categories.show');
+    Route::get('/pages/{slug}', fn (string $locale, string $slug) => app(PublicContentController::class)->show('page',$slug))->name('locale.pages.show');
+    Route::get('/blog', fn (string $locale) => app(PublicContentController::class)->posts())->name('locale.blog.index');
+    Route::get('/blog/{slug}', fn (string $locale, string $slug) => app(PublicContentController::class)->show('post',$slug))->name('locale.blog.show');
+    Route::get('/policies', fn (string $locale) => app(PublicContentController::class)->policies())->name('locale.policies.index');
+    Route::get('/policies/{slug}', fn (string $locale, string $slug) => app(PublicContentController::class)->show('policy',$slug))->name('locale.policies.show');
+    Route::get('/support-center', fn (string $locale) => app(SupportController::class)->center())->name('locale.support.center');
+    Route::get('/support-center/articles/{slug}', fn (string $locale, string $slug) => app(PublicContentController::class)->show('article',$slug))->name('locale.support.articles.show');
 });
 
 Route::get('/legal/{kind}', [LegalController::class,'public'])->name('legal.show');
