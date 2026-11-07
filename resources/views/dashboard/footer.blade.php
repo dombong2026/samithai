@@ -11,7 +11,7 @@
 <div class="flex between wrap">
 <div><h2>{{ $column->title }} <span class="pill {{ $column->enabled ? 'active' : 'inactive' }}">{{ $column->enabled ? 'Enabled' : 'Disabled' }}</span></h2><p class="tiny">Position {{ $column->position }} · {{ $column->links->count() }} links</p></div>
 <div class="flex">
-<button type="button" class="btn small" data-modal-open="footer-link-modal" data-resource-url="{{ route('dashboard.footer.links.store',$column) }}" data-field-label="" data-field-url="" data-field-position="1">+ Add link</button>
+<button type="button" class="btn small" data-modal-open="footer-link-modal" data-modal-force-post="1" data-resource-url="{{ route('dashboard.footer.links.store',$column) }}" data-field-label="" data-field-url="" data-field-position="1">+ Add link</button>
 <button type="button" class="icon-btn" data-action-toggle="column-menu-{{ $column->id }}" aria-label="Actions for {{ $column->title }}">⋮</button>
 <template id="column-menu-{{ $column->id }}">
 <button type="button" data-modal-open="column-modal" data-resource-url="{{ route('dashboard.footer.update',$column) }}" data-field-title="{{ $column->title }}" data-field-position="{{ $column->position }}" data-field-enabled="{{ (int)$column->enabled }}">Edit column</button>

@@ -63,7 +63,8 @@
         field.value = editor.innerHTML;
         field.hidden = false;
         editor.hidden = true;
-        toggle.textContent = 'Visual editor';
+        toggle.textContent = 'HTML source (save to preview)';
+        toggle.disabled = true;
       } else {
         // A raw source edit must be saved, sanitized and reloaded before visual preview.
         // Do not inject untrusted HTML directly into contenteditable.
@@ -98,7 +99,7 @@
         form.reset();
         form.action = open.dataset.resourceUrl || form.dataset.createUrl;
         const method = form.querySelector('input[name="_method"]');
-        const editing = Boolean(open.dataset.resourceUrl);
+        const editing = Boolean(open.dataset.resourceUrl) && open.dataset.modalForcePost !== '1';
         if (method) method.disabled = !editing;
         dialog.querySelectorAll('[data-modal-mode]').forEach(el => el.textContent = editing ? 'Edit' : 'Create');
         form.querySelectorAll('[data-fill]').forEach(field => {
@@ -113,7 +114,7 @@
         source.hidden = true;
         editor.hidden = false;
         const sourceToggle = dialog.querySelector('[data-rich-source-toggle]');
-        if (sourceToggle) sourceToggle.textContent = 'HTML source';
+        if (sourceToggle) { sourceToggle.textContent = 'HTML source'; sourceToggle.disabled = false; }
       }
       dialog.showModal();
       return;
