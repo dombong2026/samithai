@@ -13,3 +13,8 @@ dialog{border:1px solid var(--line);border-radius:20px;background:var(--panel);c
 .media-thumb{width:65px;height:50px;border-radius:10px;border:1px solid var(--line);overflow:hidden;background:var(--soft);display:grid;place-items:center;color:var(--primary)}.media-thumb img,.media-thumb span{width:100%;height:100%;object-fit:cover}.media-thumb span{display:grid;place-items:center;font-size:24px}.document-content{line-height:1.75;overflow-wrap:anywhere}.document-content img{max-width:100%}.document-content h2,.document-content h3{margin:20px 0 10px}.document-content ul,.document-content ol{padding-left:24px}.document-content a{color:var(--secondary);text-decoration:underline}.document-content blockquote{padding:8px 20px;border-left:3px solid var(--primary);margin:12px 0;background:var(--soft)}
 
 .wide-modal{width:min(950px,calc(100% - 24px))}.rich-editor{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:18px;min-height:235px;outline-offset:3px;overflow:auto}.rich-editor:focus{outline:2px solid var(--secondary)}.editor-toolbar{display:flex;flex-wrap:wrap;gap:4px;padding:6px 0}.editor-toolbar button{min-width:35px}.document-content[hidden],.rich-editor[hidden],textarea[hidden]{display:none}
+
+/* Feedback messages must never cover functional header and modal controls.
+   Keep only the explicit dismiss button interactive. */
+.toast-stack,.toast{pointer-events:none}
+.toast button[data-toast-dismiss]{pointer-events:auto}
