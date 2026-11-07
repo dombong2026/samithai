@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ContentEntry;
 use App\Models\MediaAsset;
 use App\Models\Prompt;
+use App\Models\SiteSetting;
 use App\Support\AuditTrail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -137,7 +138,8 @@ class MediaController extends Controller
         $this->authorizeEditor($request);
         $this->authorizeAsset($request, $mediaAsset);
         if (Prompt::where('featured_media_id', $mediaAsset->id)->exists()
-            || ContentEntry::where('featured_media_id', $mediaAsset->id)->exists()) {
+            || ContentEntry::where('featured_media_id', $mediaAsset->id)->exists()
+            || SiteSetting::text('logo_media_id') === (string) $mediaAsset->id) {
             return back()->withErrors(['media' => 'Remove this asset from featured content before deleting it.']);
         }
         $path = $mediaAsset->file_path;
@@ -154,6 +156,7 @@ class MediaController extends Controller
 
         $public = Prompt::published()->where('featured_media_id', $mediaAsset->id)->exists()
             || ContentEntry::where('featured_media_id', $mediaAsset->id)->where('status','published')->exists();
+        $public = $public || (SiteSetting::text('logo_media_id') === (string) $mediaAsset->id);
         $allowed = $public || ($request->user()
             && ($request->user()->isAdmin() || $request->user()->id === $mediaAsset->user_id));
         abort_unless($allowed, 403);

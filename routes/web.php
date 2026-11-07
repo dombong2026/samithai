@@ -17,6 +17,8 @@ use App\Http\Controllers\SupportController;
 use App\Http\Controllers\Dashboard\FinanceController;
 use App\Http\Controllers\Dashboard\PlatformController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\Dashboard\UsersController;
+use App\Http\Controllers\Dashboard\AppearanceController;
 
 Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
 Route::prefix('{locale}')->where(['locale'=>'en|zh|ko|ja|de|km|vi|th|id|ms|ar|fr|es'])->group(function (): void {
@@ -74,6 +76,11 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/account/prompts/{prompt}/submit', [PromptController::class, 'submit'])->name('account.prompts.submit');
 
     Route::get('/account/orders', [FinanceController::class, 'index'])->name('account.orders');
+    Route::get('/dashboard/users', [UsersController::class, 'index'])->name('dashboard.users');
+    Route::put('/dashboard/users/{user}/role', [UsersController::class, 'role'])->name('dashboard.users.role');
+    Route::get('/dashboard/appearance', [AppearanceController::class, 'index'])->name('dashboard.appearance');
+    Route::put('/dashboard/appearance', [AppearanceController::class, 'update'])->name('dashboard.appearance.update');
+
     Route::get('/dashboard/security', [PlatformController::class, 'security'])->name('dashboard.security');
     Route::get('/dashboard/system', [PlatformController::class, 'system'])->name('dashboard.system');
     Route::get('/dashboard/languages', [PlatformController::class, 'language'])->name('dashboard.languages');
