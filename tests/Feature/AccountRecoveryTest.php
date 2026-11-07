@@ -15,6 +15,13 @@ class AccountRecoveryTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_log_mailer_never_receives_reset_tokens_even_if_feature_flag_is_enabled(): void
+    {
+        config(['samith.email_delivery_enabled'=>true,'mail.default'=>'log']);
+        $this->post(route('password.email'),['email'=>'somebody@example.test'])
+            ->assertSessionHasErrors('email');
+    }
+
     public function test_recovery_explicitly_refuses_to_claim_email_delivery_without_provider(): void
     {
         config(['samith.email_delivery_enabled'=>false]);
@@ -25,7 +32,7 @@ class AccountRecoveryTest extends TestCase
 
     public function test_reset_link_is_non_enumerating_and_reset_rotates_credentials(): void
     {
-        config(['samith.email_delivery_enabled'=>true]);
+        config(['samith.email_delivery_enabled'=>true,'mail.default'=>'smtp','mail.from.address'=>'security@samithai.com','mail.mailers.smtp.host'=>'smtp.test.internal']);
         Notification::fake();
         $user=User::factory()->create(['password'=>'OldPassword12345']);
 
@@ -60,7 +67,7 @@ class AccountRecoveryTest extends TestCase
 
     public function test_signed_verification_links_and_optional_enforcement(): void
     {
-        config(['samith.email_delivery_enabled'=>true,'samith.require_verified_email'=>true]);
+        config(['samith.email_delivery_enabled'=>true,'samith.require_verified_email'=>true,'mail.default'=>'smtp','mail.from.address'=>'security@samithai.com','mail.mailers.smtp.host'=>'smtp.test.internal']);
         Notification::fake();
         $user=User::factory()->create();
         $user->forceFill(['email_verified_at'=>null])->save();

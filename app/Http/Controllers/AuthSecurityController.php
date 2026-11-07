@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Support\AuditTrail;
+use App\Support\MailDelivery;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
@@ -23,7 +24,7 @@ class AuthSecurityController extends Controller
     public function sendReset(Request $request): RedirectResponse
     {
         $request->validate(['email' => ['required', 'email', 'max:190']]);
-        if (! config('samith.email_delivery_enabled')) {
+        if (! MailDelivery::permitted()) {
             return back()->withErrors(['email'=>'Password recovery is not available until secure email delivery is configured.']);
         }
 
@@ -78,7 +79,7 @@ class AuthSecurityController extends Controller
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->route('account');
         }
-        if (! config('samith.email_delivery_enabled')) {
+        if (! MailDelivery::permitted()) {
             return back()->withErrors(['email'=>'Email verification requires working SMTP or a verified mail provider.']);
         }
         $request->user()->sendEmailVerificationNotification();

@@ -8,7 +8,7 @@
 <div class="panel stack">
 @if(auth()->user()->hasVerifiedEmail())
 <div class="notice">Your email address has been verified.</div>
-@elseif(config('samith.email_delivery_enabled'))
+@elseif(\App\Support\MailDelivery::permitted())
 <p>Verification email can be requested for <strong>{{ auth()->user()->email }}</strong>.</p>
 <form method="post" action="{{ route('verification.send') }}">@csrf<button class="btn primary" type="submit">Resend verification email</button></form>
 @else

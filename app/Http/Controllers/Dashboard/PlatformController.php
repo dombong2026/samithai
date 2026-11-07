@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\AuditEvent;
+use App\Support\MailDelivery;
 use App\Models\PaymentTransaction;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -64,6 +65,7 @@ class PlatformController extends Controller
                 'Installation locked' => is_file(storage_path('app/installed.lock')),
                 'Debug disabled' => !config('app.debug'),
                 'HTTPS request' => $request->secure(),
+                'Email delivery configured without logging' => MailDelivery::permitted(),
             ],
             'runtime' => [
                 'Laravel version' => app()->version(),

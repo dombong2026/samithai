@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Support\AuditTrail;
+use App\Support\MailDelivery;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -59,7 +60,7 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
         AuditTrail::record($request,'auth.register',$user);
-        if (config('samith.email_delivery_enabled')) {
+        if (MailDelivery::permitted()) {
             $user->sendEmailVerificationNotification();
         }
 

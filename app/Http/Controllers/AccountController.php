@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Prompt;
 use App\Support\AuditTrail;
+use App\Support\MailDelivery;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -78,7 +79,7 @@ class AccountController extends Controller
         $user->email = strtolower(trim($data['email']));
         $user->save();
         AuditTrail::record($request,'account.profile.update',$user);
-        if ($user->email_verified_at === null && config('samith.email_delivery_enabled')) {
+        if ($user->email_verified_at === null && MailDelivery::permitted()) {
             $user->sendEmailVerificationNotification();
         }
 
