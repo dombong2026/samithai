@@ -9,9 +9,12 @@ use App\Http\Controllers\Dashboard\PromptController;
 use App\Http\Controllers\Dashboard\OverviewController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstallerController;
+use App\Http\Controllers\Dashboard\MediaController;
 
 Route::get('/installer', [InstallerController::class, 'show'])->name('installer.show');
 Route::post('/installer', [InstallerController::class, 'install'])->middleware('throttle:4,1')->name('installer.install');
+
+Route::get('/media/{mediaAsset}/view', [MediaController::class, 'serve'])->name('media.serve');
 
 Route::get('/', [MarketplaceController::class, 'home'])->name('home');
 Route::get('/prompts', [MarketplaceController::class, 'index'])->name('prompts.index');
@@ -44,6 +47,13 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/cart/{prompt}', [CartController::class, 'add'])->name('cart.add');
     Route::delete('/cart/items/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/checkout', [CartController::class, 'checkout'])->middleware('throttle:10,1')->name('checkout');
+
+    Route::get('/account/media', [MediaController::class, 'index'])->name('account.media');
+    Route::get('/dashboard/media', [MediaController::class, 'index'])->name('dashboard.media');
+    Route::post('/media/upload', [MediaController::class, 'upload'])->middleware('throttle:30,1')->name('media.upload');
+    Route::post('/media/reference', [MediaController::class, 'reference'])->name('media.reference');
+    Route::put('/media/{mediaAsset}', [MediaController::class, 'update'])->name('media.update');
+    Route::delete('/media/{mediaAsset}', [MediaController::class, 'destroy'])->name('media.destroy');
 
     Route::get('/dashboard', [OverviewController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/categories', [CategoryController::class, 'index'])->name('dashboard.categories');

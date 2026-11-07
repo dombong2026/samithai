@@ -13,7 +13,7 @@ class MarketplaceController extends Controller
     {
         return view('marketplace.home', [
             'categories' => Category::where('is_active', true)->orderBy('name')->get(),
-            'prompts' => Prompt::published()->with(['category', 'user'])
+            'prompts' => Prompt::published()->with(['category', 'user', 'featuredMedia'])
                 ->latest('published_at')->take(12)->get(),
         ]);
     }
@@ -54,7 +54,7 @@ class MarketplaceController extends Controller
 
         return view('marketplace.category', [
             'category' => $category,
-            'prompts' => $category->prompts()->published()->with('user')
+            'prompts' => $category->prompts()->published()->with(['user','featuredMedia'])
                 ->latest('published_at')->paginate(12),
         ]);
     }

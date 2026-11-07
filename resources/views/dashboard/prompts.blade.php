@@ -27,7 +27,7 @@
 <button type="button" data-modal-open="prompt-modal" data-resource-url="{{ route('account.prompts.update',$prompt) }}"
 data-field-title="{{ $prompt->title }}" data-field-category-id="{{ $prompt->category_id }}"
 data-field-summary="{{ $prompt->summary }}" data-field-content="{{ $prompt->content }}"
-data-field-price="{{ $prompt->price }}" data-field-license-type="{{ $prompt->license_type }}">Edit prompt</button>
+data-field-featured-media-id="{{ $prompt->featured_media_id }}" data-field-price="{{ $prompt->price }}" data-field-license-type="{{ $prompt->license_type }}">Edit prompt</button>
 @if(in_array($prompt->status,['draft','rejected'],true))
 <form method="post" action="{{ route('account.prompts.submit',$prompt) }}">@csrf<button type="submit">Submit for review</button></form>
 @endif
@@ -59,6 +59,12 @@ data-field-price="{{ $prompt->price }}" data-field-license-type="{{ $prompt->lic
 </div>
 <textarea class="field" id="pr-content" name="content" data-fill="content" required rows="8" maxlength="100000"></textarea>
 <div class="muted tiny">Prompt content is stored as text and safely escaped when displayed. HTML tags are not executed in this release.</div></div>
+<div class="field-group"><label for="pr-featured">Featured media</label>
+<select class="field" id="pr-featured" name="featured_media_id" data-fill="featuredMediaId">
+<option value="">No featured media</option>
+@foreach($mediaAssets as $asset)<option value="{{ $asset->id }}">{{ $asset->title }} ({{ $asset->kind }})</option>@endforeach
+</select>
+<a class="muted tiny" href="{{ auth()->user()->isAdmin() ? route('dashboard.media') : route('account.media') }}">Manage media library</a></div>
 <div class="field-group"><label for="pr-price">Price (USD)</label><input class="field" id="pr-price" type="number" min="0" step="0.01" name="price" data-fill="price" value="0" required></div>
 <div class="notice warning">Paid checkout remains disabled pending verified payment-provider integration. You can publish paid listings, but customers cannot purchase them yet.</div>
 </div><div class="modal-foot"><button type="button" class="btn" data-modal-close>Cancel</button><button type="submit" class="btn primary">Save prompt</button></div>

@@ -6,6 +6,10 @@
 <div class="panel" style="margin-top:20px">
 <div class="flex wrap"><span class="tag">{{ $prompt->category->name }}</span><span class="tag">{{ ucfirst($prompt->license_type) }} license</span></div>
 <h1 style="margin-top:17px">{{ $prompt->title }}</h1>
+@if($prompt->featuredMedia?->kind === 'image')<img src="{{ route('media.serve',$prompt->featuredMedia) }}" alt="{{ $prompt->title }}" style="max-width:100%;max-height:420px;object-fit:contain;border-radius:14px">
+@elseif($prompt->featuredMedia?->kind === 'video')<video controls preload="metadata" style="width:100%;max-height:420px;border-radius:14px"><source src="{{ route('media.serve',$prompt->featuredMedia) }}" type="{{ $prompt->featuredMedia->mime }}"></video>
+@elseif($prompt->featuredMedia?->kind === 'youtube')<div style="aspect-ratio:16/9"><iframe style="width:100%;height:100%;border:0" referrerpolicy="strict-origin-when-cross-origin" loading="lazy" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation" src="https://www.youtube-nocookie.com/embed/{{ $prompt->featuredMedia->youtube_id }}" title="Video preview"></iframe></div>
+@elseif($prompt->featuredMedia?->kind === 'color')<div style="height:160px;border-radius:14px;background:{{ $prompt->featuredMedia->color_hex }}"></div>@endif
 <p>{{ $prompt->summary }}</p>
 <div class="flex between wrap" style="margin:28px 0"><div><div class="muted tiny">Creator: {{ $prompt->user->name }}</div><div class="price">{{ $prompt->isFree() ? 'Free' : '$'.number_format((float)$prompt->price, 2) }}</div></div>
 @if($owned)

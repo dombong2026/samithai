@@ -1,5 +1,9 @@
 <article class="prompt-card">
-<a class="prompt-art" href="{{ route('prompts.show', $prompt) }}" aria-label="View {{ $prompt->title }}"><span>{{ strtoupper(substr($prompt->category?->name ?? 'AI', 0, 1)) }}</span></a>
+<a class="prompt-art" href="{{ route('prompts.show', $prompt) }}" aria-label="View {{ $prompt->title }}">@if($prompt->featuredMedia?->kind === 'image')
+<img src="{{ route('media.serve', $prompt->featuredMedia) }}" alt="{{ $prompt->title }}" loading="lazy" style="width:100%;height:100%;object-fit:cover">
+@elseif($prompt->featuredMedia?->kind === 'color')
+<span style="width:100%;height:100%;display:grid;place-items:center;background:{{ $prompt->featuredMedia->color_hex }}">{{ strtoupper(substr($prompt->category?->name ?? 'AI',0,1)) }}</span>
+@else<span>{{ strtoupper(substr($prompt->category?->name ?? 'AI', 0, 1)) }}</span>@endif</a>
 <div class="prompt-body">
 <span class="tag">{{ $prompt->category?->name ?? 'AI prompt' }}</span>
 <a href="{{ route('prompts.show', $prompt) }}"><h3>{{ $prompt->title }}</h3></a>

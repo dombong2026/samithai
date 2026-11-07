@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\OrderItem;
 use App\Models\Prompt;
+use App\Models\MediaAsset;
+use App\Support\AuditTrail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -47,6 +49,7 @@ class PromptController extends Controller
             'prompts' => $query->latest()->paginate(10)->withQueryString(),
             'categories' => Category::where('is_active', true)->orderBy('name')->get(),
             'isAdmin' => $isAdmin,
+            'mediaAssets' => MediaAsset::where('user_id', $request->user()->id)->whereIn('kind', ['image','video','youtube','color'])->latest()->limit(80)->get(),
         ]);
     }
 
@@ -59,6 +62,7 @@ class PromptController extends Controller
             'content' => ['required', 'string', 'max:100000'],
             'price' => ['required', 'numeric', 'min:0', 'max:99999999'],
             'license_type' => ['required', 'in:regular,extended'],
+            'featured_media_id' => ['nullable', 'integer', Rule::exists('media_assets','id')->where('user_id', auth()->id())],
         ]);
     }
 
@@ -69,7 +73,8 @@ class PromptController extends Controller
         $data['user_id'] = $request->user()->id;
         $data['slug'] = Str::slug($data['title']).'-'.Str::lower(Str::random(8));
         $data['status'] = 'draft';
-        Prompt::create($data);
+        $prompt = Prompt::create($data);
+        AuditTrail::record($request, 'prompt.create', $prompt);
 
         return back()->with('success', 'Prompt saved as a draft. Submit it for review when ready.');
     }
@@ -84,6 +89,7 @@ class PromptController extends Controller
             $data['published_at'] = null;
         }
         $prompt->update($data);
+        AuditTrail::record($request, 'prompt.update', $prompt);
 
         return back()->with('success', 'Prompt updated.');
     }
@@ -96,6 +102,7 @@ class PromptController extends Controller
             return back()->withErrors(['prompt' => 'This prompt has customer orders and cannot be deleted.']);
         }
         $prompt->delete();
+        AuditTrail::record(request(), 'prompt.delete', $prompt);
 
         return back()->with('success', 'Prompt deleted.');
     }
@@ -106,6 +113,7 @@ class PromptController extends Controller
         $this->authorizePrompt($prompt);
         abort_unless(in_array($prompt->status, ['draft', 'rejected'], true), 422);
         $prompt->update(['status' => 'pending', 'published_at' => null]);
+        AuditTrail::record(request(), 'prompt.submit', $prompt);
 
         return back()->with('success', 'Prompt submitted for administrator review.');
     }
@@ -121,6 +129,7 @@ class PromptController extends Controller
             'published_at' => $approve ? now() : null,
         ]);
 
+        AuditTrail::record($request, 'prompt.moderate', $prompt, ['decision' => $data['decision']]);
         return back()->with('success', $approve ? 'Prompt published.' : 'Prompt returned to creator.');
     }
 }
