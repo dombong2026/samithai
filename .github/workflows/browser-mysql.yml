@@ -66,6 +66,8 @@ jobs:
           rm -f storage/app/installed.lock
       - name: First-install HTTP/Browser acceptance on empty MySQL
         run: npx playwright test --config=playwright.installer.config.mjs
+      - name: Post-install browser sign-in after environment reload
+        run: npx playwright test --config=playwright.installer-post.config.mjs
       - name: Verify installer database outcome
         run: |
           test -f storage/app/installed.lock

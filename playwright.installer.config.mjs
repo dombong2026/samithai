@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/installer',
+  testMatch: 'first-install.spec.mjs',
   timeout: 40_000,
   workers: 1,
   retries: 0,

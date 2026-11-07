@@ -29,10 +29,4 @@ test('a fresh MySQL installation creates an admin once and locks installer', asy
 
   await page.goto('/installer');
   await expect(page).toHaveURL('http://127.0.0.1:8010/');
-  await page.goto('/login');
-  await page.locator('#email').fill('initial-admin@example.test');
-  await page.locator('#password').fill('VerySecureInitial12345');
-  await page.getByRole('button',{ name:'Sign in' }).click();
-  await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByRole('heading',{ name:'Marketplace overview' })).toBeVisible();
 });
