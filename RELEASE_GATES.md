@@ -6,7 +6,7 @@ This is not a production acceptance certificate. Automated success indicates the
 
 GitHub workflows:
 - .github/workflows/tests.yml: PHP syntax, framework routes, compiled Blade views, Laravel feature tests, Tailwind production build.
-- .github/workflows/browser-mysql.yml: isolated MySQL 8 migrations and Playwright desktop/mobile-emulation browsing, auth, account and support workflows.
+- .github/workflows/browser-mysql.yml: isolated MySQL 8 migrations, Playwright desktop/mobile emulation, HTTP first-run web installer, and post-restart administrator sign-in.
 - .github/workflows/package.yml: release ZIP with vendor/, frontend assets, private .env excluded, checksum artifact.
 
 ## Security and correctness boundaries
@@ -32,3 +32,14 @@ GitHub workflows:
 ## Operational rule
 
 Do not deploy to samithai.com or enable real payments on the strength of GitHub CI alone.
+
+
+## New source controls and unresolved external dependencies
+
+- Recovery/reset routes are implemented, with password tokens never delivered to log/array mail transports. Actual outbound SMTP/inbox verification is untested.
+- Signed verification and optional mandatory verification are implemented; both remain explicitly disabled until a real provider works.
+- A provider-agnostic internal fulfillment boundary validates exact amounts, order IDs, currency and idempotency, but *no production provider adapter or payment callback exists*.
+- Versioned legal terms require an operator-recorded external approval reference. This does not certify external professional legal review.
+- Source content has reviewable translations, but the 13 languages have not received complete native-language validation.
+- GitHub CI fresh-installs to a disposable MySQL DB, yet real cPanel, aaPanel, recovery, backups and physical devices remain untested.
+- Reproducible dependency lockfiles and independent package supply-chain verification remain release requirements.

@@ -32,7 +32,7 @@ jobs:
           set -Eeuo pipefail
           RELEASE="$RUNNER_TEMP/Samith-AI"
           mkdir -p "$RELEASE"
-          rsync -a --exclude='.git/' --exclude='.github/' --exclude='node_modules/' --exclude='tests/' --exclude='.env' --exclude='.env.*.local' --exclude='phpunit.xml' --exclude='storage/logs/*.log' ./ "$RELEASE/"
+          rsync -a --exclude='.git/' --exclude='.github/' --exclude='node_modules/' --exclude='tests/' --exclude='.env' --exclude='.env.*.local' --exclude='phpunit.xml' --exclude='*.md' --exclude='playwright*.mjs' --exclude='package*.json' --exclude='vite.config.js' --exclude='storage/logs/*.log' ./ "$RELEASE/"
           rm -f "$RELEASE/README.md" "$RELEASE/INSTALLATION.md" "$RELEASE/storage/app/installed.lock" "$RELEASE/storage/app/installing.lock"
           test -f "$RELEASE/vendor/autoload.php"
           test -f "$RELEASE/public/build/manifest.json"

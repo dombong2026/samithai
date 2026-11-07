@@ -36,7 +36,7 @@ admin roles, audit records, system checks and 13 locale URL routes.
 
 NOT YET CUSTOMER-ACCEPTED
 Paid processor onboarding/webhooks, refunds, taxes, legally reviewed licenses,
-complete translations/native review, password recovery/email verification,
+complete translations/native review, live SMTP/email verification acceptance,
 independent clean/upgrade tests on cPanel and aaPanel, physical-device testing,
 backups/restores, load testing, complete penetration assessment and merchant compliance.
 
@@ -46,3 +46,14 @@ and a separate MySQL 8 + Chromium desktop/mobile emulation workflow.
 Inspect the status of the exact release commit before installation.
 
 For source and development notes: https://github.com/dombong2026/samithai
+
+
+SECURITY / LEGAL RELEASE FLAGS
+SAMITH_EMAIL_DELIVERY_ENABLED, SAMITH_REQUIRE_VERIFIED_EMAIL and SAMITH_REQUIRE_LEGAL_ACCEPTANCE
+default to false until reviewed on a real configured host. MAIL_MAILER=log cannot send password reset tokens.
+SAMITH_PAYMENTS_ENABLED remains false; no provider adapter is connected.
+
+HOST ACCEPTANCE
+GitHub CI performs a first install on a disposable MySQL database and then tests administrator login
+after a fresh application start. This is not equivalent to real cPanel/aaPanel, backup restore or physical-device signoff.
+Run separate independent acceptance before using this package for live customers.

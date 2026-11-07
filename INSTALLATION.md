@@ -20,7 +20,7 @@ This repository contains actual Laravel 13 code. GitHub Actions assembles a deve
 4. Open /installer over HTTPS. The first-boot bootstrap securely creates a private .env (from .env.example), a random APP_KEY, and INSTALL_TOKEN if needed.
 5. Find INSTALL_TOKEN in the private .env using File Manager (or SSH on VPS). Enter the token, site URL, MySQL connection details, and first administrator account. Press Install Samith AI once.
 6. The installer checks MySQL, migrates tables, creates the administrator, saves .env and locks the installer. Sign in at /login and use /dashboard.
-7. Test authentication, customer/creator restrictions, prompt moderation, free checkout and private library access on that specific host. Check mail delivery and real-world mobile browsers separately.
+7. Test authentication, customer/creator restrictions, prompt moderation, free checkout and private library access on that specific host. Check outbound SMTP delivery, signed email verification, legal acceptance settings, payments (disabled), and physical devices separately.
 
 Do not put the project root directly under a public web document root. Do not use an existing database with users for a fresh installation. Do not delete storage/app/installed.lock to reinstall an existing site.
 
@@ -48,4 +48,17 @@ Set APP_ENV=testing and use an isolated database when running tests. Never run t
 
 ## Outstanding release gates
 
-Independent cPanel/aaPanel fresh-install and upgrade testing, installer interruption/retry recovery, locked dependency release reproducibility, password reset and email verification, extended media-security review, full localization and native-language review, payment sandbox and merchant eligibility, tax invoices, refunds, licensing enforcement, backups/restores, and physical-device/browser security acceptance are not yet complete. CI covers PHP/Blade, feature cases, MySQL 8 schema migrations and Chromium emulation only.
+Independent cPanel/aaPanel fresh-install and upgrade testing, installer interruption/retry recovery, locked dependency release reproducibility, password reset and email verification, extended media-security review, full localization and native-language review, payment sandbox and merchant eligibility, tax invoices, refunds, licensing enforcement, backups/restores, and physical-device/browser security acceptance are not yet complete. CI covers PHP/Blade, feature cases, MySQL 8 migrations, browser emulation, and an isolated web-installer/restart acceptance. Independent cPanel, aaPanel, genuine SMTP delivery and physical devices remain untested.
+
+
+## Security release flags
+
+In .env (after independent verification, with the application private and HTTPS-enabled):
+
+- SAMITH_EMAIL_DELIVERY_ENABLED=true only after a real supported non-log mail transport, sender address/domain identity and inbox delivery are tested.
+- SAMITH_REQUIRE_VERIFIED_EMAIL=true only once existing customers can actually receive verification links.
+- SAMITH_REQUIRE_LEGAL_ACCEPTANCE=true only after reviewed and published current Regular/Extended and Marketplace Terms versions are present. The application will otherwise block free checkout.
+- Keep SAMITH_PAYMENTS_ENABLED=false and SAMITH_PAYMENT_PROVIDER=disabled until a signed, provider-specific adapter and verified settlement/reconciliation tests are completed.
+- Leave SAMITH_TRUST_CF_COUNTRY=false unless the site is protected by a trusted Cloudflare reverse proxy.
+
+Changing these values is an operator action and should be tested on staging before production.

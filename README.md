@@ -58,3 +58,17 @@ Inspect current runs in https://github.com/dombong2026/samithai/actions and do n
 - GitHub changes do not deploy to samithai.com automatically.
 
 Do not activate unverified payments or represent this application as a production-approved marketplace.
+
+
+## Production-hardening milestone
+
+- Password reset and signed email verification routes. Delivery requires explicit enablement and a non-log outbound mail transport; SMTP/inbox acceptance is external.
+- Optional email verification enforcement for checkout, creator submission and uploads.
+- Payments remain disabled. The internal fulfillment boundary validates settled provider-confirmed amount, currency, immutable order snapshots and duplicate transaction references, but no provider callback is connected.
+- Legal version control: draft/immutable published license and policy versions, explicit review references, and optional per-order acceptance records.
+- Translated CMS drafts, review gates, localized route handling and account/auth vocabulary for 13 languages. Human review and complete UI translation remain pending.
+- CI separately validates real HTTP first installation on fresh MySQL, restart and administrator login.
+- See HOST_ACCEPTANCE.md, DEVICE_ACCEPTANCE.md, LEGAL_REVIEW_CHECKLIST.md, PAYMENT_PROVIDER_ONBOARDING.md and LOCALIZATION_REVIEW.md.
+- Read-only host preflight: support/release-preflight.sh. No actual customer host or physical phone has been independently tested.
+
+All release flags default to false. Never enable paid checkout through environment configuration alone; a reviewed provider adapter, merchant onboarding and sandbox settlement acceptance are mandatory.
