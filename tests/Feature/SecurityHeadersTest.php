@@ -20,14 +20,14 @@ class SecurityHeadersTest extends TestCase
 
     public function test_account_and_login_pages_are_not_cached_by_shared_proxies(): void
     {
-        $this->get(route('login'))->assertOk()->assertHeader('Cache-Control','private, no-store');
+        $this->get(route('login'))->assertOk()->assertHeader('Cache-Control','no-store, private');
         $this->actingAs(User::factory()->create())->get(route('account'))->assertOk()
-            ->assertHeader('Cache-Control','private, no-store');
+            ->assertHeader('Cache-Control','no-store, private');
     }
 
     public function test_secure_requests_receive_hsts_header(): void
     {
-        $this->withServerVariables(['HTTPS'=>'on'])->get(route('home'))->assertOk()
+        $this->withServerVariables(['HTTPS'=>'on'])->get('https://localhost/')->assertOk()
             ->assertHeader('Strict-Transport-Security','max-age=31536000');
     }
 }
