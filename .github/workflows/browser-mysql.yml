@@ -60,6 +60,16 @@ jobs:
           npx playwright install chromium --with-deps
       - name: Desktop and mobile browser smoke
         run: npx playwright test --config=playwright.config.mjs
+      - name: Create an empty installer acceptance database
+        run: |
+          php -r '$pdo=new PDO("mysql:host=127.0.0.1;port=3306","root","test_only_password"); $pdo->exec("CREATE DATABASE IF NOT EXISTS samith_installer CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");'
+          rm -f storage/app/installed.lock
+      - name: First-install HTTP/Browser acceptance on empty MySQL
+        run: npx playwright test --config=playwright.installer.config.mjs
+      - name: Verify installer database outcome
+        run: |
+          test -f storage/app/installed.lock
+          php -r '$pdo=new PDO("mysql:host=127.0.0.1;port=3306;dbname=samith_installer","root","test_only_password"); $num=$pdo->query("SELECT COUNT(*) FROM users WHERE role = '\''admin'\''")->fetchColumn(); if ((int)$num !== 1) exit(2); echo "INSTALLER_ONE_ADMIN=VERIFIED\n";'
       - name: Upload browser traces on failure
         if: failure()
         uses: actions/upload-artifact@v4
