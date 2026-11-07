@@ -28,13 +28,21 @@ Never delete storage/app/installed.lock to reinstall an existing site.
 Keep HTTPS enabled and confirm server permissions and login restrictions.
 Do not activate paid purchases without a verified provider and end-to-end entitlement tests.
 
-FEATURES CURRENTLY IMPLEMENTED
-Prompt catalog, category browsing, authentication, account workspace, creator prompt drafts,
-admin approval, category CRUD, cart, free checkout, order records and private library.
+FEATURES CURRENTLY IMPLEMENTED IN SOURCE
+Prompt browsing and categories; secure account/creator/admin dashboards; featured media,
+Media Library; Post, Page, Policy and Knowledge Base CMS; HTML sanitization; ticket support;
+configurable footer and appearance; order history; free checkout; entitlement snapshots;
+admin roles, audit records, system checks and 13 locale URL routes.
 
-FEATURES NOT YET IMPLEMENTED
-Payments, full multilingual UI, password reset, media manager, policy CMS, support center,
-complete admin modules, refund processing, regional taxation, production-grade rich HTML editor,
-merchant compliance, user payouts and independently tested host upgrades.
+NOT YET CUSTOMER-ACCEPTED
+Paid processor onboarding/webhooks, refunds, taxes, legally reviewed licenses,
+complete translations/native review, password recovery/email verification,
+independent clean/upgrade tests on cPanel and aaPanel, physical-device testing,
+backups/restores, load testing, complete penetration assessment and merchant compliance.
+
+AUTOMATED QA
+GitHub Actions contains PHP/Laravel automated tests, the ZIP build workflow,
+and a separate MySQL 8 + Chromium desktop/mobile emulation workflow.
+Inspect the status of the exact release commit before installation.
 
 For source and development notes: https://github.com/dombong2026/samithai

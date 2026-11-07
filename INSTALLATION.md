@@ -2,7 +2,7 @@
 
 ## Important status
 
-This repository contains the actual Laravel 13 source code, not a completed customer-ready distributable ZIP. Build with Composer on a trusted machine and include the resulting vendor dependencies in a validated release package before advertising no-CLI shared-hosting installation.
+This repository contains actual Laravel 13 code. GitHub Actions assembles a development ZIP with Composer vendor files and compiled frontend assets. The archive must still pass independent cPanel/aaPanel install/upgrade, backups and recovery acceptance before customer release.
 
 ## Prerequisites
 
@@ -48,4 +48,4 @@ Set APP_ENV=testing and use an isolated database when running tests. Never run t
 
 ## Outstanding release gates
 
-Independent cPanel and aaPanel fresh installation tests, installer interruption/retry recovery, package building with locked dependencies, password reset and email verification, media storage security, localization/translation review, verified payment sandbox, receipts/tax compliance, refunds, licensing enforcement and complete admin tools are not yet accepted.
+Independent cPanel/aaPanel fresh-install and upgrade testing, installer interruption/retry recovery, locked dependency release reproducibility, password reset and email verification, extended media-security review, full localization and native-language review, payment sandbox and merchant eligibility, tax invoices, refunds, licensing enforcement, backups/restores, and physical-device/browser security acceptance are not yet complete. CI covers PHP/Blade, feature cases, MySQL 8 schema migrations and Chromium emulation only.

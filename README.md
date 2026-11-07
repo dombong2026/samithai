@@ -25,15 +25,36 @@ Keep .env out of Git. Set the web root to `public/`. Never use test or simulated
 
 See [INSTALLATION.md](INSTALLATION.md). The web installer at /installer performs environment and database setup without SSH for the customer when dependencies are already packaged.
 
-## Working v0.0.1 foundation
+## Working v0.0.1 implementation (source-code level)
 
-- Public homepage, category browsing, prompt details, search and filtering.
-- Registration, sign-in, sign-out, customer settings, creator opt-in.
-- Shared admin/account visual shell with light and dark modes.
-- Creator prompt drafts and CRUD; administrator approval and category CRUD.
-- Customer cart, real zero-value order creation and entitlement-protected library.
-- Locked first-install wizard with private installation token.
+- Customer sign-up/sign-in, creator opt-in, customer library, and account settings.
+- Public prompt discovery, categories, featured image/video/YouTube/color support.
+- Creator draft and submission lifecycle; administrator category and prompt moderation.
+- Customer cart, zero-value checkout and signed-in, entitlement-controlled private prompt library.
+- Entitlement content snapshots protect licensed text from subsequent creator edits.
+- Media Library with private, validated uploads; ownership-aware serving; search/filter and CRUD.
+- Page Manager, Post Manager, Policy Center and Knowledge Base with sanitized rich-text editing, draft preview and publication.
+- Support Center with owner/staff ticket conversations and close/reopen operations.
+- Configurable footer of up to five columns; appearance settings (logo/site name/theme colors/hero).
+- Customer orders and admin finance view, plus immutable-UI payment audit schema.
+- Admin role management, system health screen and sensitive-operation audit trail.
+- 13 supported locale prefixes with initial interface translations and language preference.
+- Five-section web installer, installation lock and automated customer-package workflow.
 
-## Incomplete / not release-approved
+## Verification
 
-Paid checkout, subscriptions, payment verification, media manager, rich HTML editor sanitization, advanced CMS, full multilingual routing, per-region localization, support/policy centers, configurable footer, installer QA and comprehensive account management. Never expose these as working features in the interface until implemented and tested.
+CI checks PHP lint, routes, compiled Blade views, Laravel feature tests and frontend build.
+A separate integration workflow checks MySQL 8 migrations and Chromium desktop/mobile-emulation browser journeys.
+Inspect current runs in https://github.com/dombong2026/samithai/actions and do not infer success from an earlier run.
+
+## Remaining release restrictions
+
+- **Paid checkout is disabled:** no real payment gateway has been onboarded or sandbox-verified; no refunds, recurring subscriptions, tax invoices or payouts are enabled.
+- **Localization is partial:** initial shared UI translations exist, but dynamic content, policies, full account flows and native-language review are incomplete.
+- **Customer readiness is unapproved:** password recovery/email verification, full security review, source/code quality acceptance, cPanel/aaPanel real clean-install and upgrade tests, and physical-device browser testing remain.
+- **Legal terms need review:** draft policy pages and regular/extended license identifiers alone do not establish legally accepted product license terms.
+- **Package is development-only** until independent installation and restore drills pass.
+- There are no mock transactions, demo accounts or simulated payment confirmations.
+- GitHub changes do not deploy to samithai.com automatically.
+
+Do not activate unverified payments or represent this application as a production-approved marketplace.
