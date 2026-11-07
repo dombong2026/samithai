@@ -12,7 +12,7 @@ export default defineConfig({
   },
   projects: [{ name: 'fresh-install-desktop', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'php artisan serve --host=127.0.0.1 --port=8010',
+    command: 'php artisan serve --no-reload --host=127.0.0.1 --port=8010',
     url: 'http://127.0.0.1:8010/installer',
     reuseExistingServer: false,
     timeout: 60_000,
