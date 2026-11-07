@@ -15,7 +15,7 @@ use Illuminate\View\View;
 
 class ContentController extends Controller
 {
-    private const KINDS = ['pages' => 'page', 'posts' => 'post', 'policies' => 'policy'];
+    private const KINDS = ['pages' => 'page', 'posts' => 'post', 'policies' => 'policy', 'knowledge' => 'article'];
 
     private function admin(Request $request): void
     {

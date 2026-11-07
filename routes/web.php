@@ -13,11 +13,15 @@ use App\Http\Controllers\Dashboard\MediaController;
 use App\Http\Controllers\Dashboard\ContentController;
 use App\Http\Controllers\PublicContentController;
 use App\Http\Controllers\Dashboard\FooterController;
+use App\Http\Controllers\SupportController;
 
 Route::get('/installer', [InstallerController::class, 'show'])->name('installer.show');
 Route::post('/installer', [InstallerController::class, 'install'])->middleware('throttle:4,1')->name('installer.install');
 
 Route::get('/media/{mediaAsset}/view', [MediaController::class, 'serve'])->name('media.serve');
+
+Route::get('/support-center', [SupportController::class, 'center'])->name('support.center');
+Route::get('/support-center/articles/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('article',$slug))->name('support.articles.show');
 
 Route::get('/blog', [PublicContentController::class, 'posts'])->name('blog.index');
 Route::get('/blog/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('post', $slug))->name('blog.show');
@@ -52,6 +56,13 @@ Route::middleware('auth')->group(function (): void {
     Route::delete('/account/prompts/{prompt}', [PromptController::class, 'destroy'])->name('account.prompts.destroy');
     Route::post('/account/prompts/{prompt}/submit', [PromptController::class, 'submit'])->name('account.prompts.submit');
 
+    Route::get('/account/support', [SupportController::class, 'tickets'])->name('account.support');
+    Route::get('/dashboard/support', [SupportController::class, 'tickets'])->name('dashboard.support');
+    Route::post('/support/tickets', [SupportController::class, 'store'])->middleware('throttle:8,60')->name('support.store');
+    Route::get('/support/tickets/{ticket}', [SupportController::class, 'show'])->name('support.show');
+    Route::post('/support/tickets/{ticket}/replies', [SupportController::class, 'reply'])->middleware('throttle:30,1')->name('support.reply');
+    Route::post('/support/tickets/{ticket}/status', [SupportController::class, 'status'])->name('support.status');
+
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/{prompt}', [CartController::class, 'add'])->name('cart.add');
     Route::delete('/cart/items/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
@@ -72,8 +83,8 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/dashboard/footer/links/{link}', [FooterController::class, 'updateLink'])->name('dashboard.footer.links.update');
     Route::delete('/dashboard/footer/links/{link}', [FooterController::class, 'destroyLink'])->name('dashboard.footer.links.destroy');
 
-    Route::get('/dashboard/{section}', [ContentController::class, 'index'])->whereIn('section', ['posts','pages','policies'])->name('dashboard.content');
-    Route::post('/dashboard/content/{kind}', [ContentController::class, 'store'])->whereIn('kind',['post','page','policy'])->name('dashboard.content.store');
+    Route::get('/dashboard/{section}', [ContentController::class, 'index'])->whereIn('section', ['posts','pages','policies','knowledge'])->name('dashboard.content');
+    Route::post('/dashboard/content/{kind}', [ContentController::class, 'store'])->whereIn('kind',['post','page','policy','article'])->name('dashboard.content.store');
     Route::put('/dashboard/content/{entry}', [ContentController::class, 'update'])->name('dashboard.content.update');
     Route::post('/dashboard/content/{entry}/publish', [ContentController::class, 'publish'])->name('dashboard.content.publish');
     Route::delete('/dashboard/content/{entry}', [ContentController::class, 'destroy'])->name('dashboard.content.destroy');

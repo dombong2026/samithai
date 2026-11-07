@@ -9,7 +9,7 @@ class PublicContentController extends Controller
 {
     public function show(string $kind, string $slug): View
     {
-        abort_unless(in_array($kind, ['page','post','policy'], true), 404);
+        abort_unless(in_array($kind, ['page','post','policy','article'], true), 404);
         $entry = ContentEntry::with('media')->where('kind', $kind)
             ->where('slug', $slug)->where('status', 'published')->firstOrFail();
 
