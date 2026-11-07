@@ -19,6 +19,7 @@
 <td>{{ $entry->updated_at->format('d M Y') }}</td>
 <td><button class="icon-btn" type="button" data-action-toggle="entry-{{ $entry->id }}" aria-label="Actions for {{ $entry->title }}">⋮</button>
 <template id="entry-{{ $entry->id }}">
+<a href="{{ route('dashboard.translations',$entry) }}">Translations</a>
 <a href="{{ route('dashboard.content.preview',$entry) }}" target="_blank" rel="noopener">Preview</a>
 @if($entry->status === 'published')
 @if($kind === 'post')<a href="{{ route('blog.show',$entry->slug) }}">View published</a>

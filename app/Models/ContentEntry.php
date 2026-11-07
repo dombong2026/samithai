@@ -13,5 +13,7 @@ class ContentEntry extends Model
 
     public function author() { return $this->belongsTo(User::class, 'user_id'); }
 
+    public function translations() { return $this->hasMany(ContentTranslation::class); }
+
     public function media() { return $this->belongsTo(MediaAsset::class, 'featured_media_id'); }
 }

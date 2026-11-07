@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstallerController;
 use App\Http\Controllers\Dashboard\MediaController;
 use App\Http\Controllers\Dashboard\ContentController;
+use App\Http\Controllers\Dashboard\ContentTranslationController;
 use App\Http\Controllers\PublicContentController;
 use App\Http\Controllers\Dashboard\FooterController;
 use App\Http\Controllers\SupportController;
@@ -125,6 +126,10 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/dashboard/footer/{column}/links', [FooterController::class, 'storeLink'])->name('dashboard.footer.links.store');
     Route::put('/dashboard/footer/links/{link}', [FooterController::class, 'updateLink'])->name('dashboard.footer.links.update');
     Route::delete('/dashboard/footer/links/{link}', [FooterController::class, 'destroyLink'])->name('dashboard.footer.links.destroy');
+
+    Route::get('/dashboard/content/{entry}/translations', [ContentTranslationController::class,'index'])->name('dashboard.translations');
+    Route::put('/dashboard/content/{entry}/translations/{locale}', [ContentTranslationController::class,'update'])->name('dashboard.translations.update');
+    Route::post('/dashboard/content/{entry}/translations/{locale}/review', [ContentTranslationController::class,'review'])->name('dashboard.translations.review');
 
     Route::get('/dashboard/{section}', [ContentController::class, 'index'])->whereIn('section', ['posts','pages','policies','knowledge'])->name('dashboard.content');
     Route::post('/dashboard/content/{kind}', [ContentController::class, 'store'])->whereIn('kind',['post','page','policy','article'])->name('dashboard.content.store');
