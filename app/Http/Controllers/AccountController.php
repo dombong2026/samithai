@@ -45,7 +45,16 @@ class AccountController extends Controller
 
         abort_unless($allowed, 403);
 
-        return view('account.prompt', ['prompt' => $prompt]);
+        $entitlement = $request->user()->entitlements()->where('prompt_id',$prompt->id)->first();
+        $content = ($request->user()->isAdmin() || $prompt->user_id === $request->user()->id)
+            ? $prompt->content
+            : ($entitlement?->content_snapshot ?? $prompt->content);
+
+        return view('account.prompt', [
+            'prompt' => $prompt,
+            'content' => $content,
+            'license' => $entitlement?->license_type ?? $prompt->license_type,
+        ]);
     }
 
     public function settings(): View

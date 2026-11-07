@@ -83,7 +83,7 @@ class CartController extends Controller
                 ]);
                 PromptEntitlement::firstOrCreate(
                     ['user_id' => $user->id, 'prompt_id' => $item->prompt_id],
-                    ['order_id' => $order->id, 'license_type' => $item->prompt->license_type]
+                    ['order_id' => $order->id, 'license_type' => $item->prompt->license_type, 'content_snapshot' => $item->prompt->content]
                 );
             }
             CartItem::where('user_id', $user->id)->delete();

@@ -34,6 +34,9 @@ class FinanceController extends Controller
     {
         abort_unless($request->user()->isAdmin() || $order->user_id === $request->user()->id, 403);
 
-        return view('dashboard.order', ['order' => $order->load(['user','items.prompt','transactions'])]);
+        return view('dashboard.order', [
+            'order' => $order->load(['user','transactions']),
+            'items' => $order->items()->with('prompt')->paginate(10),
+        ]);
     }
 }
