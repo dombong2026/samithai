@@ -13,7 +13,33 @@
       const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
       root.dataset.theme = next;
       localStorage.setItem('samith-theme', next);
-      document.querySelectorAll('[data-theme-name]').forEach(el => el.textContent = next === 'dark' ? 'Light mode' : 'Dark mode');
+    
+  document.addEventListener('click', async (event) => {
+    const copy = event.target.closest('[data-copy-target]');
+    if (copy) {
+      const source = document.getElementById(copy.dataset.copyTarget);
+      if (!source) return;
+      try {
+        await navigator.clipboard.writeText(source.textContent);
+        const old = copy.textContent;
+        copy.textContent = 'Copied';
+        setTimeout(() => { copy.textContent = old; }, 1800);
+      } catch { copy.textContent = 'Copy unavailable'; }
+    }
+    const wrap = event.target.closest('[data-editor-wrap]');
+    if (wrap) {
+      const field = document.getElementById(wrap.dataset.editorTarget);
+      if (!field) return;
+      const start = field.selectionStart, end = field.selectionEnd;
+      const tag = wrap.dataset.editorWrap;
+      const selected = field.value.slice(start, end) || 'text';
+      const markup = '<' + tag + '>' + selected + '</' + tag + '>';
+      field.setRangeText(markup, start, end, 'select');
+      field.focus();
+    }
+  });
+
+  document.querySelectorAll('[data-theme-name]').forEach(el => el.textContent = next === 'dark' ? 'Light mode' : 'Dark mode');
       return;
     }
 

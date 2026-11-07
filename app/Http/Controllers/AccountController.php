@@ -26,9 +26,14 @@ class AccountController extends Controller
 
     public function library(Request $request): View
     {
+        $data = $request->validate(['q' => ['nullable', 'string', 'max:100']]);
+        $query = $request->user()->entitlements()->with('prompt.category');
+        if (filled($data['q'] ?? null)) {
+            $query->whereHas('prompt', fn ($builder) => $builder->where('title', 'like', '%'.$data['q'].'%'));
+        }
+
         return view('account.library', [
-            'entitlements' => $request->user()->entitlements()
-                ->with('prompt.category')->latest()->paginate(10),
+            'entitlements' => $query->latest()->paginate(10)->withQueryString(),
         ]);
     }
 

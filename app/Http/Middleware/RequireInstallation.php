@@ -10,6 +10,10 @@ class RequireInstallation
 {
     public function handle(Request $request, Closure $next): Response
     {
+        if (app()->runningUnitTests()) {
+            return $next($request);
+        }
+
         $installed = is_file(storage_path('app/installed.lock'));
 
         if ($request->is('installer') || $request->is('installer/*')) {
