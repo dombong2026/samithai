@@ -10,11 +10,19 @@ use App\Http\Controllers\Dashboard\OverviewController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstallerController;
 use App\Http\Controllers\Dashboard\MediaController;
+use App\Http\Controllers\Dashboard\ContentController;
+use App\Http\Controllers\PublicContentController;
 
 Route::get('/installer', [InstallerController::class, 'show'])->name('installer.show');
 Route::post('/installer', [InstallerController::class, 'install'])->middleware('throttle:4,1')->name('installer.install');
 
 Route::get('/media/{mediaAsset}/view', [MediaController::class, 'serve'])->name('media.serve');
+
+Route::get('/blog', [PublicContentController::class, 'posts'])->name('blog.index');
+Route::get('/blog/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('post', $slug))->name('blog.show');
+Route::get('/pages/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('page', $slug))->name('pages.show');
+Route::get('/policies', [PublicContentController::class, 'policies'])->name('policies.index');
+Route::get('/policies/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('policy', $slug))->name('policies.show');
 
 Route::get('/', [MarketplaceController::class, 'home'])->name('home');
 Route::get('/prompts', [MarketplaceController::class, 'index'])->name('prompts.index');
@@ -55,6 +63,12 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/media/{mediaAsset}', [MediaController::class, 'update'])->name('media.update');
     Route::delete('/media/{mediaAsset}', [MediaController::class, 'destroy'])->name('media.destroy');
 
+    Route::get('/dashboard/{section}', [ContentController::class, 'index'])->whereIn('section', ['posts','pages','policies'])->name('dashboard.content');
+    Route::post('/dashboard/content/{kind}', [ContentController::class, 'store'])->whereIn('kind',['post','page','policy'])->name('dashboard.content.store');
+    Route::put('/dashboard/content/{entry}', [ContentController::class, 'update'])->name('dashboard.content.update');
+    Route::post('/dashboard/content/{entry}/publish', [ContentController::class, 'publish'])->name('dashboard.content.publish');
+    Route::delete('/dashboard/content/{entry}', [ContentController::class, 'destroy'])->name('dashboard.content.destroy');
+    Route::get('/dashboard/content/{entry}/preview', [ContentController::class, 'preview'])->name('dashboard.content.preview');
     Route::get('/dashboard', [OverviewController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/categories', [CategoryController::class, 'index'])->name('dashboard.categories');
     Route::post('/dashboard/categories', [CategoryController::class, 'store'])->name('dashboard.categories.store');
