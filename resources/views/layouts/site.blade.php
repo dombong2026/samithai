@@ -3,14 +3,15 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<title>@yield('title', 'AI prompt marketplace') — {{ config('app.name', 'Samith AI') }}</title>
+<title>@yield('title', 'AI prompt marketplace') — {{ \App\Models\SiteSetting::text('site_name','Samith AI') }}</title>
+<style>:root{--primary:{{ \App\Models\SiteSetting::text('primary_color','#ED702B') }};--secondary:{{ \App\Models\SiteSetting::text('secondary_color','#246BD0') }}}</style>
 <link rel="stylesheet" href="{{ asset('assets/app.css') }}">
 <script defer src="{{ asset('assets/app.js') }}"></script>
 </head>
 <body>
 <div class="top-strip"><div class="container"><span>{{ __('ui.top') }}</span><span>Samith AI Marketplace</span></div></div>
 <header class="main-header"><div class="container">
-<a class="brand" href="{{ route('home') }}"><span class="brand-mark">S</span><span>Samith <strong>AI</strong></span></a>
+<a class="brand" href="{{ route('home') }}">@if($siteLogo = \App\Models\SiteSetting::text('logo_media_id'))<img class="brand-mark" src="{{ route('media.serve',$siteLogo) }}" alt="" style="object-fit:cover">@else<span class="brand-mark">S</span>@endif<span>{{ \App\Models\SiteSetting::text('site_name','Samith AI') }}</span></a>
 <form class="search-bar" action="{{ route('prompts.index') }}" method="get" role="search">
 <label class="sr-only" for="site-search">Search prompts</label>
 <input id="site-search" name="q" placeholder="{{ __('ui.search') }}" value="{{ request('q') }}">
@@ -43,7 +44,7 @@
 <main>@yield('content')</main>
 <footer class="footer">
 <div class="container footer-grid">
-<div class="footer-col"><a class="brand" href="{{ route('home') }}"><span class="brand-mark">S</span><span>Samith <strong>AI</strong></span></a><p>Discover useful prompts for work, creativity and learning.</p></div>
+<div class="footer-col"><a class="brand" href="{{ route('home') }}">@if($siteLogo = \App\Models\SiteSetting::text('logo_media_id'))<img class="brand-mark" src="{{ route('media.serve',$siteLogo) }}" alt="" style="object-fit:cover">@else<span class="brand-mark">S</span>@endif<span>{{ \App\Models\SiteSetting::text('site_name','Samith AI') }}</span></a><p>{{ \App\Models\SiteSetting::text('site_description','Discover and license practical AI prompts.') }}</p></div>
 @foreach(\App\Models\FooterColumn::where('enabled', true)->with('links')->orderBy('position')->orderBy('id')->limit(5)->get() as $footerColumn)
 <div class="footer-col"><h3>{{ $footerColumn->title }}</h3>
 @foreach($footerColumn->links as $footerLink)
@@ -52,7 +53,7 @@
 </div>
 @endforeach
 </div>
-<div class="footer-bottom"><div class="container"><span>Copyright © {{ date('Y') }} | Samith AI</span><div class="socials" style="align-items:center">
+<div class="footer-bottom"><div class="container"><span>Copyright © {{ date('Y') }} | {{ \App\Models\SiteSetting::text('site_name','Samith AI') }}</span><div class="socials" style="align-items:center">
 <details class="profile-menu"><summary class="btn small">{{ __('ui.language') }}: {{ config('samith.locales.'.app()->getLocale(), 'English') }}</summary>
 <div class="dropdown" style="top:auto;bottom:calc(100% + 8px);max-height:350px;overflow:auto">
 @foreach(config('samith.locales') as $code => $name)

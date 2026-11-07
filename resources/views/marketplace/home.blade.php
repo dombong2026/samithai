@@ -3,8 +3,8 @@
 @section('content')
 <section class="hero"><div class="container hero-inner"><div>
 <div class="eyebrow">Samith AI · Prompt marketplace</div>
-<h1>Find the right prompt. Make every idea count.</h1>
-<p>Explore practical AI prompts from creators across different fields. Save time, improve workflows and build your personal prompt library.</p>
+<h1>{{ \App\Models\SiteSetting::text('hero_title','Find the right prompt. Make every idea count.') }}</h1>
+<p>{{ \App\Models\SiteSetting::text('hero_subtitle','Explore practical AI prompts from creators across different fields.') }}</p>
 <div class="flex wrap"><a href="{{ route('prompts.index') }}" class="btn primary">Browse prompts</a>
 @guest<a href="{{ route('register') }}" class="btn">Create account</a>@endguest
 @auth<a href="{{ route('account') }}" class="btn">My workspace</a>@endauth</div>
