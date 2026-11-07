@@ -1,0 +1,16 @@
+SAMITH AI — PROPRIETARY SOFTWARE LICENSE
+Copyright (c) 2026 Ton Samith. All rights reserved.
+https://tonsamith.com
+
+The Samith AI application source code, designs, and associated materials are
+proprietary. Public access to source code does not grant permission to copy,
+modify, redistribute, host, sublicense or resell the application.
+
+A separate written agreement from the rights holder is required for use beyond
+inspection permitted by applicable law. Third-party components retain their
+respective licenses; see the package manifests and dependency notices.
+
+Each marketplace prompt is independently licensed according to the terms shown
+at purchase. Purchase does not convey intellectual-property ownership.
+
+For licensing inquiries: https://tonsamith.com
