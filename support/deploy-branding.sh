@@ -9,7 +9,7 @@ if [[ $# -ne 1 || ( "$1" != '--check' && "$1" != '--apply' ) ]]; then
   exit 2
 fi
 MODE="$1"
-COMMIT='286c2b2626060cd8ad508fd79c6f81758884fd17'
+COMMIT='c6da7c08036db0d03adfd31f93081f43a47d0085'
 APP='/www/wwwroot/samithai-releases/3c9bf3fda1d0df308b94a60b006f36c437e7bf49'
 PHP='/www/server/php/85/bin/php'
 DOMAIN='samithai.com'
@@ -20,9 +20,9 @@ resources/views/auth/login.blade.php|93ba08a0c8564e75ee6fc0ddb0fae9182682f5ae|59
 resources/views/auth/register.blade.php|617daa9c53a312817c6f2a5fd635f9336f811d04|d20d7c17e2d6d50c9609628b614aebe0c22c353d
 resources/views/auth/reset-password.blade.php|66347f1ae78c513db09d0351f60b7c0ee23f3968|0e366e6249487338c48d582d45e52b36c346d8c6
 resources/views/auth/forgot-password.blade.php|ab5235d883adf16610a4704edaa93a8f01da6f04|1f0a2356c93f2bbddd65a876066f85db758f7699
-resources/views/installer/show.blade.php|ad91c55e3a281a3033839d5f2038251990ed9777|33584399357e1362b298f800322a9bdd1c1e891d
+resources/views/installer/show.blade.php|ad91c55e3a281a3033839d5f2038251990ed9777|e6a4465e23f20042959e5119197f326fe9acfdde
 public/assets/app.css|3cbda96b9806386a241534e4006e522b88ee23c6|3e0795bc1ba85ffa4ac04a4a21a1029411e4257f
-resources/views/partials/brand.blade.php|-|131de1c12cc1e24cee2f9d6fc0bf318766a42912
+resources/views/partials/brand.blade.php|-|ea93f0975a24a38390a7a2c6677f8b202797649d
 resources/views/partials/branding-head.blade.php|-|df5c6ea1d08e1f20f775d750fe8d1485844e3bd6
 public/branding/samith-ai-logo-light.svg|-|6a9e79ed29d9353c07350690fc23efd3f25dda39
 public/branding/samith-ai-logo-dark.svg|-|4287dd409c7222437d0f25671d55f17d3e5930b8
