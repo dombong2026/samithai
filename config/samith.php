@@ -3,6 +3,7 @@
 return [
     // Explicitly false until real outbound mail delivery and DNS identity are tested.
     'email_delivery_enabled' => (bool) env('SAMITH_EMAIL_DELIVERY_ENABLED', false),
+    'smtp_probe_enabled' => (bool) env('SAMITH_SMTP_PROBE_ENABLED', false),
     'require_verified_email' => (bool) env('SAMITH_REQUIRE_VERIFIED_EMAIL', false),
     'require_legal_acceptance' => (bool) env('SAMITH_REQUIRE_LEGAL_ACCEPTANCE', false),
     'locales' => [

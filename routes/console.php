@@ -126,3 +126,42 @@ Artisan::command('samith:queue-probe {--dispatch : Enqueue a one-time probe} {--
     $this->error('Use --dispatch or --check=UUID.');
     return 2;
 })->purpose('Explicit operator-only async worker proof, without private job payloads');
+
+
+Artisan::command('samith:smtp-acceptance {--to= : Operator-controlled destination} {--send : Explicitly request one staging email}', function () {
+    if (! \App\Support\MailDelivery::permitted()) {
+        $this->error('SMTP_TEST_BLOCKED: outbound provider gate is disabled or not safely configured.');
+        return 2;
+    }
+
+    if (! $this->option('send')) {
+        $this->warn('SMTP_CONFIG_ONLY: A permitted transport does not prove TLS, DNS or inbox delivery.');
+        return 1;
+    }
+
+    if (! config('samith.smtp_probe_enabled') || ! app()->environment(['staging', 'testing'])) {
+        $this->error('SMTP_TEST_BLOCKED: probe requires an explicitly enabled staging environment.');
+        return 2;
+    }
+
+    $recipient = $this->option('to');
+    if (! is_string($recipient) || ! filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
+        $this->error('SMTP_TEST_BLOCKED: a valid operator-controlled mailbox is required.');
+        return 2;
+    }
+
+    try {
+        \Illuminate\Support\Facades\Mail::raw(
+            'Samith AI transactional SMTP acceptance probe. No account or recovery token is included.',
+            static function ($message) use ($recipient): void {
+                $message->to($recipient)->subject('Samith AI SMTP acceptance probe');
+            }
+        );
+        $this->info('SMTP_SEND_ATTEMPTED');
+        $this->warn('Verify the actual inbox, SPF/DKIM/DMARC, message headers, deliverability and bounce/retry evidence.');
+        return 0;
+    } catch (\Throwable) {
+        $this->error('SMTP_TEST_FAILED: inspect protected provider logs. No credentials are printed.');
+        return 1;
+    }
+})->purpose('One explicitly authorized staging-only test message; never proof of inbox delivery');

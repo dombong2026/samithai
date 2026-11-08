@@ -29,6 +29,12 @@ jobs:
         run: |
           cp -n .env.example .env
           php artisan key:generate
+      - name: Independent acceptance ledger must remain blocked in source
+        run: php support/acceptance/check.php support/acceptance/pending.json --expect-blocked
+      - name: Host acceptance probe must not approve a GitHub checkout
+        run: bash tests/acceptance/host-probe.sh
+      - name: Structural localization report (native approval stays external)
+        run: php support/acceptance/localization-audit.php > "$RUNNER_TEMP/samith-locales.json"
       - name: PHP syntax validation
         run: find app bootstrap config database routes tests -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Compile all Laravel Blade templates and inspect routes
