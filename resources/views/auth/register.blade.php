@@ -8,9 +8,9 @@
 <div class="floating"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>
 <input id="email" type="email" name="email" placeholder=" " required autocomplete="email" value="{{ old('email') }}"><label for="email">{{ __('account.email_address') }}</label></div>
 <div class="floating"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-<input id="password" type="password" name="password" placeholder=" " required autocomplete="new-password" minlength="10"><label for="password">{{ __('account.password') }}</label><button type="button" class="eye" aria-label="Show password" data-password-toggle="password">◉</button></div>
+<input class="password-entry" id="password" type="password" name="password" placeholder=" " required autocomplete="new-password" minlength="10"><label for="password">{{ __('account.password') }}</label>@include('partials.auth-password-toggle', ['target' => 'password'])</div>
 <div class="floating"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-<input id="password_confirmation" type="password" name="password_confirmation" placeholder=" " required autocomplete="new-password" minlength="10"><label for="password_confirmation">{{ __('account.confirm_password') }}</label><button type="button" class="eye" aria-label="Show password" data-password-toggle="password_confirmation">◉</button></div>
+<input class="password-entry" id="password_confirmation" type="password" name="password_confirmation" placeholder=" " required autocomplete="new-password" minlength="10"><label for="password_confirmation">{{ __('account.confirm_password') }}</label>@include('partials.auth-password-toggle', ['target' => 'password_confirmation'])</div>
 <p class="tiny">Use at least 10 characters with letters and numbers.</p>
 <button type="submit" class="btn primary">Create account</button></form>
 <div class="auth-bottom">Already registered? <a href="{{ route('login') }}">Sign in</a></div>

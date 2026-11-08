@@ -52,3 +52,37 @@ test('locale URLs retain supported languages and block unknown codes', async ({ 
   await page.goto('/xx/prompts');
   await expect(page.getByText(/404|not found/i).first()).toBeVisible();
 });
+
+test('password visibility uses accessible eye and eye-off icons on all auth screens', async ({ page }) => {
+  for (const [route, fields] of [
+    ['/login', ['password']],
+    ['/register', ['password', 'password_confirmation']],
+    ['/reset-password/ci-dummy-token', ['password', 'password_confirmation']],
+  ]) {
+    await page.goto(route);
+    for (const fieldName of fields) {
+      const field = page.locator('#' + fieldName);
+      const toggle = page.locator('[data-password-toggle="' + fieldName + '"]');
+      await expect(field).toHaveAttribute('type', 'password');
+      await expect(toggle).toHaveAttribute('aria-controls', fieldName);
+      await expect(toggle).toHaveAttribute('aria-label', 'Show password');
+      await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+      await expect(toggle.locator('svg.eye-icon-show')).toBeVisible();
+      await expect(toggle.locator('svg.eye-icon-hide')).toBeHidden();
+
+      await field.fill('ExampleSecure12345');
+      await toggle.click();
+      await expect(field).toHaveAttribute('type', 'text');
+      await expect(toggle).toHaveAttribute('aria-label', 'Hide password');
+      await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+      await expect(toggle.locator('svg.eye-icon-show')).toBeHidden();
+      await expect(toggle.locator('svg.eye-icon-hide')).toBeVisible();
+
+      await toggle.focus();
+      await page.keyboard.press('Enter');
+      await expect(field).toHaveAttribute('type', 'password');
+      await expect(toggle).toHaveAttribute('aria-label', 'Show password');
+      await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    }
+  }
+});

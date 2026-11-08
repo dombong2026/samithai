@@ -170,7 +170,10 @@
       if (!field) return;
       const show = field.type === 'password';
       field.type = show ? 'text' : 'password';
-      button.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      const actionLabel = show ? 'Hide password' : 'Show password';
+      button.setAttribute('aria-label', actionLabel);
+      button.setAttribute('aria-pressed', String(show));
+      button.setAttribute('title', actionLabel);
     });
   });
 })();
