@@ -15,11 +15,22 @@ test('a fresh MySQL installation creates an admin once and locks installer', asy
   await page.locator('#app_url').fill('http://127.0.0.1:8010');
   await page.locator('#db_host').fill('127.0.0.1');
   await page.locator('#db_port').fill('3306');
-  await page.locator('#db_database').fill('samith_installer');
+  await page.locator('#db_database').fill('samith_occupied');
   await page.locator('#db_username').fill('root');
   await page.locator('#db_password').fill('test_only_password');
   await page.locator('#admin_name').fill('CI Initial Administrator');
   await page.locator('#admin_email').fill('initial-admin@example.test');
+  await page.locator('#admin_password').fill('VerySecureInitial12345');
+  await page.locator('#admin_password_confirmation').fill('VerySecureInitial12345');
+  // Safety: even a user-free schema must never be overwritten.
+  await page.getByRole('button',{ name:'Install Samith AI' }).click();
+  await expect(page).toHaveURL(/\/installer$/);
+  await expect(page.getByText(/fresh install requires a completely empty MySQL database/i)).toBeVisible();
+
+  // Error handling intentionally clears passwords and installation tokens.
+  await page.locator('#installation_token').fill(token);
+  await page.locator('#db_database').fill('samith_installer');
+  await page.locator('#db_password').fill('test_only_password');
   await page.locator('#admin_password').fill('VerySecureInitial12345');
   await page.locator('#admin_password_confirmation').fill('VerySecureInitial12345');
   await page.getByRole('button',{ name:'Install Samith AI' }).click();

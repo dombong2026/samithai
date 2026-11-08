@@ -6,7 +6,7 @@ GitHub CI is not acceptance for a real cPanel or aaPanel installation. Record op
 - [ ] Extract the signed package *outside* webroot; document root targets the public/ directory only.
 - [ ] PHP extensions, OpenSSL, Fileinfo, DOM, PDO MySQL, and secure permissions pass.
 - [ ] Prove .env, Git, vendor, private media, and installation token are not web-accessible.
-- [ ] First-run form rejects wrong tokens/database credentials; fresh empty DB installs once.
+- [ ] First-run form rejects wrong tokens/database credentials and refuses any database with preexisting tables, even without user accounts; fresh empty DB installs once.
 - [ ] One administrator can authenticate; installer cannot run again.
 - [ ] Login, registration, password reset with real SMTP, media, prompt approval, free checkout, tickets and legal records work.
 - [ ] HTTPS, backups, server logs, retention and timezones have been checked.

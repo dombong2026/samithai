@@ -22,7 +22,7 @@ This repository contains actual Laravel 13 code. GitHub Actions assembles a deve
 6. The installer checks MySQL, migrates tables, creates the administrator, saves .env and locks the installer. Sign in at /login and use /dashboard.
 7. Test authentication, customer/creator restrictions, prompt moderation, free checkout and private library access on that specific host. Check outbound SMTP delivery, signed email verification, legal acceptance settings, payments (disabled), and physical devices separately.
 
-Do not put the project root directly under a public web document root. Do not use an existing database with users for a fresh installation. Do not delete storage/app/installed.lock to reinstall an existing site.
+Do not put the project root directly under a public web document root. Do not use an existing or partially initialized database for a fresh installation. Any existing table causes the installer to stop without migrating. After an interrupted installation, preserve the state for investigation and recover using an independently verified backup or a new empty database; never remove an installation lock to force a reinstall. Do not delete storage/app/installed.lock to reinstall an existing site.
 
 ## Admin account
 
