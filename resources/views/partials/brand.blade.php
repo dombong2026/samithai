@@ -1,6 +1,6 @@
 {{-- Keeps administrator-uploaded custom logos working; defaults to Samith AI wordmark. --}}
-<a class="brand brand-with-logo" href="{{ $href ?? route('home') }}" aria-label="{{ \App\Models\SiteSetting::text('site_name','Samith AI') }}">
-@if($siteLogo = \App\Models\SiteSetting::text('logo_media_id'))
+<a class="brand brand-with-logo" href="{{ $href ?? route('home') }}" aria-label="{{ ($uninstalled ?? false) ? 'Samith AI' : \App\Models\SiteSetting::text('site_name','Samith AI') }}">
+@if(! ($uninstalled ?? false) && ($siteLogo = \App\Models\SiteSetting::text('logo_media_id')))
   <img class="brand-mark" src="{{ route('media.serve', $siteLogo) }}" alt="" style="object-fit:cover" width="36" height="36">
   <span>{{ \App\Models\SiteSetting::text('site_name','Samith AI') }}</span>
 @else
