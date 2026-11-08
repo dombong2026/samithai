@@ -9,12 +9,13 @@ use RuntimeException;
 
 /**
  * A read-only, operator-triggered restoration comparison.
- * It fingerprints row IDs and validates private media checksums, not full row contents.
+ * It fingerprints row IDs and selected immutable/critical fields using an HMAC,
+ * plus validates private media checksums. This is not a whole-database backup check.
  * Always restore into a separate database and storage location to test real recovery.
  */
 final class RecoveryInventory
 {
-    public const FORMAT = 'samith-recovery-inventory/v1';
+    public const FORMAT = 'samith-recovery-inventory/v2';
 
     private const TABLES = [
         'users', 'categories', 'prompts', 'orders', 'order_items',
@@ -23,29 +24,64 @@ final class RecoveryInventory
         'payment_transactions', 'migrations',
     ];
 
+
+    private const FINGERPRINT_COLUMNS = [
+        'users' => ['id', 'name', 'email', 'role'],
+        'categories' => ['id', 'name', 'slug', 'is_active'],
+        'prompts' => ['id', 'user_id', 'category_id', 'title', 'content', 'price', 'status', 'license_type'],
+        'orders' => ['id', 'user_id', 'number', 'status', 'currency', 'total'],
+        'order_items' => ['id', 'order_id', 'prompt_id', 'content_snapshot', 'unit_price', 'license_type'],
+        'prompt_entitlements' => ['id', 'user_id', 'prompt_id', 'order_id', 'content_snapshot', 'license_type'],
+        'legal_versions' => ['id', 'kind', 'version', 'body_html', 'status', 'review_reference'],
+        'legal_acceptances' => ['id', 'user_id', 'order_id', 'legal_version_id', 'accepted_at'],
+        'media_assets' => ['id', 'user_id', 'kind', 'file_path', 'checksum', 'bytes'],
+        'content_entries' => ['id', 'user_id', 'kind', 'slug', 'body_html', 'status'],
+        'audit_events' => ['id', 'user_id', 'action', 'subject_type', 'subject_id', 'details', 'created_at'],
+        'payment_transactions' => ['id', 'order_id', 'provider', 'provider_reference', 'status', 'currency', 'amount'],
+        'migrations' => ['id', 'migration', 'batch'],
+    ];
+
     public static function capture(): array
     {
         $tables = [];
 
         foreach (self::TABLES as $table) {
             if (! Schema::hasTable($table)) {
-                $tables[$table] = ['present' => false, 'count' => null, 'id_sha256' => null];
+                $tables[$table] = ['present' => false, 'count' => null, 'id_sha256' => null, 'content_hmac_sha256' => null];
                 continue;
             }
 
-            $hash = hash_init('sha256');
+            $idHash = hash_init('sha256');
+            // The site encryption key is also required to validate a restored
+            // instance. Keyed digests do not reveal plaintext personal/licensed data.
+            $contentHash = hash_init('sha256', HASH_HMAC, (string) config('app.key'));
+            $columns = self::FINGERPRINT_COLUMNS[$table];
             $count = 0;
-            DB::table($table)->select('id')->chunkById(500, static function ($rows) use (&$count, $hash): void {
-                foreach ($rows as $row) {
-                    hash_update($hash, (string) $row->id."\n");
-                    $count++;
+
+            DB::table($table)->select($columns)->chunkById(500,
+                static function ($rows) use (&$count, $idHash, $contentHash, $columns): void {
+                    foreach ($rows as $row) {
+                        hash_update($idHash, (string) $row->id."\n");
+                        foreach ($columns as $column) {
+                            $value = $row->{$column};
+                            if ($value === null) {
+                                hash_update($contentHash, 'N;');
+                            } else {
+                                $value = (string) $value;
+                                hash_update($contentHash, 'S'.strlen($value).':'.$value.';');
+                            }
+                        }
+                        hash_update($contentHash, "\n");
+                        $count++;
+                    }
                 }
-            });
+            );
 
             $tables[$table] = [
                 'present' => true,
                 'count' => $count,
-                'id_sha256' => hash_final($hash),
+                'id_sha256' => hash_final($idHash),
+                'content_hmac_sha256' => hash_final($contentHash),
             ];
         }
 
@@ -109,7 +145,7 @@ final class RecoveryInventory
         }
 
         foreach (self::TABLES as $table) {
-            foreach (['present', 'count', 'id_sha256'] as $key) {
+            foreach (['present', 'count', 'id_sha256', 'content_hmac_sha256'] as $key) {
                 if (($baseline['tables'][$table][$key] ?? null) !== ($restored['tables'][$table][$key] ?? null)) {
                     $differences[] = $table.'.'.$key;
                 }

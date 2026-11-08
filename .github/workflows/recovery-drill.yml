@@ -82,6 +82,19 @@ jobs:
           DB_DATABASE=samith_recovery_restored php artisan migrate:status
           DB_DATABASE=samith_recovery_restored php artisan samith:recovery-inventory \
             --compare="$RUNNER_TEMP/samith-before.json" --strict
+      - name: Verify altered licensed content fails restoration acceptance
+        run: |
+          set -Eeuo pipefail
+          php -r '$db=new PDO("mysql:host=127.0.0.1;port=3306;dbname=samith_recovery_restored","root",getenv("DB_PASSWORD")); $db->exec("UPDATE prompt_entitlements SET content_snapshot = CHAR(67,79,82,82,85,80,84)");'
+          if DB_DATABASE=samith_recovery_restored php artisan samith:recovery-inventory \
+            --compare="$RUNNER_TEMP/samith-before.json" --strict; then
+            echo 'ERROR: altered licensed content was not detected'
+            exit 1
+          fi
+          php -r '$db=new PDO("mysql:host=127.0.0.1;port=3306;dbname=samith_recovery_restored","root",getenv("DB_PASSWORD")); $db->exec("UPDATE prompt_entitlements SET content_snapshot = CHAR(67,73,32,80,82,73,86,65,84,69,32,80,82,79,77,80,84,32,67,79,78,84,69,78,84)");'
+          DB_DATABASE=samith_recovery_restored php artisan samith:recovery-inventory \
+            --compare="$RUNNER_TEMP/samith-before.json" --strict
+          echo 'ALTERED_LICENSED_CONTENT_DETECTION=VERIFIED'
       - name: Verify tampered media fails restoration acceptance
         run: |
           set -Eeuo pipefail

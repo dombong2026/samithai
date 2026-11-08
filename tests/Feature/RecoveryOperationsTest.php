@@ -31,6 +31,19 @@ class RecoveryOperationsTest extends TestCase
         $this->assertStringNotContainsString('Private Customer Identity', json_encode($after));
     }
 
+    public function test_recovery_inventory_detects_content_tampering_without_id_changes(): void
+    {
+        $person = User::factory()->create(['name' => 'Original Name']);
+        $before = RecoveryInventory::capture();
+
+        $person->update(['name' => 'Modified Name']);
+        $after = RecoveryInventory::capture();
+
+        $this->assertSame($before['tables']['users']['count'], $after['tables']['users']['count']);
+        $this->assertSame($before['tables']['users']['id_sha256'], $after['tables']['users']['id_sha256']);
+        $this->assertContains('users.content_hmac_sha256', RecoveryInventory::differences($before, $after));
+    }
+
     public function test_recovery_inventory_detects_missing_and_changed_private_media(): void
     {
         Storage::fake('local');
