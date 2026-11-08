@@ -37,6 +37,8 @@ jobs:
         run: php support/acceptance/localization-audit.php > "$RUNNER_TEMP/samith-locales.json"
       - name: Validate guarded production Nginx cutover script syntax
         run: bash tests/acceptance/cutover-syntax.sh
+      - name: Check auth eye-icon hotfix script syntax
+        run: bash tests/acceptance/auth-eye-hotfix-syntax.sh
       - name: PHP syntax validation
         run: find app bootstrap config database routes tests -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Compile all Laravel Blade templates and inspect routes
