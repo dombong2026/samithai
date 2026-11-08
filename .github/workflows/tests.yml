@@ -41,6 +41,8 @@ jobs:
         run: bash tests/acceptance/auth-eye-hotfix-syntax.sh
       - name: Check login recovery-row production hotfix syntax
         run: bash tests/acceptance/login-recovery-row-syntax.sh
+      - name: Validate guarded branding production patch
+        run: bash tests/acceptance/branding-deployment-syntax.sh
       - name: PHP syntax validation
         run: find app bootstrap config database routes tests -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Compile all Laravel Blade templates and inspect routes
