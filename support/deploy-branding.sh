@@ -9,18 +9,18 @@ if [[ $# -ne 1 || ( "$1" != '--check' && "$1" != '--apply' ) ]]; then
   exit 2
 fi
 MODE="$1"
-COMMIT='c6da7c08036db0d03adfd31f93081f43a47d0085'
+COMMIT='bcd79f9728cb9f1058cb695f8e84183cc159282e'
 APP='/www/wwwroot/samithai-releases/3c9bf3fda1d0df308b94a60b006f36c437e7bf49'
 PHP='/www/server/php/85/bin/php'
 DOMAIN='samithai.com'
 FILES="$(cat <<'CHECKSUMS'
-resources/views/layouts/site.blade.php|0c440ad72c78a00e76b8f4b1f6a6d8e3ae152965|56cf7c949460d0d02c591e71ee0c53c91be3560e
-resources/views/layouts/workspace.blade.php|6d1aee50d8e7fdc8fbb0742824b0c7c616d9e2c0|9c0b45bf7faae6f1d00e714ad3bea2bfefbf0d31
+resources/views/layouts/site.blade.php|0c440ad72c78a00e76b8f4b1f6a6d8e3ae152965|0644c26372447dd42dde9b91f5f88c4d6ea4b268
+resources/views/layouts/workspace.blade.php|6d1aee50d8e7fdc8fbb0742824b0c7c616d9e2c0|660854dd4b48d653279409bba41e9f54aaabfe1a
 resources/views/auth/login.blade.php|93ba08a0c8564e75ee6fc0ddb0fae9182682f5ae|5908614b5deb88bc88f28b77c2f2852eddd1d9a9
 resources/views/auth/register.blade.php|617daa9c53a312817c6f2a5fd635f9336f811d04|d20d7c17e2d6d50c9609628b614aebe0c22c353d
 resources/views/auth/reset-password.blade.php|66347f1ae78c513db09d0351f60b7c0ee23f3968|0e366e6249487338c48d582d45e52b36c346d8c6
-resources/views/auth/forgot-password.blade.php|ab5235d883adf16610a4704edaa93a8f01da6f04|1f0a2356c93f2bbddd65a876066f85db758f7699
-resources/views/installer/show.blade.php|ad91c55e3a281a3033839d5f2038251990ed9777|e6a4465e23f20042959e5119197f326fe9acfdde
+resources/views/auth/forgot-password.blade.php|ab5235d883adf16610a4704edaa93a8f01da6f04|89cd73040092e1847d8e97fc4aab4a9be5e637a0
+resources/views/installer/show.blade.php|ad91c55e3a281a3033839d5f2038251990ed9777|53d488e0c5fd39fc05d75641135164d6eb718429
 public/assets/app.css|3cbda96b9806386a241534e4006e522b88ee23c6|3e0795bc1ba85ffa4ac04a4a21a1029411e4257f
 resources/views/partials/brand.blade.php|-|ea93f0975a24a38390a7a2c6677f8b202797649d
 resources/views/partials/branding-head.blade.php|-|df5c6ea1d08e1f20f775d750fe8d1485844e3bd6
