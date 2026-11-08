@@ -1,0 +1,44 @@
+name: PHP runtime compatibility
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  php-runtime:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.3', '8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, dom, fileinfo, pdo_sqlite, pdo_mysql, sqlite3, xml, openssl
+          coverage: none
+      - name: Resolve supported dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Audit runtime dependencies
+        run: composer audit --no-dev
+      - name: Prepare isolated test environment
+        run: |
+          cp .env.example .env
+          touch database/database.sqlite
+          php artisan key:generate
+      - name: Migrate disposable database
+        run: php artisan migrate --force
+      - name: Verify route and view compilation
+        run: |
+          php artisan route:list --except-vendor
+          php artisan view:cache
+      - name: Run Laravel and infrastructure regression tests
+        run: php artisan test
