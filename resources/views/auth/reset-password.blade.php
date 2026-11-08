@@ -1,5 +1,6 @@
-<!doctype html><html lang="{{ app()->getLocale() }}" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Set a new password — Samith AI</title><link rel="stylesheet" href="{{ asset('assets/app.css') }}?v={{ filemtime(public_path('assets/app.css')) }}"><script defer src="{{ asset('assets/app.js') }}?v={{ filemtime(public_path('assets/app.js')) }}"></script></head><body><main class="auth-screen"><section class="auth-card">
-<a href="{{ route('home') }}" class="brand"><span class="brand-mark">S</span><span>Samith <strong>AI</strong></span></a>
+<!doctype html><html lang="{{ app()->getLocale() }}" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+@include('partials.branding-head')<title>Set a new password — Samith AI</title><link rel="stylesheet" href="{{ asset('assets/app.css') }}?v={{ filemtime(public_path('assets/app.css')) }}"><script defer src="{{ asset('assets/app.js') }}?v={{ filemtime(public_path('assets/app.js')) }}"></script></head><body><main class="auth-screen"><section class="auth-card">
+@include('partials.brand', ['href' => route('home')])
 <h1>Choose a new password</h1><p>Your new password must contain at least 12 characters, including letters and numbers.</p>
 <form method="post" action="{{ route('password.update') }}">@csrf
 <input type="hidden" name="token" value="{{ $token }}">

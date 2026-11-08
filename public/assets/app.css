@@ -35,3 +35,8 @@ dialog{border:1px solid var(--line);border-radius:20px;background:var(--panel);c
   .table-scroll{max-width:100%}
   .row-menu{max-width:calc(100vw - 20px)}
 }
+/* Samith AI generated favicon-aligned wordmark; no changes to shell spacing. */
+.brand-with-logo .brand-logo{display:block;width:143px;height:35px;max-width:100%;object-fit:contain;flex-shrink:0}
+.brand-with-logo .brand-logo-dark{display:none}
+html[data-theme="dark"] .brand-with-logo .brand-logo-light{display:none}
+html[data-theme="dark"] .brand-with-logo .brand-logo-dark{display:block}
