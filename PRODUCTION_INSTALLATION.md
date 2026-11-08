@@ -44,3 +44,17 @@ Record actual evidence, with all secrets redacted. The source-level CI tests and
 ## Release boundaries
 
 A fresh production installation does not complete external SMTP provider onboarding, real payment integration, legal counsel review, native localization validation or actual-device signoff. Do not enable paid checkout or claim full commerce compliance from successful hosting installation. Actual installation requires an operator with aaPanel terminal access; the read-only browser connector cannot run terminal commands.
+
+
+## Actual samithai.com Nginx cutover — guarded helper
+
+The production source application is already prepared under:
+\`/www/wwwroot/samithai-releases/3c9bf3fda1d0df308b94a60b006f36c437e7bf49\`.
+
+The root of \`samithai.com\` must still be \`/www/wwwroot/samithai.com\` and empty. Run:
+\`bash support/aapanel-production-cutover.sh --check\` then (only after review)
+\`bash support/aapanel-production-cutover.sh --apply\`.
+
+The apply option backs up the Nginx vhost and rewrite include privately, changes only the root directive, checks Nginx syntax, reloads, and checks /installer + CSS at the local origin. If either check fails, it restores the original Nginx vhost and reloads. A public HTTPS HTTP result is reported separately and may involve Cloudflare or DNS; verify it before proceeding with installation.
+
+This does NOT create or migrate a database, read out the install token, send emails, enable payments, or create an administrator. Create an empty dedicated MySQL database/user via aaPanel afterward and complete the web installer at https://samithai.com/installer. Never share the .env token or DB password in tickets/chats.
