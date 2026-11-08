@@ -1,0 +1,52 @@
+name: Isolated asynchronous queue worker acceptance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  queue-worker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: sqlite
+      QUEUE_CONNECTION: database
+      CACHE_STORE: file
+      SESSION_DRIVER: file
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, fileinfo, pdo_sqlite, sqlite3, xml, openssl
+          coverage: none
+      - name: Install pinned dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Prepare isolated database
+        run: |
+          cp .env.example .env
+          touch database/database.sqlite
+          php artisan key:generate
+          php artisan migrate --force
+      - name: Require real queue handling before accepting a probe
+        run: |
+          set -Eeuo pipefail
+          result="$(php artisan samith:queue-probe --dispatch)"
+          printf '%s\n' "$result"
+          probe="$(printf '%s\n' "$result" | sed -n 's/^PROBE_ID=//p' | tail -1)"
+          test -n "$probe"
+          if php artisan samith:queue-probe --check="$probe"; then
+            echo 'ERROR: unprocessed probe passed'
+            exit 1
+          fi
+          php artisan queue:work database --once --tries=1 --timeout=20 --queue=default
+          php artisan samith:queue-probe --check="$probe"
+      - name: Explain scope
+        run: |
+          echo 'DISPOSABLE_QUEUE_WORKER=VERIFIED'
+          echo 'A one-shot CI worker is not proof of actual aaPanel supervision or cPanel cron.'

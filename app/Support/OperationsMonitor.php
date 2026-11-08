@@ -19,6 +19,7 @@ final class OperationsMonitor
             'Ready queue jobs' => 'not checked',
             'Stale reserved queue jobs' => 'not checked',
             'Failed queue jobs' => 'not checked',
+            'Last handled worker probe' => 'not verified',
         ];
 
         $add = static function (string $id, string $label, string $status, string $detail) use (&$checks): void {
@@ -44,6 +45,19 @@ final class OperationsMonitor
                 'Jobs must not execute against transaction data before it is committed.');
             $add('worker_evidence', 'Queue worker and retry supervision', 'review',
                 'Queue configuration and database counts cannot prove a worker, retry policy or supervisor is operating.');
+        }
+
+        if (in_array($driver, ['database', 'redis'], true) && $probeDatabase) {
+            try {
+                if (Schema::hasTable('worker_probes')) {
+                    $recent = DB::table('worker_probes')->whereNotNull('handled_at')->max('handled_at');
+                    if ($recent !== null) {
+                        $metrics['Last handled worker probe'] = (string) $recent.' UTC';
+                    }
+                }
+            } catch (Throwable) {
+                // A failed optional probe query is not a reason to expose SQL errors.
+            }
         }
 
         if ($driver !== 'database' || ! $probeDatabase) {
