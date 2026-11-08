@@ -123,6 +123,7 @@ class InstallerController extends Controller
                 'DB_USERNAME' => $data['db_username'],
                 'DB_PASSWORD' => $data['db_password'] ?? '',
                 'SESSION_DRIVER' => 'file',
+                'SESSION_SECURE_COOKIE' => str_starts_with(strtolower($data['app_url']), 'https://') ? 'true' : 'false',
                 'CACHE_STORE' => 'file',
                 'QUEUE_CONNECTION' => 'sync',
             ];

@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\AuditEvent;
-use App\Support\MailDelivery;
+use App\Support\InfrastructureReadiness;
 use App\Models\PaymentTransaction;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class PlatformController extends Controller
@@ -43,39 +42,8 @@ class PlatformController extends Controller
     public function system(Request $request): View
     {
         $this->admin($request);
-        $connected = false;
-        try {
-            DB::select('SELECT 1');
-            $connected = true;
-        } catch (\Throwable $e) {
-            report($e);
-        }
 
-        return view('dashboard.system', [
-            'requirements' => [
-                'PHP 8.3+' => PHP_VERSION_ID >= 80300,
-                'PDO MySQL' => extension_loaded('pdo_mysql'),
-                'OpenSSL' => extension_loaded('openssl'),
-                'Mbstring' => extension_loaded('mbstring'),
-                'XML / DOM' => extension_loaded('dom') && extension_loaded('xml'),
-                'Fileinfo' => extension_loaded('fileinfo'),
-                'Storage writable' => is_writable(storage_path('app')) && is_writable(storage_path('framework')),
-                'Bootstrap cache writable' => is_writable(base_path('bootstrap/cache')),
-                'Database responds' => $connected,
-                'Installation locked' => is_file(storage_path('app/installed.lock')),
-                'Debug disabled' => !config('app.debug'),
-                'HTTPS request' => $request->secure(),
-                'Email delivery configured without logging' => MailDelivery::permitted(),
-            ],
-            'runtime' => [
-                'Laravel version' => app()->version(),
-                'PHP version' => PHP_VERSION,
-                'Environment' => app()->environment(),
-                'Queue mode' => config('queue.default'),
-                'Cache driver' => config('cache.default'),
-                'Disk' => config('filesystems.default'),
-            ],
-        ]);
+        return view('dashboard.system', InfrastructureReadiness::inspect());
     }
 
     public function language(Request $request): View

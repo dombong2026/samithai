@@ -18,6 +18,7 @@ for dir in storage/framework bootstrap/cache; do
   if [[ -d "$dir" ]]; then ok "$dir"; else no "Missing $dir"; fi
 done
 if [[ -f storage/app/installed.lock ]]; then ok "Installer locked"; else unknown "No installation lock"; fi
+if [[ -f composer.lock && -f package-lock.json ]]; then ok "Composer and npm dependency lockfiles"; else unknown "Dependency lockfiles incomplete; release not reproducible"; fi
 if [[ -e public/.env || -e public/vendor || -e public/storage/app ]]; then no "Exposed sensitive filesystem path"; else ok "No sensitive files at common public paths"; fi
 if [[ -f .env ]]; then
   if grep -qE '^APP_DEBUG=(true|"true")$' .env; then no "APP_DEBUG enabled"; else ok "Debug disabled"; fi
