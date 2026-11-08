@@ -41,14 +41,11 @@ jobs:
           test -f "$RELEASE/vendor/autoload.php"
           test -f "$RELEASE/public/build/manifest.json"
           test -f "$RELEASE/public/assets/app.css"
-          cat > "$RELEASE/RELEASE_STATUS.txt" <<'STATUS'
-Samith AI v0.0.1 — DEVELOPMENT CANDIDATE ONLY.
-This ZIP is NOT approved for live customer deployment or paid checkout.
-Automated source, MySQL, browser emulation and synthetic recovery tests are not actual
-aaPanel/cPanel hosting, external SMTP inbox, offsite backup, legal, native-language
-or physical device acceptance. Do not enable real money billing.
-See GitHub EXTERNAL_ACCEPTANCE.md and RELEASE_GATES.md for the required release signoff.
-STATUS
+          printf '%s\n' \
+            'Samith AI v0.0.1 - DEVELOPMENT CANDIDATE ONLY' \
+            'NOT approved for customer production deployment or paid checkout.' \
+            'CI does not replace actual aaPanel/cPanel, offsite restore, SMTP, tax, legal or physical device acceptance.' \
+            'See EXTERNAL_ACCEPTANCE.md in source. Payment processing stays disabled.' > "$RELEASE/RELEASE_STATUS.txt"
           test -f "$RELEASE/RELEASE_STATUS.txt"
           test -f "$RELEASE/INSTALLATION.txt"
           test -f "$RELEASE/.env.example"
