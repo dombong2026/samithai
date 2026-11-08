@@ -9,12 +9,12 @@ if [[ "$#" -ne 1 || ( "$1" != "--check" && "$1" != "--apply" ) ]]; then
 fi
 MODE="$1"
 APP="/www/wwwroot/samithai-releases/3c9bf3fda1d0df308b94a60b006f36c437e7bf49"
-COMMIT="586a6af48445a559ef7918b81f3bd85ab1889ff3"
+COMMIT="d32c6e0ec9ec7e2b9f795deb974ea8b0f4badce8"
 PHP="/www/server/php/85/bin/php"
 DOMAIN="samithai.com"
 FILES="$(cat <<'FILESPEC'
 resources/views/auth/login.blade.php|dcaea285d23ae49d52c8b0a2b7012a82b1c52667|93ba08a0c8564e75ee6fc0ddb0fae9182682f5ae
-public/assets/app.css|dcfcbbedcff48626a25b836afb9c22cb0f9c85d3|681ea1b7963121794a478978fcdd67b01b6302b1
+public/assets/app.css|dcfcbbedcff48626a25b836afb9c22cb0f9c85d3|3cbda96b9806386a241534e4006e522b88ee23c6
 FILESPEC
 )"
 
