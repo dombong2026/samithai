@@ -131,6 +131,48 @@ class RecoveryOperationsTest extends TestCase
         $this->assertArrayHasKey('media', $decoded);
     }
 
+    public function test_recovery_comparison_returns_nonzero_after_data_changes(): void
+    {
+        $path = tempnam(sys_get_temp_dir(), 'samith-inventory-');
+        $this->assertNotFalse($path);
+
+        try {
+            file_put_contents($path, json_encode(RecoveryInventory::capture(), JSON_THROW_ON_ERROR));
+            User::factory()->create();
+
+            $exit = Artisan::call('samith:recovery-inventory', [
+                '--compare' => $path, '--strict' => true,
+            ]);
+
+            $this->assertSame(1, $exit);
+            $this->assertStringContainsString('users.count', Artisan::output());
+        } finally {
+            unlink($path);
+        }
+    }
+
+    public function test_installer_custom_sensitive_fields_are_never_flashed_on_validation_failure(): void
+    {
+        $this->post(route('installer.install'), [
+            'installation_token' => 'ci-token',
+            'db_password' => 'ci-db-password',
+            'admin_password' => 'ci-admin-password',
+            'admin_password_confirmation' => 'ci-admin-password',
+            'db_port' => 'not-a-port',
+        ])->assertSessionHasErrors();
+
+        $old = session('_old_input', []);
+        foreach (['installation_token', 'db_password', 'admin_password', 'admin_password_confirmation'] as $key) {
+            $this->assertArrayNotHasKey($key, $old);
+        }
+    }
+
+    public function test_asynchronous_queue_drivers_wait_for_database_commit(): void
+    {
+        $this->assertTrue(config('queue.connections.database.after_commit'));
+        $this->assertTrue(config('queue.connections.redis.after_commit'));
+    }
+
     public function test_installer_page_is_never_cacheable(): void
     {
         $this->get(route('installer.show'))->assertOk()
