@@ -1,0 +1,85 @@
+{
+  "format": "samith-ai-external-acceptance/v1",
+  "release_sha": null,
+  "package_sha256": null,
+  "scope": "Independent host, provider, security and physical-device release acceptance. No claimed approvals.",
+  "gates": {
+    "aapanel_clean_install": {
+      "status": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "evidence_sha256": null,
+      "evidence_reference": null
+    },
+    "cpanel_clean_install": {
+      "status": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "evidence_sha256": null,
+      "evidence_reference": null
+    },
+    "prior_release_upgrade": {
+      "status": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "evidence_sha256": null,
+      "evidence_reference": null
+    },
+    "offsite_backup_restore": {
+      "status": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "evidence_sha256": null,
+      "evidence_reference": null
+    },
+    "queue_worker_supervision": {
+      "status": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "evidence_sha256": null,
+      "evidence_reference": null
+    },
+    "smtp_inbox_delivery": {
+      "status": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "evidence_sha256": null,
+      "evidence_reference": null
+    },
+    "payment_provider_and_tax": {
+      "status": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "evidence_sha256": null,
+      "evidence_reference": null
+    },
+    "localization_native_review": {
+      "status": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "evidence_sha256": null,
+      "evidence_reference": null
+    },
+    "legal_counsel_approval": {
+      "status": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "evidence_sha256": null,
+      "evidence_reference": null
+    },
+    "physical_device_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "evidence_sha256": null,
+      "evidence_reference": null
+    },
+    "independent_security_review": {
+      "status": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "evidence_sha256": null,
+      "evidence_reference": null
+    }
+  }
+}
