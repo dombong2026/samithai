@@ -29,6 +29,9 @@ test('a fresh MySQL installation creates an admin once and locks installer', asy
 
   // Error handling intentionally clears passwords and installation tokens.
   await page.locator('#installation_token').fill(token);
+  await page.locator('#db_username').fill('root');
+  await page.locator('#admin_name').fill('CI Initial Administrator');
+  await page.locator('#admin_email').fill('initial-admin@example.test');
   await page.locator('#db_database').fill('samith_installer');
   await page.locator('#db_password').fill('test_only_password');
   await page.locator('#admin_password').fill('VerySecureInitial12345');
