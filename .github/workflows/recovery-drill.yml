@@ -1,0 +1,98 @@
+name: Disposable MySQL backup and recovery drill
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: samith_recovery_source
+          MYSQL_ROOT_PASSWORD: test_only_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -ptest_only_password"
+          --health-interval=10s --health-timeout=5s --health-retries=12
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: samith_recovery_source
+      DB_USERNAME: root
+      DB_PASSWORD: test_only_password
+      QUEUE_CONNECTION: sync
+      CACHE_STORE: file
+      SESSION_DRIVER: file
+      SAMITH_RECOVERY_FIXTURE: isolated
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, fileinfo, pdo_mysql, pdo_sqlite, sqlite3, xml, openssl
+          coverage: none
+      - name: Install immutable Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Create isolated source schema and fixtures
+        run: |
+          set -Eeuo pipefail
+          cp .env.example .env
+          php artisan key:generate
+          php artisan migrate --force
+          php tests/recovery/seed-fixture.php
+          php artisan samith:recovery-inventory --json --strict > "$RUNNER_TEMP/samith-before.json"
+      - name: Capture database and private media snapshots
+        run: |
+          set -Eeuo pipefail
+          command -v mysqldump
+          command -v mysql
+          mysqldump --protocol=TCP -h 127.0.0.1 -uroot \
+            --password="$DB_PASSWORD" --single-transaction --no-tablespaces \
+            --skip-lock-tables samith_recovery_source > "$RUNNER_TEMP/samith-source.sql"
+          test -s "$RUNNER_TEMP/samith-source.sql"
+          tar -cf "$RUNNER_TEMP/samith-media.tar" -C storage/app/private media
+          sha256sum "$RUNNER_TEMP/samith-source.sql" "$RUNNER_TEMP/samith-media.tar" \
+            > "$RUNNER_TEMP/samith-backup.sha256"
+          (cd "$RUNNER_TEMP" && sha256sum -c samith-backup.sha256)
+      - name: Restore into a completely separate disposable MySQL database
+        run: |
+          set -Eeuo pipefail
+          php -r '$db=new PDO("mysql:host=127.0.0.1;port=3306","root",getenv("DB_PASSWORD")); $db->exec("CREATE DATABASE samith_recovery_restored CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");'
+          mysql --protocol=TCP -h 127.0.0.1 -uroot --password="$DB_PASSWORD" \
+            samith_recovery_restored < "$RUNNER_TEMP/samith-source.sql"
+          mv storage/app/private/media "$RUNNER_TEMP/samith-media-original"
+          tar -xf "$RUNNER_TEMP/samith-media.tar" -C storage/app/private
+          DB_DATABASE=samith_recovery_restored php artisan samith:recovery-inventory \
+            --compare="$RUNNER_TEMP/samith-before.json" --strict
+      - name: Verify upgrades are idempotent on restored schema
+        run: |
+          set -Eeuo pipefail
+          DB_DATABASE=samith_recovery_restored php artisan migrate --force
+          DB_DATABASE=samith_recovery_restored php artisan migrate:status
+          DB_DATABASE=samith_recovery_restored php artisan samith:recovery-inventory \
+            --compare="$RUNNER_TEMP/samith-before.json" --strict
+      - name: Verify tampered media fails restoration acceptance
+        run: |
+          set -Eeuo pipefail
+          printf 'corrupted test media' > storage/app/private/media/ci/fixture.png
+          if DB_DATABASE=samith_recovery_restored php artisan samith:recovery-inventory \
+            --compare="$RUNNER_TEMP/samith-before.json" --strict; then
+            echo 'ERROR: damaged media was not detected'
+            exit 1
+          fi
+          echo 'CORRUPTED_MEDIA_DETECTION=VERIFIED'
+      - name: Log scope limitations
+        run: |
+          echo 'DISPOSABLE_MYSQL_RESTORE=VERIFIED'
+          echo 'This test does not approve a real cPanel or aaPanel host, older-release migration, real backups, or production rollback.'

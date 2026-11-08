@@ -13,7 +13,7 @@ GitHub CI is not acceptance for a real cPanel or aaPanel installation. Record op
 
 ## Rollback and recovery on isolated staging clone
 - [ ] Export a complete MySQL dump, media directory and private .env with separately protected keys.
-- [ ] Record SHA256 digests. Restore into a *different* test database and directory.
+- [ ] Record SHA256 digests. Restore into a *different* test database and directory. Compare outputs from the read-only samith:recovery-inventory command on source and restored instances.
 - [ ] Compare user, prompt, entitlement, order, policy and legal version counts and sampled IDs.
 - [ ] Apply upgrade migrations to the disposable clone; test previously issued entitlements.
 - [ ] Simulate interrupted deployment; restore backup and confirm application functionality.
@@ -32,3 +32,5 @@ aaPanel: [ ] Passed [ ] Failed [ ] Untested
 Backup restoration: [ ] Passed [ ] Failed [ ] Untested
 Upgrade rollback: [ ] Passed [ ] Failed [ ] Untested
 Operator, timestamp, findings and evidence:
+
+CI runs an isolated MySQL 8 dump/restore drill with synthetic data and local media, but this is not acceptance of a real host or prior-release upgrade. Queue worker supervision, off-site backups and production rollback remain operator-run.
