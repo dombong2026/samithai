@@ -74,6 +74,7 @@ class InstallerController extends Controller
             }
 
             config()->set('database.default', 'mysql');
+            config()->set('database.connections.mysql.url', null);
             config()->set('database.connections.mysql.host', $data['db_host']);
             config()->set('database.connections.mysql.port', (string) $data['db_port']);
             config()->set('database.connections.mysql.database', $data['db_database']);
@@ -83,8 +84,10 @@ class InstallerController extends Controller
 
             try {
                 DB::connection('mysql')->getPdo();
-                if (Schema::connection('mysql')->hasTable('users') && DB::connection('mysql')->table('users')->exists()) {
-                    return back()->withErrors(['db_database' => 'This database already contains user accounts. Choose a new, empty database.']);
+                // This flow is ONLY for new sites. Existing tables (even without users)
+                // may belong to another application or a partially interrupted install.
+                if (DB::connection('mysql')->select('SHOW TABLES') !== []) {
+                    return back()->withErrors(['db_database' => 'A fresh install requires a completely empty MySQL database. Never reuse or overwrite existing tables.']);
                 }
             } catch (Throwable $e) {
                 report($e);

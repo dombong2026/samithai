@@ -26,7 +26,7 @@
 @foreach($runtime as $name => $value)
 <div class="flex between" style="padding:10px 0;border-bottom:1px solid var(--line)"><span>{{ $name }}</span><strong>{{ $value }}</strong></div>
 @endforeach
-<div class="notice warning" style="margin-top:20px">No migrations, writes or external HTTP requests are performed by these checks. This report does not replace independent cPanel/aaPanel installation, backup restoration, real-device, SMTP or payment acceptance.</div>
+<div class="notice warning" style="margin-top:20px">Queue depth is read without accessing job payloads. Worker liveness, backup restoration and recovery acceptance require separate verification. No migrations, writes or external HTTP requests are performed by these checks. This report does not replace independent cPanel/aaPanel installation, backup restoration, real-device, SMTP or payment acceptance.</div>
 </div>
 </div>
 @endsection

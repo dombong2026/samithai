@@ -22,6 +22,7 @@ class SecurityHeaders
         }
         // User-specific HTML and password reset forms must not be cached by shared proxies.
         if ($request->is('account','account/*','dashboard','dashboard/*',
+                'installer','installer/*',
                 'login','register','forgot-password','reset-password','reset-password/*',
                 'email/verify','email/verify/*','orders/*','support/tickets/*')) {
             $response->headers->set('Cache-Control','private, no-store');

@@ -101,6 +101,16 @@ final class InfrastructureReadiness
                 'Email is intentionally disabled until transport and inbox delivery are verified.');
         }
 
+        $operations = OperationsMonitor::inspect($probeDatabase);
+        foreach ($operations['checks'] as $id => $check) {
+            $add('ops_'.$id, $check['label'], $check['status'], $check['detail']);
+        }
+
+        $add('backup_restore_drill', 'Independent backup restoration', 'review',
+            'A read-only inventory is available, but a separately restored host and media copy must be accepted by an operator.');
+        $add('upgrade_rollback_drill', 'Independent upgrade rollback', 'review',
+            'No production upgrade or rollback is authorized from this dashboard.');
+
         $add('dependency_locks', 'Reproducible Composer and npm dependencies',
             is_file(base_path('composer.lock')) && is_file(base_path('package-lock.json')) ? 'pass' : 'review',
             'Commit generated lockfiles before approving an independently repeatable release.');
@@ -120,6 +130,7 @@ final class InfrastructureReadiness
                 'Queue mode' => (string) config('queue.default'),
                 'Cache driver' => (string) config('cache.default'),
                 'Disk' => (string) config('filesystems.default'),
+                ...$operations['metrics'],
             ],
         ];
     }
