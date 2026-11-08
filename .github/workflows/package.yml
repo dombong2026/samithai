@@ -53,7 +53,13 @@ jobs:
           test ! -e "$RELEASE/.git"
           cd "$RUNNER_TEMP"
           zip -qr "$GITHUB_WORKSPACE/Samith-AI-v0.0.1.zip" "Samith-AI"
-          sha256sum "$GITHUB_WORKSPACE/Samith-AI-v0.0.1.zip" > "$GITHUB_WORKSPACE/Samith-AI-v0.0.1.sha256"
+          # A portable checksum manifest must use only the archive basename.
+          # Absolute GitHub runner paths would fail sha256sum -c on cPanel/aaPanel.
+          (
+            cd "$GITHUB_WORKSPACE"
+            sha256sum Samith-AI-v0.0.1.zip > Samith-AI-v0.0.1.sha256
+            sha256sum -c Samith-AI-v0.0.1.sha256
+          )
       - name: Upload release package
         uses: actions/upload-artifact@v4
         with:
