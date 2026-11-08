@@ -86,3 +86,27 @@ test('password visibility uses accessible eye and eye-off icons on all auth scre
     }
   }
 });
+
+test('login recovery link shares the remember-me row above the sign-in button on desktop and mobile', async ({ page }) => {
+  for (const width of [1280, 375]) {
+    await page.setViewportSize({ width, height: 850 });
+    await page.goto('/login');
+    const options = page.locator('.auth-options');
+    const remember = options.getByRole('checkbox', { name: 'Remember me' });
+    const recovery = options.getByRole('link', { name: 'Forgot your password?' });
+    const submit = page.getByRole('button', { name: 'Sign in' });
+    await expect(remember).toBeVisible();
+    await expect(recovery).toHaveAttribute('href', /\/forgot-password$/);
+    await expect(recovery).toBeVisible();
+    const a = await remember.boundingBox();
+    const b = await recovery.boundingBox();
+    const c = await submit.boundingBox();
+    expect(a).not.toBeNull();
+    expect(b).not.toBeNull();
+    expect(c).not.toBeNull();
+    expect(Math.abs(a.y - b.y)).toBeLessThan(12);
+    expect(a.x + a.width).toBeLessThan(b.x);
+    expect(b.y + b.height).toBeLessThan(c.y);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 2);
+  }
+});

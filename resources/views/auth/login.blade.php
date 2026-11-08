@@ -8,9 +8,11 @@
 <div class="floating"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
 <input class="password-entry" id="password" type="password" name="password" placeholder=" " required autocomplete="current-password"><label for="password">{{ __('account.password') }}</label>
 @include('partials.auth-password-toggle', ['target' => 'password'])</div>
-<div class="flex"><label class="flex"><input type="checkbox" name="remember" value="1">{{ __('account.remember_me') }}</label></div>
+<div class="flex between auth-options">
+<label class="flex"><input type="checkbox" name="remember" value="1">{{ __('account.remember_me') }}</label>
+<a class="tiny auth-recovery-link" href="{{ route('password.request') }}">{{ __('account.forgot_password') }}</a>
+</div>
 <button type="submit" class="btn primary">Sign in</button>
-<a class="tiny" href="{{ route('password.request') }}">{{ __('account.forgot_password') }}</a>
 </form><div class="auth-bottom">New to Samith AI? <a href="{{ route('register') }}">Create account</a></div>
 </section></main>@include('partials.feedback')
 </body></html>
