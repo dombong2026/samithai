@@ -43,3 +43,10 @@ Do not deploy to samithai.com or enable real payments on the strength of GitHub 
 - Source content has reviewable translations, but the 13 languages have not received complete native-language validation.
 - GitHub CI fresh-installs to a disposable MySQL DB, yet real cPanel, aaPanel, recovery, backups and physical devices remain untested.
 - Composer and npm dependency lockfiles are now committed, while independent dependency supply-chain assessment and customer package verification remain release requirements.
+
+
+## External evidence ledger — mandatory before any public release
+
+The default \`support/acceptance/pending.json\` is intentionally NOT approved. An operator-controlled private copy must identify the exact release commit and ZIP SHA256, with independently reviewed, timestamped evidence for each of 11 external gates. Validate its structure with \`php support/acceptance/check.php /private/path/manifest.json\`. The validator does not authenticate evidence or grant deployment permission. Source CI asserts the tracked pending ledger cannot accidentally appear complete.
+
+Development ZIPs contain RELEASE_STATUS.txt explicitly stating production release is not approved. Do not treat a package-build green check as customer acceptance. See EXTERNAL_ACCEPTANCE.md and HOST_PROBE.md.

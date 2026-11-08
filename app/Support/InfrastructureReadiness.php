@@ -111,6 +111,11 @@ final class InfrastructureReadiness
         $add('upgrade_rollback_drill', 'Independent upgrade rollback', 'review',
             'No production upgrade or rollback is authorized from this dashboard.');
 
+        $add('external_release_approval', 'Independent customer-release approval', 'review',
+            'Actual aaPanel/cPanel, off-site restore, queue supervision, SMTP, payments, native translation, legal and device gates remain unapproved.');
+        $add('independent_security_review', 'Independent security acceptance', 'review',
+            'Automated source tests do not replace an independent security assessment.');
+
         $add('dependency_locks', 'Reproducible Composer and npm dependencies',
             is_file(base_path('composer.lock')) && is_file(base_path('package-lock.json')) ? 'pass' : 'review',
             'Commit generated lockfiles before approving an independently repeatable release.');

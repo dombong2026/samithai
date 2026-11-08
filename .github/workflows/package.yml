@@ -29,6 +29,8 @@ jobs:
         run: |
           npm ci --ignore-scripts
           npm run build
+      - name: Require pending external acceptance to remain blocked
+        run: php support/acceptance/check.php support/acceptance/pending.json --expect-blocked
       - name: Assemble protected customer package
         run: |
           set -Eeuo pipefail
@@ -39,6 +41,15 @@ jobs:
           test -f "$RELEASE/vendor/autoload.php"
           test -f "$RELEASE/public/build/manifest.json"
           test -f "$RELEASE/public/assets/app.css"
+          cat > "$RELEASE/RELEASE_STATUS.txt" <<'STATUS'
+Samith AI v0.0.1 — DEVELOPMENT CANDIDATE ONLY.
+This ZIP is NOT approved for live customer deployment or paid checkout.
+Automated source, MySQL, browser emulation and synthetic recovery tests are not actual
+aaPanel/cPanel hosting, external SMTP inbox, offsite backup, legal, native-language
+or physical device acceptance. Do not enable real money billing.
+See GitHub EXTERNAL_ACCEPTANCE.md and RELEASE_GATES.md for the required release signoff.
+STATUS
+          test -f "$RELEASE/RELEASE_STATUS.txt"
           test -f "$RELEASE/INSTALLATION.txt"
           test -f "$RELEASE/.env.example"
           test ! -e "$RELEASE/.env"
@@ -49,7 +60,7 @@ jobs:
       - name: Upload release package
         uses: actions/upload-artifact@v4
         with:
-          name: samith-ai-v0.0.1-customer-package
+          name: samith-ai-v0.0.1-development-candidate
           path: |
             Samith-AI-v0.0.1.zip
             Samith-AI-v0.0.1.sha256

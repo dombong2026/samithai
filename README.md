@@ -94,3 +94,8 @@ All release flags default to false. Never enable paid checkout through environme
 - The disposable GitHub Actions recovery drill creates artificial customer/license records, exports MySQL and media, restores into a second disposable MySQL database, checks fingerprints and media, reruns migrations, and verifies that tampering fails.
 - An inventory cannot prove integrity of unselected columns, an older-version upgrade, storage outside the private local disk, or a complete independently accepted cPanel/aaPanel restore. Compare instances with the same preserved APP_KEY; the inventory never prints that key. Keep database dumps, private media and .env/encryption keys encrypted and outside webroot; never upload actual backups to CI artifacts.
 - Every production deployment still requires a human-approved, off-host backup, a staging restoration, verified rollback procedure and separate operations acceptance. No automatic production restoration or rollback has been installed.
+
+
+## External acceptance milestone
+
+The GitHub main code now includes a fail-closed external-evidence manifest, read-only aaPanel/cPanel staging-host probe, real queued-job execution probe, guarded staging SMTP acceptance command, and 13-language structural coverage report. These do **not** mean any real customer host, external mailbox, merchant account, lawyer or physical device was verified. Evidence remains pending in EXTERNAL_ACCEPTANCE.md; no production deployment is authorized by passing CI.
