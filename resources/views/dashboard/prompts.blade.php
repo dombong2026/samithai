@@ -19,11 +19,17 @@
 <td class="title-cell">{{ $prompt->title }}<div class="muted tiny">{{ \Illuminate\Support\Str::limit($prompt->summary,65) }}</div></td>
 <td>{{ $prompt->user->name }}</td><td>{{ $prompt->category->name }}</td>
 <td>{{ $prompt->isFree() ? 'Free' : '$'.number_format((float)$prompt->price,2) }}</td>
-<td><span class="pill {{ $prompt->status }}">{{ ucfirst($prompt->status) }}</span></td>
+<td><span class="pill {{ $prompt->status }}">{{ ucfirst($prompt->status) }}</span>
+@if(in_array($prompt->status, ['draft', 'rejected'], true) && $prompt->latestReview?->action === 'rejected' && filled($prompt->latestReview->note))
+<details class="prompt-review-feedback"><summary>Reviewer feedback</summary>
+<p>{{ $prompt->latestReview->note }}</p></details>
+@endif
+</td>
 <td>{{ $prompt->updated_at->format('d M Y') }}</td>
 <td><button class="icon-btn" type="button" aria-label="Actions for {{ $prompt->title }}" data-action-toggle="prompt-actions-{{ $prompt->id }}">⋮</button>
 <template id="prompt-actions-{{ $prompt->id }}">
 @if($prompt->status === 'published')<a href="{{ route('prompts.show',$prompt) }}">View on marketplace</a>@endif
+@if($prompt->review_events_count > 0)<a href="{{ route('account.prompts.reviews',$prompt) }}">Review history ({{ $prompt->review_events_count }})</a>@endif
 <button type="button" data-modal-open="prompt-modal" data-resource-url="{{ route('account.prompts.update',$prompt) }}"
 data-field-title="{{ $prompt->title }}" data-field-category-id="{{ $prompt->category_id }}"
 data-field-summary="{{ $prompt->summary }}" data-field-content="{{ $prompt->content }}"
@@ -33,13 +39,36 @@ data-field-featured-media-id="{{ $prompt->featured_media_id }}" data-field-price
 @endif
 @if($isAdmin && $prompt->status === 'pending')
 <form method="post" action="{{ route('dashboard.prompts.moderate',$prompt) }}">@csrf<input type="hidden" name="decision" value="approve"><button type="submit">Approve & publish</button></form>
-<form method="post" action="{{ route('dashboard.prompts.moderate',$prompt) }}">@csrf<input type="hidden" name="decision" value="reject"><button type="submit">Reject submission</button></form>
+<button type="button" data-modal-open="reject-prompt-{{ $prompt->id }}">Reject with feedback</button>
 @endif
 <form method="post" action="{{ route('account.prompts.destroy',$prompt) }}" data-confirm="Delete this prompt? Existing customer orders prevent deletion.">@csrf @method('DELETE')<button type="submit" class="danger">Delete prompt</button></form>
 </template></td></tr>
 @empty<tr><td colspan="8" class="empty">No prompts found. Use New prompt to create one.</td></tr>@endforelse
 </tbody></table></div>
 @include('partials.pagination',['paginator'=>$prompts])
+@foreach($prompts as $prompt)
+@if($isAdmin && $prompt->status === 'pending')
+<dialog id="reject-prompt-{{ $prompt->id }}">
+<div class="modal-head"><h2>Return prompt for revision</h2><button class="icon-btn" type="button" data-modal-close aria-label="Close">✕</button></div>
+<form method="post" action="{{ route('dashboard.prompts.moderate', $prompt) }}">
+@csrf
+<input type="hidden" name="decision" value="reject">
+<div class="modal-content stack">
+<p><strong>{{ $prompt->title }}</strong></p>
+<div class="field-group">
+<label for="review-note-{{ $prompt->id }}">Feedback for creator</label>
+<textarea id="review-note-{{ $prompt->id }}" name="review_note" class="field" minlength="10" maxlength="1200" rows="5" required placeholder="Explain what needs to change before this prompt can be approved."></textarea>
+<span class="muted tiny">Required: 10–1,200 characters. The creator can read this privately and resubmit.</span>
+</div>
+</div>
+<div class="modal-foot">
+<button type="button" class="btn" data-modal-close>Cancel</button>
+<button type="submit" class="btn danger">Return for revision</button>
+</div>
+</form>
+</dialog>
+@endif
+@endforeach
 <dialog id="prompt-modal">
 <div class="modal-head"><h2><span data-modal-mode>Create</span> prompt</h2><button class="icon-btn" type="button" data-modal-close aria-label="Close">✕</button></div>
 <form method="post" action="{{ route('account.prompts.store') }}" data-resource-form data-create-url="{{ route('account.prompts.store') }}">@csrf <input type="hidden" name="_method" value="PUT" disabled>

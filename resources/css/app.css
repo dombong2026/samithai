@@ -7,3 +7,11 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Creator moderation feedback: visible only within protected workspaces. */
+.prompt-review-feedback{max-width:270px;margin-top:7px}
+.prompt-review-feedback summary{cursor:pointer;color:var(--secondary);font-size:12px;font-weight:700}
+.prompt-review-feedback p{margin:8px 0 0;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--muted)}
+.prompt-review-event{padding:15px 0;border-top:1px solid var(--line)}
+.prompt-review-event:first-of-type{border-top:0}
+.prompt-review-note{margin:10px 0 0;padding:11px 13px;background:var(--soft);border-radius:10px;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}

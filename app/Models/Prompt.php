@@ -33,6 +33,16 @@ class Prompt extends Model
 
     public function featuredMedia() { return $this->belongsTo(MediaAsset::class, 'featured_media_id'); }
 
+    public function reviewEvents()
+    {
+        return $this->hasMany(PromptReview::class);
+    }
+
+    public function latestReview()
+    {
+        return $this->hasOne(PromptReview::class)->latestOfMany();
+    }
+
     public function isFree(): bool
     {
         return (float) $this->price === 0.0;

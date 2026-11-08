@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/account/prompts/{prompt}', [PromptController::class, 'update'])->name('account.prompts.update');
     Route::delete('/account/prompts/{prompt}', [PromptController::class, 'destroy'])->name('account.prompts.destroy');
     Route::post('/account/prompts/{prompt}/submit', [PromptController::class, 'submit'])->middleware(RequireVerifiedEmailWhenEnabled::class)->name('account.prompts.submit');
+    Route::get('/account/prompts/{prompt}/reviews', [PromptController::class, 'reviewHistory'])->name('account.prompts.reviews');
 
     Route::get('/account/orders', [FinanceController::class, 'index'])->name('account.orders');
     Route::get('/dashboard/users', [UsersController::class, 'index'])->name('dashboard.users');

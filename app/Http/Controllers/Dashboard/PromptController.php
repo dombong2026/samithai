@@ -9,6 +9,7 @@ use App\Models\Prompt;
 use App\Models\MediaAsset;
 use App\Support\AuditTrail;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -34,7 +35,7 @@ class PromptController extends Controller
         if ($request->routeIs('dashboard.prompts')) {
             abort_unless($isAdmin, 403);
         }
-        $query = Prompt::with(['category', 'user']);
+        $query = Prompt::with(['category', 'user', 'latestReview'])->withCount('reviewEvents');
         if (! $isAdmin || $request->routeIs('account.prompts')) {
             $query->where('user_id', $request->user()->id);
         }
@@ -111,25 +112,68 @@ class PromptController extends Controller
     {
         $this->authorizeCreator();
         $this->authorizePrompt($prompt);
-        abort_unless(in_array($prompt->status, ['draft', 'rejected'], true), 422);
-        $prompt->update(['status' => 'pending', 'published_at' => null]);
-        AuditTrail::record(request(), 'prompt.submit', $prompt);
+
+        DB::transaction(function () use ($prompt): void {
+            $locked = Prompt::whereKey($prompt->id)->lockForUpdate()->firstOrFail();
+            $this->authorizePrompt($locked);
+            abort_unless(in_array($locked->status, ['draft', 'rejected'], true), 422);
+
+            $locked->update(['status' => 'pending', 'published_at' => null]);
+            $locked->reviewEvents()->create([
+                'actor_id' => auth()->id(),
+                'action' => 'submitted',
+            ]);
+            AuditTrail::record(request(), 'prompt.submit', $locked);
+        });
 
         return back()->with('success', 'Prompt submitted for administrator review.');
     }
 
+    public function reviewHistory(Request $request, Prompt $prompt): View
+    {
+        $this->authorizeCreator();
+        $this->authorizePrompt($prompt);
+
+        return view('dashboard.prompt-reviews', [
+            'prompt' => $prompt,
+            'reviews' => $prompt->reviewEvents()->with('actor:id,name')->latest('id')
+                ->paginate(20),
+        ]);
+    }
+
     public function moderate(Request $request, Prompt $prompt): RedirectResponse
     {
-        abort_unless($request->user()->isAdmin(), 403);
-        $data = $request->validate(['decision' => ['required', 'in:approve,reject']]);
-        abort_unless($prompt->status === 'pending', 422);
-        $approve = $data['decision'] === 'approve';
-        $prompt->update([
-            'status' => $approve ? 'published' : 'rejected',
-            'published_at' => $approve ? now() : null,
+        abort_unless($request->user()?->isAdmin(), 403);
+        $data = $request->validate([
+            'decision' => ['required', 'in:approve,reject'],
+            'review_note' => [
+                Rule::requiredIf(fn () => $request->input('decision') === 'reject'),
+                'nullable', 'string', 'min:10', 'max:1200',
+            ],
         ]);
 
-        AuditTrail::record($request, 'prompt.moderate', $prompt, ['decision' => $data['decision']]);
-        return back()->with('success', $approve ? 'Prompt published.' : 'Prompt returned to creator.');
+        $approve = $data['decision'] === 'approve';
+        $note = trim((string) ($data['review_note'] ?? ''));
+        DB::transaction(function () use ($prompt, $request, $approve, $note): void {
+            $locked = Prompt::whereKey($prompt->id)->lockForUpdate()->firstOrFail();
+            abort_unless($locked->status === 'pending', 422);
+
+            $locked->update([
+                'status' => $approve ? 'published' : 'rejected',
+                'published_at' => $approve ? now() : null,
+            ]);
+            $locked->reviewEvents()->create([
+                'actor_id' => $request->user()->id,
+                'action' => $approve ? 'approved' : 'rejected',
+                'note' => $note !== '' ? $note : null,
+            ]);
+            AuditTrail::record($request, 'prompt.moderate', $locked, [
+                'decision' => $approve ? 'approve' : 'reject',
+            ]);
+        });
+
+        return back()->with('success', $approve
+            ? 'Prompt published.'
+            : 'Prompt returned to the creator with written review feedback.');
     }
 }
