@@ -21,3 +21,5 @@ The additive 2026_11_09_000100_create_prompt_reviews.php migration creates the p
 This feature is committed to GitHub main, not automatically deployed. A live installation requires the additive migration and updated source/templates. Take and verify an off-host production backup before migrating. Do not run migrate:fresh or overwrite .env. Paid checkout remains disabled.
 
 Outstanding: real payment onboarding, SMTP, full translations, legal counsel, external backup restoration, physical-device testing and independent hosting acceptance.
+
+Review records are included in the operator recovery inventory v3; a review-note content change invalidates the keyed digest without exposing note text.

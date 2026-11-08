@@ -44,6 +44,34 @@ class RecoveryOperationsTest extends TestCase
         $this->assertContains('users.content_hmac_sha256', RecoveryInventory::differences($before, $after));
     }
 
+    public function test_recovery_inventory_detects_tampering_with_private_creator_review_notes(): void
+    {
+        $creator = User::factory()->create();
+        $reviewer = User::factory()->create();
+        $category = \App\Models\Category::create([
+            'name' => 'QA', 'slug' => 'qa', 'is_active' => true,
+        ]);
+        $prompt = \App\Models\Prompt::create([
+            'user_id' => $creator->id, 'category_id' => $category->id,
+            'title' => 'QA prompt', 'slug' => 'qa-prompt',
+            'summary' => 'Recovery check', 'content' => 'PROTECTED_PROMPT_CONTENT',
+            'status' => 'rejected', 'price' => 0, 'license_type' => 'regular',
+        ]);
+        $review = \App\Models\PromptReview::create([
+            'prompt_id' => $prompt->id, 'actor_id' => $reviewer->id,
+            'action' => 'rejected', 'note' => 'Please add more detailed examples.',
+        ]);
+        $before = RecoveryInventory::capture();
+
+        $review->update(['note' => 'Maliciously replaced reviewer instructions.']);
+        $after = RecoveryInventory::capture();
+
+        $this->assertSame($before['tables']['prompt_reviews']['count'], $after['tables']['prompt_reviews']['count']);
+        $this->assertSame($before['tables']['prompt_reviews']['id_sha256'], $after['tables']['prompt_reviews']['id_sha256']);
+        $this->assertContains('prompt_reviews.content_hmac_sha256', RecoveryInventory::differences($before, $after));
+        $this->assertStringNotContainsString('Maliciously replaced', json_encode($after));
+    }
+
     public function test_recovery_inventory_detects_missing_and_changed_private_media(): void
     {
         Storage::fake('local');

@@ -15,10 +15,10 @@ use RuntimeException;
  */
 final class RecoveryInventory
 {
-    public const FORMAT = 'samith-recovery-inventory/v2';
+    public const FORMAT = 'samith-recovery-inventory/v3';
 
     private const TABLES = [
-        'users', 'categories', 'prompts', 'orders', 'order_items',
+        'users', 'categories', 'prompts', 'prompt_reviews', 'orders', 'order_items',
         'prompt_entitlements', 'legal_versions', 'legal_acceptances',
         'media_assets', 'content_entries', 'audit_events',
         'payment_transactions', 'migrations',
@@ -29,6 +29,7 @@ final class RecoveryInventory
         'users' => ['id', 'name', 'email', 'role'],
         'categories' => ['id', 'name', 'slug', 'is_active'],
         'prompts' => ['id', 'user_id', 'category_id', 'title', 'content', 'price', 'status', 'license_type'],
+        'prompt_reviews' => ['id', 'prompt_id', 'actor_id', 'action', 'note', 'created_at'],
         'orders' => ['id', 'user_id', 'number', 'status', 'currency', 'total'],
         'order_items' => ['id', 'order_id', 'prompt_id', 'content_snapshot', 'unit_price', 'license_type'],
         'prompt_entitlements' => ['id', 'user_id', 'prompt_id', 'order_id', 'content_snapshot', 'license_type'],

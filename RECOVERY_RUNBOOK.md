@@ -63,3 +63,7 @@ Keep SAMITH_PAYMENTS_ENABLED=false; external payment, SMTP, legal, translation a
 Record: environment, host, release Git SHA, package SHA-256, operator, date, backup location and integrity manifest, restore DB name, media integrity result, migration check, worker acceptance, recovery time, failed checks, remediation and signoff.
 
 No production deployment is permitted solely because CI passed.
+
+## Review history backup integrity
+
+The recovery inventory v3 includes the new prompt_reviews table and a keyed content HMAC for reviewer notes, actors, actions and timestamps. A database clone restored from an older release must be migrated and get a new baseline before comparisons. Earlier v2 inventories intentionally fail format compatibility rather than falsely claiming review-history coverage.
