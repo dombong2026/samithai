@@ -1,5 +1,5 @@
 <!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-@include('partials.branding-head')<title>Install Samith AI</title><link rel="stylesheet" href="{{ asset('assets/app.css') }}"><script defer src="{{ asset('assets/app.js') }}"></script></head><body>
+@include('partials.branding-head')<title>Install Samith AI</title><link rel="stylesheet" href="{{ asset('assets/app.css') }}?v={{ filemtime(public_path('assets/app.css')) }}"><script defer src="{{ asset('assets/app.js') }}"></script></head><body>
 <main class="auth-screen" style="display:block"><div class="container" style="max-width:850px;padding:35px 0">
 <div class="flex between wrap" style="margin-bottom:24px">@include('partials.brand', ['href' => route('home'), 'uninstalled' => true])<button class="btn" type="button" data-theme-toggle>Light / dark</button></div>
 <div class="eyebrow">First-time setup · v0.0.1</div><h1>Install Samith AI</h1><p>Complete the setup once. The installer locks automatically after the administrator account is created.</p>
