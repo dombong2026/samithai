@@ -55,7 +55,7 @@ jobs:
           php artisan migrate:status
       - name: Install browser dependencies
         run: |
-          npm install --ignore-scripts
+          npm ci --ignore-scripts
           npm install --no-save @playwright/test@^1.56
           npx playwright install chromium --with-deps
       - name: Desktop and mobile browser smoke

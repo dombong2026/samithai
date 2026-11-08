@@ -21,11 +21,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Confirm tracked dependency lockfiles
+        run: test -s composer.lock && test -s package-lock.json
       - name: Install runtime dependencies
         run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
       - name: Compile production frontend assets
         run: |
-          npm install --ignore-scripts
+          npm ci --ignore-scripts
           npm run build
       - name: Assemble protected customer package
         run: |

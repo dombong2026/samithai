@@ -42,4 +42,4 @@ Do not deploy to samithai.com or enable real payments on the strength of GitHub 
 - Versioned legal terms require an operator-recorded external approval reference. This does not certify external professional legal review.
 - Source content has reviewable translations, but the 13 languages have not received complete native-language validation.
 - GitHub CI fresh-installs to a disposable MySQL DB, yet real cPanel, aaPanel, recovery, backups and physical devices remain untested.
-- Reproducible dependency lockfiles and independent package supply-chain verification remain release requirements.
+- Composer and npm dependency lockfiles are now committed, while independent dependency supply-chain assessment and customer package verification remain release requirements.

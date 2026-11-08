@@ -19,6 +19,8 @@ jobs:
           php-version: '8.4'
           extensions: mbstring, dom, fileinfo, pdo_sqlite, sqlite3, xml, openssl
           coverage: none
+      - name: Confirm locked Composer and npm manifests
+        run: test -s composer.lock && test -s package-lock.json
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
       - name: Runtime dependency security advisory audit
@@ -38,5 +40,5 @@ jobs:
         run: php artisan test
       - name: Build Tailwind assets
         run: |
-          npm install --ignore-scripts
+          npm ci --ignore-scripts
           npm run build
