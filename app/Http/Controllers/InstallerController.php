@@ -32,6 +32,13 @@ class InstallerController extends Controller
         ];
     }
 
+    private function installError(Request $request, string $field, string $message): RedirectResponse
+    {
+        return back()->withErrors([$field => $message])->withInput($request->only([
+            'app_url', 'db_host', 'db_port', 'db_database', 'db_username', 'admin_name', 'admin_email',
+        ]));
+    }
+
     public function show(): View
     {
         return view('installer.show', ['requirements' => $this->requirements()]);
@@ -56,16 +63,16 @@ class InstallerController extends Controller
 
         $actualToken = (string) env('INSTALL_TOKEN', '');
         if ($actualToken === '' || ! hash_equals($actualToken, $data['installation_token'])) {
-            return back()->withErrors(['installation_token' => 'Invalid installation token.'])->exceptInput('db_password', 'admin_password');
+            return $this->installError($request, 'installation_token', 'Invalid installation token.');
         }
 
         if (in_array(false, $this->requirements(), true)) {
-            return back()->withErrors(['requirements' => 'Fix the server requirements before continuing.'])->exceptInput('db_password', 'admin_password');
+            return $this->installError($request, 'requirements', 'Fix the server requirements before continuing.');
         }
 
         $lock = fopen(storage_path('app/installing.lock'), 'c+');
         if (! $lock || ! flock($lock, LOCK_EX)) {
-            return back()->withErrors(['installer' => 'Installer is busy. Try again.']);
+            return $this->installError($request, 'installer', 'Installer is busy. Try again.');
         }
 
         try {
@@ -87,11 +94,11 @@ class InstallerController extends Controller
                 // This flow is ONLY for new sites. Existing tables (even without users)
                 // may belong to another application or a partially interrupted install.
                 if (DB::connection('mysql')->select('SHOW TABLES') !== []) {
-                    return back()->withErrors(['db_database' => 'A fresh install requires a completely empty MySQL database. Never reuse or overwrite existing tables.']);
+                    return $this->installError($request, 'db_database', 'A fresh install requires a completely empty MySQL database. Never reuse or overwrite existing tables.');
                 }
             } catch (Throwable $e) {
                 report($e);
-                return back()->withErrors(['db_database' => 'Unable to connect to the MySQL database. Check the database and user permissions.']);
+                return $this->installError($request, 'db_database', 'Unable to connect to the MySQL database. Check the database and user permissions.');
             }
 
             try {
@@ -109,7 +116,7 @@ class InstallerController extends Controller
                 }
             } catch (Throwable $e) {
                 report($e);
-                return back()->withErrors(['installer' => 'Migration or administrator creation failed. Check server logs before retrying.']);
+                return $this->installError($request, 'installer', 'Migration or administrator creation failed. Check server logs before retrying.');
             }
 
             $path = base_path('.env');
@@ -142,11 +149,11 @@ class InstallerController extends Controller
             }
 
             if (file_put_contents($path, $contents, LOCK_EX) === false) {
-                return back()->withErrors(['installer' => 'Database was initialized, but saving .env failed. Restore writable permissions before retrying.']);
+                return $this->installError($request, 'installer', 'Database was initialized, but saving .env failed. Restore writable permissions before retrying.');
             }
             @chmod($path, 0600);
             if (file_put_contents(storage_path('app/installed.lock'), now()->toIso8601String(), LOCK_EX) === false) {
-                return back()->withErrors(['installer' => 'Database was initialized, but installation lock could not be written.']);
+                return $this->installError($request, 'installer', 'Database was initialized, but installation lock could not be written.');
             }
 
             return redirect()->route('login')->with('success', 'Samith AI installed. Sign in with your administrator account.');
