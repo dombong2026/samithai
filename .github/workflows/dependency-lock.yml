@@ -1,0 +1,68 @@
+name: Resolve and verify dependency lockfiles
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dependency-lock.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: samith-dependency-lockfiles
+  cancel-in-progress: false
+
+jobs:
+  resolve-lockfiles:
+    name: Generate, test and commit pinned dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, fileinfo, pdo_sqlite, sqlite3, pdo_mysql, xml, openssl
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Resolve Composer packages without running project scripts
+        run: composer update --prefer-dist --no-interaction --no-progress --no-scripts
+      - name: Resolve npm packages without running install scripts
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Assert that manifests were not modified
+        run: |
+          git diff --exit-code -- composer.json package.json
+          test -s composer.lock
+          test -s package-lock.json
+      - name: Audit locked Composer production packages
+        run: composer audit --no-dev
+      - name: Reinstall from generated Composer and npm locks
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress
+          npm ci --ignore-scripts --no-audit --no-fund
+      - name: Validate pinned build and Laravel regression suite
+        run: |
+          cp .env.example .env
+          touch database/database.sqlite
+          php artisan key:generate
+          php artisan migrate --force
+          php artisan test
+          npm run build
+      - name: Commit verified dependency lockfiles to main
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add composer.lock package-lock.json
+          if git diff --cached --quiet; then
+            echo 'LOCKFILES_UNCHANGED'
+            exit 0
+          fi
+          git commit -m 'build(deps): track verified Composer and npm lockfiles'
+          git push origin HEAD:main
