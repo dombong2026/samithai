@@ -24,6 +24,7 @@ class MarketplaceController extends Controller
             'q' => ['nullable', 'string', 'max:100'],
             'category' => ['nullable', 'string', 'max:120'],
             'price' => ['nullable', 'in:free,paid'],
+            'sort' => ['nullable', 'in:newest,oldest,title_az,price_asc,price_desc'],
         ]);
 
         $query = Prompt::published()->with(['category', 'user']);
@@ -42,8 +43,26 @@ class MarketplaceController extends Controller
             $query->where('price', '>', 0);
         }
 
+        $sort = $data['sort'] ?? 'newest';
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('published_at')->orderBy('id');
+                break;
+            case 'title_az':
+                $query->orderBy('title')->orderBy('id');
+                break;
+            case 'price_asc':
+                $query->orderBy('price')->orderByDesc('published_at')->orderByDesc('id');
+                break;
+            case 'price_desc':
+                $query->orderByDesc('price')->orderByDesc('published_at')->orderByDesc('id');
+                break;
+            default:
+                $query->orderByDesc('published_at')->orderByDesc('id');
+        }
+
         return view('marketplace.index', [
-            'prompts' => $query->latest('published_at')->paginate(12)->withQueryString(),
+            'prompts' => $query->paginate(12)->withQueryString(),
             'categories' => Category::where('is_active', true)->orderBy('name')->get(),
         ]);
     }

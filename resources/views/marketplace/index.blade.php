@@ -8,6 +8,13 @@
 <label class="sr-only" for="category">Category</label><select id="category" name="category"><option value="">All categories</option>
 @foreach($categories as $cat)<option value="{{ $cat->slug }}" @selected(request('category') === $cat->slug)>{{ $cat->name }}</option>@endforeach</select>
 <label class="sr-only" for="price">Price</label><select id="price" name="price"><option value="">All prices</option><option value="free" @selected(request('price') === 'free')>Free</option><option value="paid" @selected(request('price') === 'paid')>Paid</option></select>
+<label class="sr-only" for="sort">Sort prompts</label><select id="sort" name="sort" aria-label="Sort prompts">
+<option value="newest" @selected(request('sort', 'newest') === 'newest')>Newest first</option>
+<option value="oldest" @selected(request('sort') === 'oldest')>Oldest first</option>
+<option value="title_az" @selected(request('sort') === 'title_az')>Title A–Z</option>
+<option value="price_asc" @selected(request('sort') === 'price_asc')>Price: low to high</option>
+<option value="price_desc" @selected(request('sort') === 'price_desc')>Price: high to low</option>
+</select>
 <button class="btn primary" type="submit">Search & filter</button><a class="btn" href="{{ route('prompts.index') }}">Clear</a>
 </form>
 @if($prompts->isEmpty())<div class="panel empty"><h3>No matching prompts</h3><p>Try a different keyword or filter.</p></div>
