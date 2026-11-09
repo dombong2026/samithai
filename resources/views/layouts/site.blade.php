@@ -25,6 +25,7 @@
 @auth
 @if(auth()->user()->isAdmin())<a href="{{ route('dashboard') }}">Admin dashboard</a>@endif
 <a href="{{ route('account') }}">{{ __('ui.account') }}</a><a href="{{ route('account.library') }}">{{ __('ui.library') }}</a>
+<a href="{{ route('account.saved') }}">Saved prompts</a>
 <a href="{{ route('account.settings') }}">{{ __('ui.settings') }}</a>
 @else
 <a href="{{ route('login') }}">{{ __('ui.login') }}</a><a href="{{ route('register') }}">{{ __('ui.register') }}</a>

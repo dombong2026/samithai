@@ -29,6 +29,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(PromptEntitlement::class);
     }
 
+    public function savedPrompts()
+    {
+        return $this->belongsToMany(Prompt::class, 'prompt_saves')->withTimestamps();
+    }
+
     public function cartItems()
     {
         return $this->hasMany(CartItem::class);

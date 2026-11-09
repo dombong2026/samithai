@@ -43,6 +43,31 @@ class Prompt extends Model
         return $this->hasOne(PromptReview::class)->latestOfMany();
     }
 
+    public function savers()
+    {
+        return $this->belongsToMany(User::class, 'prompt_saves')->withTimestamps();
+    }
+
+    public function entitlements()
+    {
+        return $this->hasMany(PromptEntitlement::class);
+    }
+
+    /**
+     * Adds one viewer-specific save flag with a correlated subquery.
+     * No lookup runs for unauthenticated visitors.
+     */
+    public function scopeWithViewerSave($query, ?int $viewerId)
+    {
+        if ($viewerId !== null) {
+            $query->withExists([
+                'savers as is_saved' => fn ($users) => $users->where('users.id', $viewerId),
+            ]);
+        }
+
+        return $query;
+    }
+
     public function isFree(): bool
     {
         return (float) $this->price === 0.0;

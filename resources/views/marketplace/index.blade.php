@@ -10,6 +10,7 @@
 <label class="sr-only" for="price">Price</label><select id="price" name="price"><option value="">All prices</option><option value="free" @selected(request('price') === 'free')>Free</option><option value="paid" @selected(request('price') === 'paid')>Paid</option></select>
 <label class="sr-only" for="sort">Sort prompts</label><select id="sort" name="sort" aria-label="Sort prompts">
 <option value="newest" @selected(request('sort', 'newest') === 'newest')>Newest first</option>
+<option value="most_saved" @selected(request('sort') === 'most_saved')>Most saved</option>
 <option value="oldest" @selected(request('sort') === 'oldest')>Oldest first</option>
 <option value="title_az" @selected(request('sort') === 'title_az')>Title A–Z</option>
 <option value="price_asc" @selected(request('sort') === 'price_asc')>Price: low to high</option>

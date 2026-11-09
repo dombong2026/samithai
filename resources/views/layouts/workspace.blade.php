@@ -38,9 +38,11 @@
 <a class="side-link {{ request()->routeIs('account.orders') ? 'active' : '' }}" href="{{ route('account.orders') }}">{{ __('account.my_orders') }}</a>
 <a class="side-link {{ request()->routeIs('account.support') ? 'active' : '' }}" href="{{ route('account.support') }}">{{ __('account.support_tickets') }}</a>
 <a class="side-link {{ request()->routeIs('account.library*') ? 'active' : '' }}" href="{{ route('account.library') }}">My library</a>
+<a class="side-link {{ request()->routeIs('account.saved') ? 'active' : '' }}" href="{{ route('account.saved') }}">Saved prompts</a>
 @if(auth()->user()->isCreator())
 <a class="side-link {{ request()->routeIs('account.media') ? 'active' : '' }}" href="{{ route('account.media') }}">{{ __('account.my_media') }}</a>
 <a class="side-link {{ request()->routeIs('account.prompts*') ? 'active' : '' }}" href="{{ route('account.prompts') }}">{{ __('account.my_prompts') }}</a>
+<a class="side-link {{ request()->routeIs('account.creator.insights') ? 'active' : '' }}" href="{{ route('account.creator.insights') }}">Creator insights</a>
 @endif
 <a class="side-link {{ request()->routeIs('cart.*') ? 'active' : '' }}" href="{{ route('cart.index') }}">My cart</a>
 <a class="side-link {{ request()->routeIs('account.settings*') ? 'active' : '' }}" href="{{ route('account.settings') }}">{{ __('account.account_settings') }}</a>

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\SavedPromptController;
+use App\Http\Controllers\CreatorInsightsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthSecurityController;
 use App\Http\Controllers\Dashboard\LegalController;
@@ -81,6 +83,10 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/account', [AccountController::class, 'index'])->name('account');
     Route::get('/account/library', [AccountController::class, 'library'])->name('account.library');
+    Route::get('/account/saved', [SavedPromptController::class, 'index'])->name('account.saved');
+    Route::get('/account/creator/insights', [CreatorInsightsController::class, 'index'])->name('account.creator.insights');
+    Route::post('/prompts/{prompt}/save', [SavedPromptController::class, 'store'])->middleware('throttle:30,1')->name('prompts.save');
+    Route::delete('/prompts/{prompt}/save', [SavedPromptController::class, 'destroy'])->middleware('throttle:30,1')->name('prompts.unsave');
     Route::get('/account/library/{prompt:slug}', [AccountController::class, 'purchasedPrompt'])->name('account.library.show');
     Route::get('/account/settings', [AccountController::class, 'settings'])->name('account.settings');
     Route::put('/account/settings', [AccountController::class, 'saveSettings'])->name('account.settings.update');

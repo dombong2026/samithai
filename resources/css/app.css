@@ -15,3 +15,12 @@
 .prompt-review-event{padding:15px 0;border-top:1px solid var(--line)}
 .prompt-review-event:first-of-type{border-top:0}
 .prompt-review-note{margin:10px 0 0;padding:11px 13px;background:var(--soft);border-radius:10px;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* Saved prompts: icon-only and unobtrusive on catalog cards. */
+.prompt-card{position:relative}
+.prompt-save-form{position:absolute;top:10px;right:10px;z-index:2;margin:0}
+.save-toggle{position:absolute;top:10px;right:10px;z-index:2;width:35px;height:35px;display:grid;place-items:center;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--muted);font-size:23px;line-height:1;box-shadow:0 3px 12px rgba(15,25,40,.12);text-decoration:none}
+.prompt-save-form .save-toggle{position:static}
+.save-toggle:hover,.save-toggle:focus-visible,.save-toggle.is-saved{color:var(--primary);border-color:var(--primary)}
+.save-toggle.is-saved{background:var(--soft)}
+@media(max-width:760px){.save-toggle{width:33px;height:33px}}

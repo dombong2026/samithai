@@ -14,6 +14,7 @@ class MarketplaceController extends Controller
         return view('marketplace.home', [
             'categories' => Category::where('is_active', true)->orderBy('name')->get(),
             'prompts' => Prompt::published()->with(['category', 'user', 'featuredMedia'])
+                ->withViewerSave(auth()->id())
                 ->latest('published_at')->take(12)->get(),
         ]);
     }
@@ -24,10 +25,11 @@ class MarketplaceController extends Controller
             'q' => ['nullable', 'string', 'max:100'],
             'category' => ['nullable', 'string', 'max:120'],
             'price' => ['nullable', 'in:free,paid'],
-            'sort' => ['nullable', 'in:newest,oldest,title_az,price_asc,price_desc'],
+            'sort' => ['nullable', 'in:newest,oldest,title_az,price_asc,price_desc,most_saved'],
         ]);
 
-        $query = Prompt::published()->with(['category', 'user']);
+        $query = Prompt::published()->with(['category', 'user', 'featuredMedia'])
+            ->withViewerSave(auth()->id());
         if (filled($data['q'] ?? null)) {
             $query->where(function ($builder) use ($data): void {
                 $builder->where('title', 'like', '%'.$data['q'].'%')
@@ -45,6 +47,10 @@ class MarketplaceController extends Controller
 
         $sort = $data['sort'] ?? 'newest';
         switch ($sort) {
+            case 'most_saved':
+                $query->withCount('savers')->orderByDesc('savers_count')
+                    ->orderByDesc('published_at')->orderByDesc('id');
+                break;
             case 'oldest':
                 $query->orderBy('published_at')->orderBy('id');
                 break;
@@ -74,6 +80,7 @@ class MarketplaceController extends Controller
         return view('marketplace.category', [
             'category' => $category,
             'prompts' => $category->prompts()->published()->with(['user','featuredMedia'])
+                ->withViewerSave(auth()->id())
                 ->latest('published_at')->paginate(12),
         ]);
     }
@@ -83,7 +90,8 @@ class MarketplaceController extends Controller
         abort_unless($prompt->status === 'published', 404);
 
         return view('marketplace.show', [
-            'prompt' => $prompt->load(['category', 'user']),
+            'prompt' => $prompt->load(['category', 'user', 'featuredMedia']),
+            'saved' => auth()->check() && auth()->user()->savedPrompts()->whereKey($prompt->id)->exists(),
             'owned' => auth()->check() && (
                 auth()->user()->isAdmin() ||
                 $prompt->user_id === auth()->id() ||

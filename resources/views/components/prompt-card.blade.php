@@ -1,4 +1,13 @@
 <article class="prompt-card">
+@if(auth()->check())
+<form method="post" action="{{ ($prompt->is_saved ?? false) ? route('prompts.unsave', $prompt) : route('prompts.save', $prompt) }}" class="prompt-save-form" aria-label="Saved prompts">
+@csrf
+@if($prompt->is_saved ?? false) @method('DELETE') @endif
+<button class="save-toggle {{ ($prompt->is_saved ?? false) ? 'is-saved' : '' }}" type="submit" aria-label="{{ ($prompt->is_saved ?? false) ? 'Remove from saved prompts' : 'Save prompt for later' }}" title="{{ ($prompt->is_saved ?? false) ? 'Remove saved prompt' : 'Save for later' }}">{{ ($prompt->is_saved ?? false) ? '♥' : '♡' }}</button>
+</form>
+@else
+<a class="save-toggle" href="{{ route('login') }}" aria-label="Sign in to save this prompt" title="Sign in to save">♡</a>
+@endif
 <a class="prompt-art" href="{{ route('prompts.show', $prompt) }}" aria-label="View {{ $prompt->title }}">@if($prompt->featuredMedia?->kind === 'image')
 <img src="{{ route('media.serve', $prompt->featuredMedia) }}" alt="{{ $prompt->title }}" loading="lazy" style="width:100%;height:100%;object-fit:cover">
 @elseif($prompt->featuredMedia?->kind === 'color')

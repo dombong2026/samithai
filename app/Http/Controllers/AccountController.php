@@ -22,6 +22,7 @@ class AccountController extends Controller
         return view('account.index', [
             'libraryCount' => $user->entitlements()->count(),
             'cartCount' => $user->cartItems()->count(),
+            'savedCount' => $user->savedPrompts()->where('status', 'published')->count(),
             'ordersCount' => $user->isAdmin() ? 0 : \App\Models\Order::where('user_id', $user->id)->count(),
             'promptsCount' => $user->prompts()->count(),
         ]);
