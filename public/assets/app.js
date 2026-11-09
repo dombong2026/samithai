@@ -263,7 +263,7 @@
   const sidebar = document.getElementById('workspace-sidebar');
   const toggle = document.querySelector('[data-workspace-sidebar-toggle]');
   const storageKey = 'samith-workspace-sidebar-hidden';
-  const setSidebarHidden = (hidden) => {
+  const setSidebarHidden = (hidden, revealMobileNavigation = false) => {
     workspace.classList.toggle('workspace-sidebar-hidden', hidden);
     if (toggle) {
       toggle.setAttribute('aria-expanded', String(!hidden));
@@ -271,7 +271,7 @@
       toggle.title = hidden ? 'Show sidebar' : 'Hide sidebar';
     }
     if (sidebar) sidebar.setAttribute('aria-hidden', String(hidden));
-    if (!hidden && matchMedia('(max-width:760px)').matches) {
+    if (!hidden && revealMobileNavigation && matchMedia('(max-width:760px)').matches) {
       const mobileNav = sidebar?.querySelector('[data-workspace-mobile-nav]');
       if (mobileNav) mobileNav.open = true;
     }
@@ -281,7 +281,7 @@
   setSidebarHidden(savedSidebar);
   toggle?.addEventListener('click', () => {
     const next = !workspace.classList.contains('workspace-sidebar-hidden');
-    setSidebarHidden(next);
+    setSidebarHidden(next, !next);
     try { localStorage.setItem(storageKey, next ? '1' : '0'); } catch {}
   });
 
