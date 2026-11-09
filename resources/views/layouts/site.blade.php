@@ -10,12 +10,13 @@
 <script defer src="{{ asset('assets/app.js') }}"></script>
 </head>
 <body>
-<div class="top-strip"><div class="container"><span>{{ __('ui.top') }}</span><span>Samith AI Marketplace</span></div></div>
+@php($shellCopy = \App\Support\FrontendPageCopy::values('shell'))
+<div class="top-strip"><div class="container"><span>{{ __('ui.top') }}</span><span>{{ $shellCopy['top_strip'] }}</span></div></div>
 <header class="main-header"><div class="container">
 @include('partials.brand', ['href' => route('home')])
 <form class="search-bar" action="{{ route('prompts.index') }}" method="get" role="search">
 <label class="sr-only" for="site-search">Search prompts</label>
-<input id="site-search" name="q" placeholder="{{ __('ui.search') }}" value="{{ request('q') }}">
+<input id="site-search" name="q" placeholder="{{ $shellCopy['search_placeholder'] }}" value="{{ request('q') }}">
 <button type="submit" aria-label="Search">⌕</button>
 </form>
 <div class="main-nav">
