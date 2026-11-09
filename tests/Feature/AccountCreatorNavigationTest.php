@@ -133,8 +133,8 @@ class AccountCreatorNavigationTest extends TestCase
             ->assertSee('Licensed library')
             ->assertSee('Saved prompts')
             ->assertSee('Order records')
-            ->assertSee('Library & saved')
-            ->assertSee('Help & settings');
+            ->assertSeeText('Library & saved')
+            ->assertSeeText('Help & settings');
         $xp = $this->xp($response->getContent());
         $this->assertCount(1, $xp->query('//main[contains(concat(" ", normalize-space(@class), " "), " workspace-body ")]//div[contains(concat(" ", normalize-space(@class), " "), " account-dashboard-premium ")]'));
         foreach ($xp->query('//nav[@aria-label="Account navigation"]//details[@data-nav-group]') as $details) {
