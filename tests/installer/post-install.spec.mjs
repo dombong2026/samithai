@@ -11,4 +11,24 @@ test('after process reload, the persisted MySQL admin can sign in and installer 
   await page.getByRole('button',{ name:'Sign in' }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole('heading',{ name:'Marketplace dashboard' })).toBeVisible();
+  const groups = page.locator('nav[aria-label="Administration navigation"] [data-nav-group]');
+  await expect(groups).toHaveCount(5);
+  const sidebarLinks = await page.locator('nav[aria-label="Administration navigation"] a[href]').evaluateAll(
+    links => links.map(a => a.getAttribute('href'))
+  );
+  expect(sidebarLinks.length).toBe(new Set(sidebarLinks).size);
+  const interest = page.locator('main.workspace-body #marketplace-interest');
+  await expect(interest).toBeVisible();
+  const insideMain = await interest.evaluate(element => Boolean(element.closest('main.workspace-body')));
+  expect(insideMain).toBe(true);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/dashboard');
+  const mobileMenu = page.locator('[data-workspace-mobile-nav]');
+  await expect(mobileMenu).toHaveJSProperty('open', false);
+  await page.locator('.workspace-nav-trigger').click();
+  await expect(mobileMenu).toHaveJSProperty('open', true);
+  const adminNav = page.locator('nav[aria-label="Administration navigation"]');
+  await expect(adminNav.getByRole('link', { name:'Overview' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(393);
 });
