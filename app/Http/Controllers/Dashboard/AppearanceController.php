@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\MediaAsset;
+use App\Models\ContentEntry;
+use App\Support\FrontendPageCopy;
 use App\Models\SiteSetting;
 use App\Support\AuditTrail;
 use Illuminate\Http\RedirectResponse;
@@ -28,8 +30,39 @@ class AppearanceController extends Controller
         $settings = [];
         foreach (self::DEFAULTS as $key => $default) $settings[$key] = SiteSetting::text($key,$default);
 
+
+        $filters = $request->validate(['page_q' => ['nullable', 'string', 'max:80']]);
+        $q = trim($filters['page_q'] ?? '');
+        $builtins = [];
+        foreach (FrontendPageCopy::definitions() as $key => $definition) {
+            if ($q !== '' && !str_contains(mb_strtolower($definition['name'].' '.$definition['path']), mb_strtolower($q))) {
+                continue;
+            }
+            $builtins[$key] = [
+                ...$definition,
+                'values' => FrontendPageCopy::values($key),
+                'customized' => FrontendPageCopy::hasCustomCopy($key),
+            ];
+        }
+        $managed = [
+            ['name' => 'Blog article detail', 'path' => '/blog/{slug}', 'manager' => 'posts', 'label' => 'Post Manager'],
+            ['name' => 'Published policy detail', 'path' => '/policies/{slug}', 'manager' => 'policies', 'label' => 'Policy Center'],
+            ['name' => 'Support article detail', 'path' => '/support-center/articles/{slug}', 'manager' => 'knowledge', 'label' => 'Knowledge Base'],
+        ];
+        if ($q !== '') {
+            $managed = array_values(array_filter($managed,
+                fn ($entry) => str_contains(mb_strtolower($entry['name'].' '.$entry['path']), mb_strtolower($q))));
+        }
+        $customPages = ContentEntry::where('kind', 'page')
+            ->when($q !== '', fn ($query) => $query->where('title', 'like', '%'.$q.'%'))
+            ->latest('id')->paginate(10, ['*'], 'custom_page')->withQueryString();
+
         return view('dashboard.appearance', [
             'settings' => $settings,
+            'frontendPages' => $builtins,
+            'managedPages' => $managed,
+            'customPages' => $customPages,
+            'pageSearch' => $q,
             'images' => MediaAsset::where('kind','image')->latest()->take(100)->get(),
         ]);
     }

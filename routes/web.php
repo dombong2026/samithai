@@ -26,6 +26,7 @@ use App\Http\Controllers\Dashboard\PlatformController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\Dashboard\UsersController;
 use App\Http\Controllers\Dashboard\AppearanceController;
+use App\Http\Controllers\Dashboard\FrontendPageController;
 
 Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
 Route::prefix('{locale}')->where(['locale'=>'en|zh|ko|ja|de|km|vi|th|id|ms|ar|fr|es'])->group(function (): void {
@@ -104,6 +105,8 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/dashboard/users/{user}/role', [UsersController::class, 'role'])->name('dashboard.users.role');
     Route::get('/dashboard/appearance', [AppearanceController::class, 'index'])->name('dashboard.appearance');
     Route::put('/dashboard/appearance', [AppearanceController::class, 'update'])->name('dashboard.appearance.update');
+    Route::put('/dashboard/appearance/frontend-pages/{page}', [FrontendPageController::class, 'update'])->name('dashboard.appearance.frontend.update');
+    Route::delete('/dashboard/appearance/frontend-pages/{page}', [FrontendPageController::class, 'reset'])->name('dashboard.appearance.frontend.reset');
 
     Route::get('/dashboard/legal', [LegalController::class,'index'])->name('dashboard.legal');
     Route::post('/dashboard/legal', [LegalController::class,'store'])->name('dashboard.legal.store');
