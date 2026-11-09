@@ -64,6 +64,10 @@ jobs:
         run: |
           php -r '$pdo=new PDO("mysql:host=127.0.0.1;port=3306","root","test_only_password"); $pdo->exec("CREATE DATABASE IF NOT EXISTS samith_installer CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"); $pdo->exec("CREATE DATABASE IF NOT EXISTS samith_occupied CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"); $pdo->exec("CREATE TABLE IF NOT EXISTS samith_occupied.legacy_records (id BIGINT PRIMARY KEY)");'
           rm -f storage/app/installed.lock
+          # Browser smoke exercises installer protection under the same 127.0.0.1 IP.
+          # Reset only the disposable CI cache so the first-install scenario does
+          # not inherit request-throttle counters from the preceding test suite.
+          php artisan cache:clear --no-ansi
       - name: First-install HTTP/Browser acceptance on empty MySQL
         run: npx playwright test --config=playwright.installer.config.mjs
       - name: Post-install browser sign-in after environment reload
