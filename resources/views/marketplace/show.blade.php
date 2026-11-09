@@ -3,7 +3,7 @@
 @section('content')
 @php($pageCopy = \App\Support\FrontendPageCopy::values('prompt'))
 <section class="section"><div class="container" style="max-width:1050px">
-<a class="btn small" href="{{ route('prompts.index') }}">{{ $pageCopy['back_cta'] }}</a>
+@if(\App\Support\FrontendPageAvailability::enabled('catalog'))<a class="btn small" href="{{ route('prompts.index') }}">{{ $pageCopy['back_cta'] }}</a>@endif
 <div class="panel" style="margin-top:20px">
 <div class="flex wrap"><span class="tag">{{ $prompt->category->name }}</span><span class="tag">{{ ucfirst($prompt->license_type) }} license</span></div>
 <h1 style="margin-top:17px">{{ $prompt->title }}</h1>

@@ -7,7 +7,9 @@
 <section class="section"><div class="container"><div class="flex between"><h2>{{ $pageCopy['articles_title'] }}</h2><span class="muted">{{ $articles->total() }} published articles</span></div>
 <div class="category-grid">
 @forelse($articles as $entry)
+@if(\App\Support\FrontendPageAvailability::enabled('support_detail'))
 <a href="{{ route('support.articles.show',$entry->slug) }}" class="panel stack"><h3>{{ $entry->title }}</h3><p>{{ $entry->excerpt }}</p><span class="muted">{{ $pageCopy['article_cta'] }}</span></a>
+@else<article class="panel stack"><h3>{{ $entry->title }}</h3><p>{{ $entry->excerpt }}</p></article>@endif
 @empty<div class="panel empty">{{ $pageCopy['empty_message'] }}</div>@endforelse
 </div><div class="table-foot">{{ $articles->links() }}</div></div></section>
 @endsection
