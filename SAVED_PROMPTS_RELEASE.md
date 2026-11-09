@@ -1,15 +1,19 @@
-# Samith AI — Saved Prompts production upgrade
+# Saved Prompts + Creator Insights — guarded aaPanel upgrade
 
-Latest feature source: `8c7ea259d8d817bc9861929f8a1c24dc861f6f5f` (saved prompts, private creator insights, most-saved sorting, admin overview, integrity v4).
+Target production installation: `samithai.com`, currently confirmed with prompt-review table, v3 recovery inventory and exact 16-file baseline. The operator has verified a fresh local AES-256 encrypted backup at `/root/SamithAI-Upgrade-Evidence/samithai-current-v3-20261109T062845Z.tar.gpg`, its matching SHA256 file and successful decryption before this upgrade. Offsite transfer and restoration remain unverified by explicit operator choice.
 
-## Read-only preflight
+## Scoped deployment
 
-After downloading `support/saved-insights-preflight.sh` from a pinned commit, run `bash -n` followed by `bash script --check`. This verifies the exact 16 existing source blobs, checks that the five new source files are absent, validates the already-installed prompt review migration and absence of the new prompt_saves table, and confirms a healthy current recovery inventory v3. No writes, migrations, backups or webserver changes are performed.
+Run `support/deploy-saved-insights.sh --check` first. A successful check only reads source hashes, checks MySQL state, encrypted backup SHA256 and current v3 recovery inventory. `--apply` independently re-runs those checks, verifies GitHub-sha-pinned files, creates a root-only backup of existing code, briefly enables maintenance, updates 16 existing source files and adds 5 new files, runs **only** `2026_11_09_020000_create_prompt_saves_table.php`, rebuilds routes/Blade, verifies v4 recovery inventory with 15 tables, exits maintenance and performs live-origin guest and asset smoke checks.
 
-## Deployment gate
+## Safety limits
 
-Previous user-verified AES-256 backup contains recovery inventory **v2**, captured *before* the prompt review upgrade. It does not protect prompt review records created since then. Capture a fresh encrypted, root-restricted MySQL + entire private storage + .env snapshot with source code v3 and validate its checksums before touching production. An off-site copy was explicitly declined, so its single-server failure risk remains, and that risk must be documented.
+- No changes to `.env`, the running Nginx configuration, existing media, licenses, orders or payment provider settings. Paid checkout remains disabled.
+- The previous v3 encrypted SQL backup is never unencrypted or restored by this script. Do not expose the decryption passphrase.
+- On an error after source installation the script **attempts code rollback and exits maintenance mode**. It does NOT automatically delete a newly created prompt_saves table or migration record; this must be evaluated before retrying. The new table is additive and foreign-key scoped to real user/prompt records.
+- Authenticated creator and customer smoke tests are in CI; the live script can verify guest redirects only. Authenticated live-role and mobile acceptance still require a user session.
+- Keeping all recovery artifacts on the same server retains server-loss risk. Offsite recovery and independent restoration remain unverified.
 
-After backup acceptance, apply only `2026_11_09_020000_create_prompt_saves_table.php`, install the 16 updated files and five additions, compile the Blade views and routes, verify auth/saved creator insights on production, and capture a healthy v4 recovery inventory. Preserve the old application code as rollback source. Do not run `migrate:fresh`, alter the old licensed orders, enable paid checkout, or automatically restore older v2 SQL. A rollback after migration requires reviewing the additive schema before restoring compatible code.
+## Post-upgrade
 
-CI passes do not substitute for real-device or host-level security and independent recovery acceptance.
+Use `/account/saved`, `/account/creator/insights`, `/prompts?sort=most_saved`, and `/dashboard` with authorized accounts. The script captures a root-restricted `post-upgrade-v4-inventory.json` in its code-backup directory. Retain it, plus the encrypted v3 backup and confidential passphrase stored independently.
