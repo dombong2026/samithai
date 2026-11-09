@@ -181,3 +181,48 @@ test('trending discovery is responsive and saved prompts require authentication'
     await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
   }
 });
+
+
+test('shared workspace header search, sidebar visibility and icon profile menu work', async ({ page }) => {
+  await page.goto('/register');
+  const email = 'header-qa-' + Date.now() + '-' + Math.floor(Math.random() * 1000000) + '@example.test';
+  await page.locator('#name').fill('Header QA Customer');
+  await page.locator('#email').fill(email);
+  await page.locator('#password').fill('SecurePass12345');
+  await page.locator('#password_confirmation').fill('SecurePass12345');
+  await page.getByRole('button', { name: 'Create account' }).click();
+  await expect(page).toHaveURL(/\/account$/);
+
+  const sidebar = page.locator('#workspace-sidebar');
+  const sidebarToggle = page.locator('[data-workspace-sidebar-toggle]');
+  const search = page.locator('[data-workspace-search-input]');
+  const profile = page.locator('.workspace-profile-trigger');
+
+  await expect(sidebarToggle).toBeVisible();
+  await expect(search).toBeVisible();
+  await expect(profile).toBeVisible();
+  await expect(page.locator('header.workspace-top .workspace-breadcrumb')).toHaveCount(0);
+  await expect(page.locator('.workspace-aside-footer')).toHaveCount(0);
+
+  await search.fill('my library');
+  const libraryResult = page.locator('[data-workspace-search-results] a[href$="/account/library"]');
+  await expect(libraryResult).toBeVisible();
+  await search.press('Escape');
+  await expect(page.locator('[data-workspace-search-results]')).toBeHidden();
+
+  await sidebarToggle.click();
+  await expect(page.locator('.workspace.workspace-sidebar-hidden')).toHaveCount(1);
+  await expect(sidebarToggle).toHaveAttribute('aria-label', 'Show sidebar');
+  await expect(sidebar).toBeHidden();
+  await sidebarToggle.click();
+  await expect(sidebar).toBeVisible();
+  await expect(sidebarToggle).toHaveAttribute('aria-label', 'Hide sidebar');
+
+  await profile.click();
+  const dropdown = page.locator('.workspace-profile-dropdown');
+  await expect(dropdown).toBeVisible();
+  await expect(dropdown.locator('a svg')).toHaveCount(6);
+  await expect(dropdown.getByRole('button', { name: 'Sign out' }).locator('svg')).toHaveCount(1);
+  await page.keyboard.press('Escape');
+  await expect(dropdown).toBeHidden();
+});
