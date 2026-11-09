@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Samith AI: global feedback + Frontend Pages management source upgrade.
-# --check is read-only. --apply installs a pinned 16-file application-only patch.
+# --check is read-only. --apply installs a pinned 21-file application-only patch.
 # No DB migrations, DB restoration, payment changes or Nginx modifications.
 set +x
 set -Eeuo pipefail
@@ -11,7 +11,7 @@ if [[ $# -ne 1 || ( "$1" != "--check" && "$1" != "--apply" ) ]]; then
   exit 2
 fi
 MODE="$1"
-SOURCE="d1011bd2922ce62bad6a3f63e303d3eda044d494"
+SOURCE="633ca50a1f092ed320f7b0b5b262a9d4592af518"
 APP="/www/wwwroot/samithai-releases/3c9bf3fda1d0df308b94a60b006f36c437e7bf49"
 PHP="/www/server/php/85/bin/php"
 DOMAIN="samithai.com"
@@ -19,9 +19,14 @@ VHOST="/www/server/panel/vhost/nginx/$DOMAIN.conf"
 FILES="$(cat <<'FILEHASHES'
 app/Http/Controllers/Dashboard/AppearanceController.php|49eb07e41c2a13b6a0a3ac9fade0a0e8b39ec8f5|e5e5705a075da1edcb0657286bf34312780d9ace
 app/Http/Controllers/Dashboard/FrontendPageController.php|-|ea1d70ee995c246e14967ed455ce8bb2dc4d45d8
-app/Support/FrontendPageCopy.php|-|5aca2b693059480860f51a4f87f7c52b7c1ff824
+app/Support/FrontendPageCopy.php|-|340e43d3d1818bf38543e229b3c85802dc2e6616
 public/assets/app.css|aaf2bb751d6bbc85b77d3cde5ac3a1676fb36d80|dc8d9418d1a37f3776caa2d32b77782b864e8115
 public/assets/app.js|69af028b80ad55aeac940668bc833c4bb4cc2c8f|8fd1834100a7354e1c3a67306542c5e0ae3cc6d9
+resources/views/auth/forgot-password.blade.php|89cd73040092e1847d8e97fc4aab4a9be5e637a0|2e8cc5c51ca2be6cda493f1ed1a6d7c033582fd5
+resources/views/auth/login.blade.php|5908614b5deb88bc88f28b77c2f2852eddd1d9a9|ef4f79960e39e40f44f5718daa64d322779eb394
+resources/views/auth/register.blade.php|d20d7c17e2d6d50c9609628b614aebe0c22c353d|42114a96dca6884686308ed4712c5013797df515
+resources/views/auth/reset-password.blade.php|0e366e6249487338c48d582d45e52b36c346d8c6|bde35778268c6fe8ef37c0e0ca58eb824d774cd5
+resources/views/auth/verify-email.blade.php|214aa927f20bcb9f25a777389ca8fdb3abdd95bc|b1cbe1a6f9107da3df67cf2f6d828fa71ff3154e
 resources/views/dashboard/appearance.blade.php|55b42906bfdc686c38285f54e104f696ba40e5cd|729749ddb1d16e4e4c3e194c9d015356041446ba
 resources/views/layouts/site.blade.php|2c41f82223c99e37364284b777e5687a21183260|3d44786d486c7da38f094209e2ac34864a7a7add
 resources/views/marketplace/category.blade.php|338c4c8aec278534c3749d132bccae73e3674828|55a74f42bb0ea39974847b3ae43e783cac0453c0
@@ -73,15 +78,15 @@ while IFS='|' read -r path previous target; do
     exit 1
   fi
 done <<< "$FILES"
-if [[ "$BEFORE" -eq 16 && "$AFTER" -eq 0 ]]; then
+if [[ "$BEFORE" -eq 21 && "$AFTER" -eq 0 ]]; then
   SOURCE_STATE="PREVIOUS"
-elif [[ "$BEFORE" -eq 0 && "$AFTER" -eq 16 ]]; then
+elif [[ "$BEFORE" -eq 0 && "$AFTER" -eq 21 ]]; then
   SOURCE_STATE="ALREADY_UPDATED"
 else
   echo "BLOCKED: mixed old/new source ($BEFORE previous and $AFTER new)"
   exit 1
 fi
-echo "SOURCE_FILES=16_OF_16_VERIFIED"
+echo "SOURCE_FILES=21_OF_21_VERIFIED"
 echo "SOURCE_STATE=$SOURCE_STATE"
 
 DB="$(
