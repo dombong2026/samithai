@@ -16,4 +16,5 @@ if grep -Eq 'migrate:(fresh|refresh|rollback)|db:wipe|artisan migrate ' support/
  exit 1
 fi
 bash tests/acceptance/frontend-page-visibility-deploy-syntax.sh
+bash tests/acceptance/workspace-header-deploy-syntax.sh
 echo 'FRONTEND_PAGES_RELEASE_SCRIPT_SYNTAX=PASS'
