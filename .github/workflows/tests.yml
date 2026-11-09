@@ -57,6 +57,8 @@ jobs:
         run: bash tests/acceptance/deploy-saved-insights-syntax.sh
       - name: Validate already-installed saved insights reconciliation utility
         run: bash tests/acceptance/reconcile-saved-insights-syntax.sh
+      - name: Verify premium admin dashboard production patch syntax
+        run: bash tests/acceptance/premium-admin-dashboard-syntax.sh
       - name: PHP syntax validation
         run: find app bootstrap config database routes tests -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Compile all Laravel Blade templates and inspect routes
