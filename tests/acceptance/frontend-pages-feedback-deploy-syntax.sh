@@ -8,6 +8,9 @@ fi
 grep -Fq 'SOURCE_FILES=21_OF_21_VERIFIED' support/deploy-frontend-pages-and-feedback.sh
 grep -Fq 'SOURCE_STATE="ALREADY_UPDATED"' support/deploy-frontend-pages-and-feedback.sh
 grep -Fq 'GLOBAL_SUCCESS_FEEDBACK_AUTO_DISMISS=INSTALLED' support/deploy-frontend-pages-and-feedback.sh
+grep -Fq 'route:list --except-vendor --json' support/deploy-frontend-pages-and-feedback.sh
+grep -Fq 'OLD_SOURCE_ROLLBACK=VERIFIED' support/deploy-frontend-pages-and-feedback.sh
+grep -Fq 'MAINTENANCE_EXIT=VERIFIED' support/deploy-frontend-pages-and-feedback.sh
 if grep -Eq 'migrate:(fresh|refresh|rollback)|db:wipe|artisan migrate ' support/deploy-frontend-pages-and-feedback.sh; then
  echo 'Unexpected database migration in source-only release'
  exit 1

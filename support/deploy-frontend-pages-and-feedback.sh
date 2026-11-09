@@ -130,25 +130,52 @@ finish() {
   set +e
   if [[ "$code" -ne 0 && "$CHANGED" -eq 1 ]]; then
     echo "FAILED=ATTEMPTING_OLD_APPLICATION_CODE_RESTORE"
+    restored=1
     while IFS='|' read -r path previous target; do
       if [[ "$previous" == "-" ]]; then
-        rm -f -- "$APP/$path"
+        rm -f -- "$APP/$path" || restored=0
       else
-        cp -p -- "$BACKUP/$path" "$APP/$path"
+        cp -p -- "$BACKUP/$path" "$APP/$path" || restored=0
       fi
     done <<< "$FILES"
-    (
+    while IFS='|' read -r path previous target; do
+      if [[ "$previous" == "-" ]]; then
+        if [[ -e "$APP/$path" || -L "$APP/$path" ]]; then
+          echo "ROLLBACK_FILE_MISMATCH=$path"
+          restored=0
+        fi
+      elif [[ ! -f "$APP/$path" || -L "$APP/$path" ]] \
+        || [[ "$(git hash-object "$APP/$path" 2>/dev/null)" != "$previous" ]]; then
+        echo "ROLLBACK_FILE_MISMATCH=$path"
+        restored=0
+      fi
+    done <<< "$FILES"
+    if [[ "$restored" -eq 1 ]]; then
+      echo "OLD_SOURCE_ROLLBACK=VERIFIED"
+    else
+      echo "OLD_SOURCE_ROLLBACK=FAILED"
+    fi
+    if (
       cd "$APP"
       runuser -u www -- "$PHP" artisan route:clear --no-ansi
       runuser -u www -- "$PHP" artisan view:clear --no-ansi
       runuser -u www -- "$PHP" artisan view:cache --no-ansi
-    ) >/dev/null 2>&1
-    echo "OLD_SOURCE_ROLLBACK=ATTEMPTED"
+    ) > "$BACKUP/rollback-cache.log" 2>&1; then
+      echo "ROLLBACK_LARAVEL_CACHES=REBUILT"
+    else
+      echo "ROLLBACK_LARAVEL_CACHES=FAILED"
+      echo "ROLLBACK_CACHE_LOG=$BACKUP/rollback-cache.log"
+    fi
     echo "ROLLBACK_DIRECTORY=$BACKUP"
   fi
   if [[ "$MAINTENANCE" -eq 1 ]]; then
-    (cd "$APP"; runuser -u www -- "$PHP" artisan up --no-ansi) >/dev/null 2>&1
-    echo "MAINTENANCE_EXIT=ATTEMPTED"
+    if (cd "$APP"; runuser -u www -- "$PHP" artisan up --no-ansi) > "$BACKUP/maintenance-exit.log" 2>&1 \
+      && [[ ! -e "$APP/storage/framework/down" && ! -e "$APP/storage/framework/maintenance.php" ]]; then
+      echo "MAINTENANCE_EXIT=VERIFIED"
+    else
+      echo "MAINTENANCE_EXIT=FAILED"
+      echo "MAINTENANCE_LOG=$BACKUP/maintenance-exit.log"
+    fi
   fi
   rm -rf -- "$WORK"
   exit "$code"
@@ -198,11 +225,51 @@ if [[ "$SOURCE_STATE" == "PREVIOUS" ]]; then
     runuser -u www -- "$PHP" artisan route:clear --no-ansi
     runuser -u www -- "$PHP" artisan view:clear --no-ansi
     runuser -u www -- "$PHP" artisan view:cache --no-ansi
-    runuser -u www -- "$PHP" artisan route:list --except-vendor --no-ansi > "$WORK/routes.txt"
   )
-  grep -Fq 'dashboard.appearance.frontend.update' "$WORK/routes.txt"
-  grep -Fq 'dashboard.appearance.frontend.reset' "$WORK/routes.txt"
-  echo "NEW_APPEARANCE_ROUTES_AND_BLADE=VERIFIED"
+  echo "========== VERIFY APPEARANCE ROUTES =========="
+  if ! (cd "$APP" && runuser -u www -- "$PHP" artisan route:list --except-vendor --json --no-ansi > "$WORK/routes.json"); then
+    echo "BLOCKED: Laravel route:list JSON command failed" >&2
+    exit 1
+  fi
+  python3 - "$WORK/routes.json" <<'PYTHON_ROUTES'
+import json
+import sys
+from pathlib import Path
+
+try:
+    routes = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+except (OSError, ValueError) as exc:
+    raise SystemExit(f"BLOCKED: Laravel route listing is not valid JSON: {exc}")
+
+if not isinstance(routes, list):
+    raise SystemExit("BLOCKED: Laravel route listing is not an array")
+
+required = {
+    "dashboard.appearance.frontend.update": "PUT",
+    "dashboard.appearance.frontend.reset": "DELETE",
+}
+for name, method in required.items():
+    matching = [
+        route for route in routes
+        if isinstance(route, dict) and route.get("name") == name
+    ]
+    if not matching:
+        nearby = [
+            str(route.get("name")) for route in routes
+            if isinstance(route, dict)
+            and "appearance" in str(route.get("name") or "")
+        ]
+        raise SystemExit(
+            f"BLOCKED: missing named route {name}; nearby appearance routes: {nearby}"
+        )
+    if not any(
+        method in str(route.get("method", "")).split("|")
+        for route in matching
+    ):
+        raise SystemExit(f"BLOCKED: named route {name} is not registered for {method}")
+
+print("NEW_APPEARANCE_ROUTES_AND_BLADE=VERIFIED")
+PYTHON_ROUTES
 
   (cd "$APP"; runuser -u www -- "$PHP" artisan up --no-ansi)
   MAINTENANCE=0
