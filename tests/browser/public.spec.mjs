@@ -133,3 +133,34 @@ test('Samith AI icon and theme-safe header branding render on storefront and aut
     await expect(brand.locator('img.brand-logo-light')).toBeVisible();
   }
 });
+
+
+test('saved prompts route and trending discovery are accessible on responsive screens', async ({ page }) => {
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/prompts?sort=most_saved');
+    await expect(page.locator('select[name="sort"]')).toHaveValue('most_saved');
+    await expect(page.getByRole('heading', { name: 'AI prompt marketplace' })).toBeVisible();
+    const overflow = await page.evaluate(() => ({
+      html: document.documentElement.scrollWidth,
+      viewport: window.innerWidth,
+    }));
+    expect(overflow.html).toBeLessThanOrEqual(overflow.viewport + 3);
+  }
+
+  await page.goto('/register');
+  const email = 'saved-acceptance-' + Date.now() + '-' + Math.floor(Math.random()*1000000) + '@example.test';
+  await page.locator('#name').fill('CI Saved User');
+  await page.locator('#email').fill(email);
+  await page.locator('#password').fill('SecurePass12345');
+  await page.locator('#password_confirmation').fill('SecurePass12345');
+  await page.getByRole('button', { name: 'Create account' }).click();
+
+  await expect(page).toHaveURL(/\/account$/);
+  await page.goto('/account/saved');
+  await expect(page.getByRole('heading', { name: 'Saved prompts' })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Browse prompts/i })).toBeVisible();
+  await expect(page.locator('nav[aria-label="Account navigation"]').getByRole('link', { name: 'Saved prompts' })).toBeVisible();
+  await page.goto('/account/creator/insights');
+  await expect(page.getByText(/403|Forbidden/i).first()).toBeVisible();
+});

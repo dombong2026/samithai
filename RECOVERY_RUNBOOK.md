@@ -67,3 +67,8 @@ No production deployment is permitted solely because CI passed.
 ## Review history backup integrity
 
 The recovery inventory v3 includes the new prompt_reviews table and a keyed content HMAC for reviewer notes, actors, actions and timestamps. A database clone restored from an older release must be migrated and get a new baseline before comparisons. Earlier v2 inventories intentionally fail format compatibility rather than falsely claiming review-history coverage.
+
+## Saved prompts backup integrity (recovery inventory v4)
+
+The feature milestone after creator review history adds a `prompt_saves` table. Inventory v4 fingerprints saved user/prompt relationships and migrations with a keyed HMAC, without disclosing customer identities or private prompt text.
+A v3 inventory does not validate v4 data and intentionally fails format comparison; capture a fresh encrypted v3 pre-upgrade backup and new v4 post-migration baseline. The initial v2 encrypted backup predates both feature upgrades and is not a substitute for a current v3 backup.

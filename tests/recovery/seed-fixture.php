@@ -68,6 +68,11 @@ DB::transaction(static function () use ($image): void {
         'price' => 0, 'status' => 'published', 'license_type' => 'regular',
         'published_at' => now(), 'featured_media_id' => $media->id,
     ]);
+    DB::table('prompt_saves')->insert([
+        'user_id' => $buyer->id, 'prompt_id' => $prompt->id,
+        'created_at' => now(), 'updated_at' => now(),
+    ]);
+
     $order = Order::create([
         'user_id' => $buyer->id, 'number' => 'CI-RECOVERY-0001',
         'status' => 'completed', 'currency' => 'USD', 'total' => 0,
