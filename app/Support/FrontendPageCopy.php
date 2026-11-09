@@ -103,6 +103,63 @@ final class FrontendPageCopy
                 'empty_message' => ['label' => 'Empty policies message', 'default' => 'Marketplace policies have not been published yet.', 'type' => 'textarea'],
             ],
         ],
+        'login' => [
+            'name' => 'Sign in',
+            'path' => '/login',
+            'description' => 'Guest login page labels; authentication rules remain protected.',
+            'fields' => [
+                'title' => ['label' => 'Heading', 'default' => 'Welcome back'],
+                'subtitle' => ['label' => 'Description', 'default' => 'Sign in to manage your prompts and purchases.', 'type' => 'textarea'],
+                'submit' => ['label' => 'Sign-in button', 'default' => 'Sign in'],
+                'bottom' => ['label' => 'Bottom prompt', 'default' => 'New to Samith AI?'],
+                'bottom_cta' => ['label' => 'Registration link label', 'default' => 'Create account'],
+            ],
+        ],
+        'register' => [
+            'name' => 'Registration',
+            'path' => '/register',
+            'description' => 'Account registration copy; validation, passwords and email requirements are unchanged.',
+            'fields' => [
+                'title' => ['label' => 'Heading', 'default' => 'Create an account'],
+                'subtitle' => ['label' => 'Description', 'default' => 'Start your AI prompt collection.', 'type' => 'textarea'],
+                'submit' => ['label' => 'Registration button', 'default' => 'Create account'],
+                'bottom' => ['label' => 'Bottom prompt', 'default' => 'Already registered?'],
+                'bottom_cta' => ['label' => 'Sign-in link', 'default' => 'Sign in'],
+            ],
+        ],
+        'forgot' => [
+            'name' => 'Password recovery',
+            'path' => '/forgot-password',
+            'description' => 'Password reset request copy; secure recovery and throttling are unchanged.',
+            'fields' => [
+                'title' => ['label' => 'Heading', 'default' => 'Reset your password'],
+                'subtitle' => ['label' => 'Description', 'default' => 'Enter your account email address to request a secure reset link.', 'type' => 'textarea'],
+                'submit' => ['label' => 'Request button', 'default' => 'Request reset link'],
+                'back' => ['label' => 'Back link', 'default' => 'Back to sign in'],
+            ],
+        ],
+        'reset' => [
+            'name' => 'Set new password',
+            'path' => '/reset-password/{token}',
+            'description' => 'Password form copy; minimum password policy and token verification are protected.',
+            'fields' => [
+                'title' => ['label' => 'Heading', 'default' => 'Choose a new password'],
+                'subtitle' => ['label' => 'Description', 'default' => 'Your new password must contain at least 12 characters, including letters and numbers.', 'type' => 'textarea'],
+                'submit' => ['label' => 'Change password button', 'default' => 'Update password'],
+                'back' => ['label' => 'Back link', 'default' => 'Back to sign in'],
+            ],
+        ],
+        'verify' => [
+            'name' => 'Email verification',
+            'path' => '/email/verify',
+            'description' => 'Account verification headings and action labels; SMTP/security logic stays untouched.',
+            'fields' => [
+                'title' => ['label' => 'Page heading', 'default' => 'Verify your email'],
+                'subtitle' => ['label' => 'Description', 'default' => 'Confirm that you own your account email address.', 'type' => 'textarea'],
+                'settings_cta' => ['label' => 'Settings link', 'default' => 'Account settings'],
+                'resend_cta' => ['label' => 'Resend link button', 'default' => 'Resend verification email'],
+            ],
+        ],
         'support' => [
             'name' => 'Support Center',
             'path' => '/support-center',

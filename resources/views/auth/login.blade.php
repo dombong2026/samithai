@@ -1,8 +1,9 @@
 <!doctype html><html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 @include('partials.branding-head')<title>Sign in — Samith AI</title><link rel="stylesheet" href="{{ asset('assets/app.css') }}?v={{ filemtime(public_path('assets/app.css')) }}"><script defer src="{{ asset('assets/app.js') }}?v={{ filemtime(public_path('assets/app.js')) }}"></script></head><body>
+@php($authCopy = \App\Support\FrontendPageCopy::values('login'))
 <main class="auth-screen"><section class="auth-card">
 @include('partials.brand', ['href' => route('home')])
-<h1>Welcome back</h1><p>Sign in to manage your prompts and purchases.</p>
+<h1>{{ $authCopy['title'] }}</h1><p>{{ $authCopy['subtitle'] }}</p>
 <form method="post" action="{{ route('login.submit') }}">@csrf
 <div class="floating"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>
 <input id="email" type="email" name="email" placeholder=" " required autocomplete="username" value="{{ old('email') }}"><label for="email">{{ __('account.email_address') }}</label></div>
@@ -13,7 +14,7 @@
 <label class="flex"><input type="checkbox" name="remember" value="1">{{ __('account.remember_me') }}</label>
 <a class="tiny auth-recovery-link" href="{{ route('password.request') }}">{{ __('account.forgot_password') }}</a>
 </div>
-<button type="submit" class="btn primary">Sign in</button>
-</form><div class="auth-bottom">New to Samith AI? <a href="{{ route('register') }}">Create account</a></div>
+<button type="submit" class="btn primary">{{ $authCopy['submit'] }}</button>
+</form><div class="auth-bottom">{{ $authCopy['bottom'] }} <a href="{{ route('register') }}">{{ $authCopy['bottom_cta'] }}</a></div>
 </section></main>@include('partials.feedback')
 </body></html>
