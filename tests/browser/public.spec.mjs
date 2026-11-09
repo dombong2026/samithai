@@ -226,6 +226,19 @@ test('shared workspace header search, sidebar visibility and icon profile menu w
   await page.keyboard.press('Escape');
   await expect(dropdown).toBeHidden();
 
+  // Persist and restore Quick Launch settings through the authenticated workspace.
+  const launchpad = page.locator('[data-workspace-launchpad="account"]');
+  await expect(launchpad).toBeVisible();
+  await launchpad.getByRole('button', { name: /Customize/i }).click();
+  const launchDialog = page.locator('#workspace-launchpad-config-account');
+  await expect(launchDialog).toBeVisible();
+  await launchDialog.getByLabel(/Order history/i).check();
+  await launchDialog.getByRole('button', { name: /Save shortcuts/i }).click();
+  await expect(page).toHaveURL(/\/account$/);
+  await expect(page.locator('[data-workspace-launchpad="account"] [data-launch-key="orders"]')).toBeVisible();
+  await page.reload();
+  await expect(page.locator('[data-workspace-launchpad="account"] [data-launch-key="orders"]')).toBeVisible();
+
   // Reuse the same authenticated account: a separate registration would exhaust
   // the deliberately strict rate limit during mobile/desktop smoke tests.
   for (const width of [1280, 390]) {
