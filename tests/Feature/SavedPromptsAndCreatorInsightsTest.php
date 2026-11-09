@@ -171,6 +171,21 @@ class SavedPromptsAndCreatorInsightsTest extends TestCase
         $this->actingAs($customer)->get(route('account.creator.insights'))->assertForbidden();
     }
 
+    public function test_administrator_interests_show_verified_saves_without_customer_names(): void
+    {
+        $creator = $this->user('creator');
+        $customer = $this->user();
+        $admin = $this->user('admin');
+        $public = $this->prompt($creator, 'Published interest item');
+
+        $this->actingAs($customer)->post(route('prompts.save', $public))->assertRedirect();
+        $this->actingAs($admin)->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Marketplace interest')
+            ->assertSee('Published interest item')
+            ->assertDontSee($customer->email);
+    }
+
     public function test_saves_are_part_of_integrity_inventory_and_cascade_on_prompt_removal(): void
     {
         $creator = $this->user('creator');

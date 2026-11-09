@@ -25,3 +25,26 @@
 @endforeach</div>@endif
 </div>
 @endsection
+
+<div class="panel" style="margin-top:22px">
+<div class="flex between wrap">
+<div><h2>Marketplace interest</h2><p class="muted tiny">Real saves from registered accounts, not sales or views.</p></div>
+<span class="tag">{{ number_format($savedCount) }} total saves</span>
+</div>
+@if($mostSavedPrompts->isEmpty())
+<p class="muted">Published prompts will appear here when creators have listings.</p>
+@else
+<div class="table-scroll"><table>
+<thead><tr><th>Published prompt</th><th>Creator</th><th>Saves</th><th>Action</th></tr></thead>
+<tbody>
+@foreach($mostSavedPrompts as $prompt)
+<tr>
+<td class="title-cell">{{ $prompt->title }}</td>
+<td>{{ $prompt->user?->name ?? 'Former creator' }}</td>
+<td>{{ number_format($prompt->savers_count) }}</td>
+<td><a class="btn small" href="{{ route('prompts.show', $prompt) }}">View</a></td>
+</tr>
+@endforeach
+</tbody></table></div>
+@endif
+</div>

@@ -21,6 +21,12 @@ class OverviewController extends Controller
             'pendingCount' => Prompt::where('status', 'pending')->count(),
             'categoryCount' => Category::count(),
             'ordersCount' => Order::count(),
+            'savedCount' => \Illuminate\Support\Facades\DB::table('prompt_saves')->count(),
+            'mostSavedPrompts' => Prompt::published()
+                ->withCount('savers')
+                ->with('user:id,name')
+                ->orderByDesc('savers_count')->orderByDesc('published_at')
+                ->limit(6)->get(),
             'recentPrompts' => Prompt::with(['user', 'category'])->latest()->take(10)->get(),
         ]);
     }
