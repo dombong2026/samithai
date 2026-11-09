@@ -15,4 +15,5 @@ if grep -Eq 'migrate:(fresh|refresh|rollback)|db:wipe|artisan migrate ' support/
  echo 'Unexpected database migration in source-only release'
  exit 1
 fi
+bash tests/acceptance/frontend-page-visibility-deploy-syntax.sh
 echo 'FRONTEND_PAGES_RELEASE_SCRIPT_SYNTAX=PASS'
