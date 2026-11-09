@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
 use App\Support\AuditTrail;
 use App\Support\FrontendPageCopy;
+use App\Support\FrontendPageAvailability;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -43,6 +44,25 @@ class FrontendPageController extends Controller
 
         AuditTrail::record($request, 'frontend_page.configure', null, ['page' => $page]);
         return back()->with('success', $definition['name'].' updated.');
+    }
+
+    public function visibility(Request $request, string $page): RedirectResponse
+    {
+        $this->authorizeAdmin($request);
+        abort_unless(FrontendPageAvailability::toggleable($page), 422);
+        $data = $request->validate(['enabled' => ['required', 'boolean']]);
+        $enabled = (bool) $data['enabled'];
+
+        SiteSetting::updateOrCreate(
+            ['key' => 'frontend_page.enabled.'.$page],
+            ['value' => $enabled ? '1' : '0']
+        );
+
+        AuditTrail::record($request, 'frontend_page.visibility', null, [
+            'page' => $page, 'enabled' => $enabled,
+        ]);
+
+        return back()->with('success', 'Page '.($enabled ? 'enabled' : 'disabled').' successfully.');
     }
 
     public function reset(Request $request, string $page): RedirectResponse

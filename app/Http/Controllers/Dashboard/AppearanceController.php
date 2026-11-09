@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MediaAsset;
 use App\Models\ContentEntry;
 use App\Support\FrontendPageCopy;
+use App\Support\FrontendPageAvailability;
 use App\Models\SiteSetting;
 use App\Support\AuditTrail;
 use Illuminate\Http\RedirectResponse;
@@ -42,13 +43,20 @@ class AppearanceController extends Controller
                 ...$definition,
                 'values' => FrontendPageCopy::values($key),
                 'customized' => FrontendPageCopy::hasCustomCopy($key),
+                'enabled' => FrontendPageAvailability::enabled($key),
+                'toggleable' => FrontendPageAvailability::toggleable($key),
             ];
         }
         $managed = [
-            ['name' => 'Blog article detail', 'path' => '/blog/{slug}', 'manager' => 'posts', 'label' => 'Post Manager'],
-            ['name' => 'Published policy detail', 'path' => '/policies/{slug}', 'manager' => 'policies', 'label' => 'Policy Center'],
-            ['name' => 'Support article detail', 'path' => '/support-center/articles/{slug}', 'manager' => 'knowledge', 'label' => 'Knowledge Base'],
+            ['key' => 'blog_detail', 'name' => 'Blog article detail', 'path' => '/blog/{slug}', 'manager' => 'posts', 'label' => 'Post Manager'],
+            ['key' => 'policy_detail', 'name' => 'Published policy detail', 'path' => '/policies/{slug}', 'manager' => 'policies', 'label' => 'Policy Center'],
+            ['key' => 'support_detail', 'name' => 'Support article detail', 'path' => '/support-center/articles/{slug}', 'manager' => 'knowledge', 'label' => 'Knowledge Base'],
         ];
+        $managed = array_map(fn (array $entry) => [
+            ...$entry,
+            'enabled' => FrontendPageAvailability::enabled($entry['key']),
+            'toggleable' => FrontendPageAvailability::toggleable($entry['key']),
+        ], $managed);
         if ($q !== '') {
             $managed = array_values(array_filter($managed,
                 fn ($entry) => str_contains(mb_strtolower($entry['name'].' '.$entry['path']), mb_strtolower($q))));

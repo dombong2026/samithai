@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthSecurityController;
 use App\Http\Controllers\Dashboard\LegalController;
 use App\Http\Middleware\RequireVerifiedEmailWhenEnabled;
+use App\Http\Middleware\EnsureFrontendPageEnabled;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\Dashboard\CategoryController;
@@ -31,16 +32,16 @@ use App\Http\Controllers\Dashboard\FrontendPageController;
 Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
 Route::prefix('{locale}')->where(['locale'=>'en|zh|ko|ja|de|km|vi|th|id|ms|ar|fr|es'])->group(function (): void {
     Route::get('/', fn (string $locale) => app(MarketplaceController::class)->home())->name('locale.home');
-    Route::get('/prompts', fn (Request $request, string $locale) => app(MarketplaceController::class)->index($request))->name('locale.prompts.index');
-    Route::get('/prompts/{prompt:slug}', fn (string $locale, \App\Models\Prompt $prompt) => app(MarketplaceController::class)->show($prompt))->name('locale.prompts.show');
-    Route::get('/categories/{category:slug}', fn (string $locale, \App\Models\Category $category) => app(MarketplaceController::class)->category($category))->name('locale.categories.show');
+    Route::get('/prompts', fn (Request $request, string $locale) => app(MarketplaceController::class)->index($request))->middleware(EnsureFrontendPageEnabled::class.':catalog')->name('locale.prompts.index');
+    Route::get('/prompts/{prompt:slug}', fn (string $locale, \App\Models\Prompt $prompt) => app(MarketplaceController::class)->show($prompt))->middleware(EnsureFrontendPageEnabled::class.':prompt')->name('locale.prompts.show');
+    Route::get('/categories/{category:slug}', fn (string $locale, \App\Models\Category $category) => app(MarketplaceController::class)->category($category))->middleware(EnsureFrontendPageEnabled::class.':category')->name('locale.categories.show');
     Route::get('/pages/{slug}', fn (string $locale, string $slug) => app(PublicContentController::class)->show('page',$slug))->name('locale.pages.show');
-    Route::get('/blog', fn (string $locale) => app(PublicContentController::class)->posts())->name('locale.blog.index');
-    Route::get('/blog/{slug}', fn (string $locale, string $slug) => app(PublicContentController::class)->show('post',$slug))->name('locale.blog.show');
+    Route::get('/blog', fn (string $locale) => app(PublicContentController::class)->posts())->middleware(EnsureFrontendPageEnabled::class.':blog')->name('locale.blog.index');
+    Route::get('/blog/{slug}', fn (string $locale, string $slug) => app(PublicContentController::class)->show('post',$slug))->middleware(EnsureFrontendPageEnabled::class.':blog_detail')->name('locale.blog.show');
     Route::get('/policies', fn (string $locale) => app(PublicContentController::class)->policies())->name('locale.policies.index');
     Route::get('/policies/{slug}', fn (string $locale, string $slug) => app(PublicContentController::class)->show('policy',$slug))->name('locale.policies.show');
-    Route::get('/support-center', fn (string $locale) => app(SupportController::class)->center())->name('locale.support.center');
-    Route::get('/support-center/articles/{slug}', fn (string $locale, string $slug) => app(PublicContentController::class)->show('article',$slug))->name('locale.support.articles.show');
+    Route::get('/support-center', fn (string $locale) => app(SupportController::class)->center())->middleware(EnsureFrontendPageEnabled::class.':support')->name('locale.support.center');
+    Route::get('/support-center/articles/{slug}', fn (string $locale, string $slug) => app(PublicContentController::class)->show('article',$slug))->middleware(EnsureFrontendPageEnabled::class.':support_detail')->name('locale.support.articles.show');
 });
 
 Route::get('/legal/{kind}', [LegalController::class,'public'])->name('legal.show');
@@ -50,19 +51,19 @@ Route::post('/installer', [InstallerController::class, 'install'])->middleware('
 
 Route::get('/media/{mediaAsset}/view', [MediaController::class, 'serve'])->name('media.serve');
 
-Route::get('/support-center', [SupportController::class, 'center'])->name('support.center');
-Route::get('/support-center/articles/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('article',$slug))->name('support.articles.show');
+Route::get('/support-center', [SupportController::class, 'center'])->middleware(EnsureFrontendPageEnabled::class.':support')->name('support.center');
+Route::get('/support-center/articles/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('article',$slug))->middleware(EnsureFrontendPageEnabled::class.':support_detail')->name('support.articles.show');
 
-Route::get('/blog', [PublicContentController::class, 'posts'])->name('blog.index');
-Route::get('/blog/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('post', $slug))->name('blog.show');
+Route::get('/blog', [PublicContentController::class, 'posts'])->middleware(EnsureFrontendPageEnabled::class.':blog')->name('blog.index');
+Route::get('/blog/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('post', $slug))->middleware(EnsureFrontendPageEnabled::class.':blog_detail')->name('blog.show');
 Route::get('/pages/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('page', $slug))->name('pages.show');
 Route::get('/policies', [PublicContentController::class, 'policies'])->name('policies.index');
 Route::get('/policies/{slug}', fn (PublicContentController $controller, string $slug) => $controller->show('policy', $slug))->name('policies.show');
 
 Route::get('/', [MarketplaceController::class, 'home'])->name('home');
-Route::get('/prompts', [MarketplaceController::class, 'index'])->name('prompts.index');
-Route::get('/categories/{category:slug}', [MarketplaceController::class, 'category'])->name('categories.show');
-Route::get('/prompts/{prompt:slug}', [MarketplaceController::class, 'show'])->name('prompts.show');
+Route::get('/prompts', [MarketplaceController::class, 'index'])->middleware(EnsureFrontendPageEnabled::class.':catalog')->name('prompts.index');
+Route::get('/categories/{category:slug}', [MarketplaceController::class, 'category'])->middleware(EnsureFrontendPageEnabled::class.':category')->name('categories.show');
+Route::get('/prompts/{prompt:slug}', [MarketplaceController::class, 'show'])->middleware(EnsureFrontendPageEnabled::class.':prompt')->name('prompts.show');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/forgot-password', [AuthSecurityController::class, 'forgot'])->name('password.request');
@@ -70,9 +71,9 @@ Route::middleware('guest')->group(function (): void {
     Route::get('/reset-password/{token}', [AuthSecurityController::class, 'resetForm'])->name('password.reset');
     Route::post('/reset-password', [AuthSecurityController::class, 'reset'])->middleware('throttle:5,1')->name('password.update');
     Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
-    Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
+    Route::get('/register', [AuthController::class, 'registerForm'])->middleware(EnsureFrontendPageEnabled::class.':register')->name('register');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:8,1')->name('login.submit');
-    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1')->name('register.submit');
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1')->middleware(EnsureFrontendPageEnabled::class.':register')->name('register.submit');
 });
 
 Route::middleware('auth')->group(function (): void {
@@ -107,6 +108,7 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/dashboard/appearance', [AppearanceController::class, 'update'])->name('dashboard.appearance.update');
     Route::put('/dashboard/appearance/frontend-pages/{page}', [FrontendPageController::class, 'update'])->name('dashboard.appearance.frontend.update');
     Route::delete('/dashboard/appearance/frontend-pages/{page}', [FrontendPageController::class, 'reset'])->name('dashboard.appearance.frontend.reset');
+    Route::put('/dashboard/appearance/frontend-pages/{page}/visibility', [FrontendPageController::class, 'visibility'])->name('dashboard.appearance.frontend.visibility');
 
     Route::get('/dashboard/legal', [LegalController::class,'index'])->name('dashboard.legal');
     Route::post('/dashboard/legal', [LegalController::class,'store'])->name('dashboard.legal.store');

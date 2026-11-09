@@ -251,4 +251,68 @@ class FrontendPageAppearanceTest extends TestCase
         $this->withSession(['errors' => session()->get('errors') ?? new \Illuminate\Support\ViewErrorBag()])
             ->get(route('home'))->assertOk();
     }
+
+    public function test_optional_catalog_page_can_be_disabled_and_reenabled(): void
+    {
+        $admin = $this->person('admin');
+        $customer = $this->person('customer');
+        $this->actingAs($customer)->put(route('dashboard.appearance.frontend.visibility','catalog'), [
+            'enabled' => '0',
+        ])->assertForbidden();
+        $this->actingAs($admin)->put(route('dashboard.appearance.frontend.visibility','catalog'), [
+            'enabled' => '0',
+        ])->assertRedirect()->assertSessionHas('success');
+
+        $this->assertSame('0', SiteSetting::text('frontend_page.enabled.catalog'));
+        $this->assertDatabaseHas('audit_events', ['action'=>'frontend_page.visibility','user_id'=>$admin->id]);
+        $this->get(route('prompts.index'))->assertNotFound();
+        $this->get(route('locale.prompts.index',['locale'=>'en']))->assertNotFound();
+        $this->get(route('home'))->assertOk();
+        $this->get(route('dashboard.appearance'))->assertOk()->assertSee('frontend-visibility-button');
+
+        $this->put(route('dashboard.appearance.frontend.visibility','catalog'), ['enabled'=>'1'])
+            ->assertRedirect();
+        $this->get(route('prompts.index'))->assertOk();
+    }
+
+    public function test_protected_pages_cannot_be_disabled_even_by_admin(): void
+    {
+        $admin = $this->person('admin');
+        $this->actingAs($admin);
+        foreach (['shell','home','policies','login','forgot','reset','verify','policy_detail','missing'] as $key) {
+            $this->put(route('dashboard.appearance.frontend.visibility',$key),[
+                'enabled'=>'0',
+            ])->assertStatus(422);
+        }
+        $this->put(route('dashboard.appearance.frontend.visibility','blog'),[
+            'enabled'=>'invalid',
+        ])->assertSessionHasErrors('enabled');
+        $this->assertDatabaseCount('site_settings',0);
+        $this->get(route('home'))->assertOk();
+        auth()->logout();
+        $this->get(route('login'))->assertOk();
+        $this->get(route('password.request'))->assertOk();
+        $this->get(route('policies.index'))->assertOk();
+    }
+
+    public function test_registration_switch_blocks_both_public_form_and_submission(): void
+    {
+        $admin = $this->person('admin');
+        $this->actingAs($admin)->put(route('dashboard.appearance.frontend.visibility','register'),[
+            'enabled'=>'0',
+        ])->assertRedirect();
+        auth()->logout();
+        $this->get(route('register'))->assertNotFound();
+        $this->post(route('register.submit'),[
+            'name'=>'Blocked Customer','email'=>'blocked@example.test',
+            'password'=>'SecurePassword123','password_confirmation'=>'SecurePassword123',
+        ])->assertNotFound();
+        $this->assertDatabaseMissing('users',['email'=>'blocked@example.test']);
+        $this->get(route('login'))->assertOk();
+        $this->actingAs($admin)->put(route('dashboard.appearance.frontend.visibility','register'),[
+            'enabled'=>'1',
+        ])->assertRedirect();
+        auth()->logout();
+        $this->get(route('register'))->assertOk();
+    }
 }

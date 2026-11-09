@@ -26,7 +26,7 @@
 </div><div class="flex" style="justify-content:flex-end;margin:22px 0"><button class="btn primary" type="submit">Save appearance</button></div></form>
 
 <section class="panel frontend-pages-panel" id="frontend-pages" aria-labelledby="frontend-pages-title">
-<div class="frontend-pages-heading"><div><div class="eyebrow">SITE BUILDER</div><h2 id="frontend-pages-title">Frontend Pages</h2><p class="muted">Configure public page copy and display controls, or manage custom pages without changing system routes.</p></div>
+<div class="frontend-pages-heading"><div><div class="eyebrow">SITE BUILDER</div><h2 id="frontend-pages-title">Frontend Pages</h2><p class="muted">Enable or disable optional public pages, configure page copy and manage custom pages. Essential login, recovery, homepage and legal pages remain protected.</p></div>
 <button type="button" class="btn primary" data-frontend-dialog="frontend-create-page"><x-nav-icon name="pages"/> Add custom page</button></div>
 <form method="get" action="{{ route('dashboard.appearance') }}" class="frontend-pages-search">
 <label for="frontend-page-search" class="sr-only">Find frontend page</label>
@@ -35,26 +35,40 @@
 @if($pageSearch !== '')<a class="btn" href="{{ route('dashboard.appearance') }}#frontend-pages">Clear</a>@endif
 </form>
 <div class="frontend-pages-scroll"><table class="frontend-pages-table">
-<thead><tr><th>Frontend page</th><th>URL pattern</th><th>Type</th><th>Status</th><th>Action</th></tr></thead>
+<thead><tr><th>Frontend page</th><th>URL pattern</th><th>Type</th><th>Visibility</th><th>Action</th></tr></thead>
 <tbody>
 @foreach($frontendPages as $key => $page)
 <tr><td><strong>{{ $page['name'] }}</strong><span class="muted tiny">{{ $page['description'] }}</span></td>
 <td><code>{{ $page['path'] }}</code></td><td>Built-in template</td>
-<td><span class="frontend-status {{ $page['customized'] ? 'is-custom' : '' }}">{{ $page['customized'] ? 'Customized' : 'Default' }}</span></td>
-<td><button class="btn small" type="button" data-frontend-dialog="frontend-config-{{ $key }}">Configure</button></td></tr>
+<td><span class="frontend-status {{ !$page['toggleable'] ? 'is-protected' : ($page['enabled'] ? 'is-live' : 'is-disabled') }}">{{ !$page['toggleable'] ? 'Protected' : ($page['enabled'] ? 'Enabled' : 'Disabled') }}</span><span class="muted tiny frontend-copy-state">{{ $page['customized'] ? 'Customized copy' : 'Default copy' }}</span></td>
+<td><div class="frontend-row-actions"><button class="btn small" type="button" data-frontend-dialog="frontend-config-{{ $key }}">Configure</button>
+@if($page['toggleable'])
+<form method="post" action="{{ route('dashboard.appearance.frontend.visibility', $key) }}" data-confirm="{{ $page['enabled'] ? 'Disable this page for public visitors? Content and settings will be preserved.' : 'Enable this public page again?' }}">@csrf @method('PUT')
+<input type="hidden" name="enabled" value="{{ $page['enabled'] ? '0' : '1' }}">
+<button type="submit" class="btn small frontend-visibility-button {{ $page['enabled'] ? 'is-disable' : 'is-enable' }}">{{ $page['enabled'] ? 'Disable' : 'Enable' }}</button></form>
+@else<span class="muted tiny" title="Essential page: access cannot be disabled">Always on</span>@endif
+</div></td></tr>
 @endforeach
 @foreach($managedPages as $page)
 <tr><td><strong>{{ $page['name'] }}</strong><span class="muted tiny">Individual content is controlled in {{ $page['label'] }}.</span></td>
-<td><code>{{ $page['path'] }}</code></td><td>Managed content</td><td><span class="frontend-status">Governed</span></td>
-<td><a class="btn small" href="{{ route('dashboard.content',$page['manager']) }}">Manage</a></td></tr>
+<td><code>{{ $page['path'] }}</code></td><td>Managed content</td><td><span class="frontend-status {{ !$page['toggleable'] ? 'is-protected' : ($page['enabled'] ? 'is-live' : 'is-disabled') }}">{{ !$page['toggleable'] ? 'Protected' : ($page['enabled'] ? 'Enabled' : 'Disabled') }}</span></td>
+<td><div class="frontend-row-actions"><a class="btn small" href="{{ route('dashboard.content',$page['manager']) }}">Manage</a>
+@if($page['toggleable'])
+<form method="post" action="{{ route('dashboard.appearance.frontend.visibility', $page['key']) }}" data-confirm="{{ $page['enabled'] ? 'Disable public access to these articles? Published content will be preserved.' : 'Enable public access to these articles?' }}">@csrf @method('PUT')
+<input type="hidden" name="enabled" value="{{ $page['enabled'] ? '0' : '1' }}">
+<button type="submit" class="btn small frontend-visibility-button {{ $page['enabled'] ? 'is-disable' : 'is-enable' }}">{{ $page['enabled'] ? 'Disable' : 'Enable' }}</button></form>
+@else<span class="muted tiny">Always on</span>@endif</div></td></tr>
 @endforeach
 @if($pageSearch === '' || str_contains('published legal license /legal/{kind}',mb_strtolower($pageSearch)))
-<tr><td><strong>Published legal license</strong><span class="muted tiny">Versioned legal content is controlled by Legal Review.</span></td><td><code>/legal/{kind}</code></td><td>Protected legal</td><td><span class="frontend-status">Governed</span></td><td><a class="btn small" href="{{ route('dashboard.legal') }}">Manage</a></td></tr>
+<tr><td><strong>Published legal license</strong><span class="muted tiny">Versioned legal content is controlled by Legal Review.</span></td><td><code>/legal/{kind}</code></td><td>Protected legal</td><td><span class="frontend-status is-protected">Protected</span></td><td><div class="frontend-row-actions"><a class="btn small" href="{{ route('dashboard.legal') }}">Manage</a><span class="muted tiny">Always on</span></div></td></tr>
 @endif
 @foreach($customPages as $entry)
 <tr><td><strong>{{ $entry->title }}</strong><span class="muted tiny">Updated {{ $entry->updated_at->format('d M Y') }}</span></td><td><code>/pages/{{ $entry->slug }}</code></td><td>Custom page</td>
-<td><span class="frontend-status {{ $entry->status === 'published' ? 'is-live' : '' }}">{{ ucfirst($entry->status) }}</span></td>
-<td><button class="btn small" type="button" data-frontend-dialog="frontend-custom-{{ $entry->id }}">Configure</button></td></tr>
+<td><span class="frontend-status {{ $entry->status === 'published' ? 'is-live' : 'is-disabled' }}">{{ $entry->status === 'published' ? 'Enabled' : 'Disabled (draft)' }}</span></td>
+<td><div class="frontend-row-actions"><button class="btn small" type="button" data-frontend-dialog="frontend-custom-{{ $entry->id }}">Configure</button>
+<form method="post" action="{{ route('dashboard.content.publish',$entry) }}" data-confirm="{{ $entry->status === 'published' ? 'Disable this custom page? Content will be preserved as a draft.' : 'Enable and publish this custom page?' }}">@csrf
+<input type="hidden" name="status" value="{{ $entry->status === 'published' ? 'draft' : 'published' }}">
+<button type="submit" class="btn small frontend-visibility-button {{ $entry->status === 'published' ? 'is-disable' : 'is-enable' }}">{{ $entry->status === 'published' ? 'Disable' : 'Enable' }}</button></form></div></td></tr>
 @endforeach
 @if(!$frontendPages && !$managedPages && $customPages->isEmpty() && $pageSearch !== '')<tr><td colspan="5">No matching pages.</td></tr>@endif
 </tbody></table></div>
