@@ -226,3 +226,40 @@ test('shared workspace header search, sidebar visibility and icon profile menu w
   await page.keyboard.press('Escape');
   await expect(dropdown).toBeHidden();
 });
+
+
+test('workspace header refinement has no stray character and flags all available languages', async ({ page }) => {
+  await page.goto('/register');
+  const email = 'toolbar-qa-' + Date.now() + '-' + Math.floor(Math.random() * 1000000) + '@example.test';
+  await page.locator('#name').fill('Header Refinement QA');
+  await page.locator('#email').fill(email);
+  await page.locator('#password').fill('SecurePass12345');
+  await page.locator('#password_confirmation').fill('SecurePass12345');
+  await page.getByRole('button', { name: 'Create account' }).click();
+  await expect(page).toHaveURL(/\/account$/);
+
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/account');
+    expect(await page.locator('.workspace-main').evaluate(el => [...el.childNodes].filter(n => n.nodeType === Node.TEXT_NODE).every(n => n.textContent.trim() !== '>'))).toBe(true);
+    await expect(page.locator('.workspace-top-site')).toHaveAttribute('aria-label', 'Marketplace');
+    await expect(page.locator('.workspace-top-site svg')).toBeVisible();
+
+    const controls = ['.workspace-sidebar-toggle', '.workspace-top-site', '.workspace-theme-switch', '.workspace-language-trigger'];
+    for (const selector of controls) {
+      const color = await page.locator('header.workspace-top ' + selector).evaluate(el => getComputedStyle(el).backgroundColor);
+      expect(color).toBe('rgba(0, 0, 0, 0)');
+    }
+    await expect(page.locator('.workspace-profile-trigger')).toBeVisible();
+    await expect(page.locator('.workspace-language-flag').first()).toBeVisible();
+
+    await page.locator('.workspace-language-trigger').click();
+    const options = page.locator('.workspace-language-list a');
+    await expect(options).toHaveCount(13);
+    await expect(options.locator('.workspace-language-flag')).toHaveCount(13);
+    await expect(options.locator('[aria-current="true"]')).toHaveCount(1);
+    await page.keyboard.press('Escape');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth))
+      .toBeLessThanOrEqual(width + 3);
+  }
+});

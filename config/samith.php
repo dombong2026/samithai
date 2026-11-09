@@ -12,6 +12,11 @@ return [
         'id' => 'Bahasa Indonesia', 'ms' => 'Bahasa Melayu', 'ar' => 'العربية',
         'fr' => 'Français', 'es' => 'Español',
     ],
+    'locale_flags' => [
+        'en' => '🇬🇧', 'zh' => '🇨🇳', 'ko' => '🇰🇷', 'ja' => '🇯🇵',
+        'de' => '🇩🇪', 'km' => '🇰🇭', 'vi' => '🇻🇳', 'th' => '🇹🇭',
+        'id' => '🇮🇩', 'ms' => '🇲🇾', 'ar' => '🇸🇦', 'fr' => '🇫🇷', 'es' => '🇪🇸',
+    ],
     // Cloudflare country headers are advisory; only trust them if configured behind a trusted proxy.
     'trust_cloudflare_country' => (bool) env('SAMITH_TRUST_CF_COUNTRY', false),
     'country_locale' => [

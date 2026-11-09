@@ -418,3 +418,112 @@ html[data-theme=light] .workspace-theme-switch .ui-symbol:last-child{display:non
  .workspace .workspace-top-actions{gap:3px}
  .workspace-top-actions .workspace-language-menu summary.btn{padding:6px;gap:3px}
 }
+
+
+/* Workspace header refinement: only profile keeps a filled control surface.
+   Scoped to the private dashboard/account header; storefront remains unchanged. */
+.workspace .workspace-top .workspace-sidebar-toggle,
+.workspace .workspace-top .workspace-top-site,
+.workspace .workspace-top .workspace-theme-switch,
+.workspace .workspace-top .workspace-language-menu > summary,
+.workspace .workspace-top .workspace-header-search {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.workspace .workspace-top .workspace-sidebar-toggle:hover,
+.workspace .workspace-top .workspace-top-site:hover,
+.workspace .workspace-top .workspace-theme-switch:hover,
+.workspace .workspace-top .workspace-language-menu > summary:hover {
+  background: transparent;
+  border-color: transparent;
+  color: var(--primary);
+}
+.workspace .workspace-top .workspace-sidebar-toggle:focus-visible,
+.workspace .workspace-top .workspace-top-site:focus-visible,
+.workspace .workspace-top .workspace-theme-switch:focus-visible,
+.workspace .workspace-top .workspace-language-menu > summary:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+  background: transparent;
+}
+.workspace .workspace-top .workspace-sidebar-toggle[aria-expanded="false"] {
+  border-color: transparent;
+  color: var(--primary);
+}
+.workspace .workspace-top .workspace-header-search:focus-within {
+  background: transparent;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 2px color-mix(in srgb,var(--secondary) 13%, transparent);
+}
+.workspace .workspace-top .workspace-top-site {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.workspace .workspace-top .workspace-top-site > .ui-symbol {
+  width: 20px;
+  height: 20px;
+  flex-basis: 20px;
+}
+.workspace .workspace-top .workspace-language-menu > .workspace-language-trigger {
+  min-height: 40px;
+  padding: 7px 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.workspace-language-flag {
+  font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+  font-size: 18px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+.workspace-language-code { font-size: 12px; font-weight: 750; }
+.workspace .workspace-language-list a {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.workspace .workspace-language-list a .workspace-language-flag { font-size: 19px; }
+.workspace .workspace-language-list a[aria-current="true"] {
+  color: var(--primary);
+  font-weight: 750;
+}
+.workspace .workspace-top .workspace-profile-trigger {
+  background: var(--soft);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+.workspace .workspace-top .workspace-profile-trigger:hover {
+  background: color-mix(in srgb,var(--primary) 10%, var(--panel));
+  border-color: color-mix(in srgb,var(--primary) 30%, var(--line));
+}
+@media(max-width:760px) {
+  .workspace .workspace-top .workspace-top-site {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+  }
+  .workspace .workspace-top .workspace-language-menu > .workspace-language-trigger {
+    min-height: 36px;
+    padding: 5px;
+    gap: 4px;
+  }
+  .workspace-language-flag { font-size: 16px; }
+}
+@media(max-width:440px) {
+  .workspace .workspace-top .workspace-top-site,
+  .workspace .workspace-top .workspace-theme-switch {
+    width: 32px;
+    min-width: 32px;
+    padding: 0;
+  }
+  .workspace .workspace-top .workspace-language-menu > .workspace-language-trigger {
+    gap: 3px;
+  }
+}

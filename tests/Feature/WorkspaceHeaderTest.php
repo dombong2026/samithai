@@ -45,6 +45,10 @@ class WorkspaceHeaderTest extends TestCase
             $this->assertCount(0, $xp->query('//div[contains(@class,"workspace-aside-footer")]'));
             $this->assertCount(0, $xp->query('//header[contains(@class,"workspace-top")]//summary[contains(@class,"workspace-profile-trigger")]//span'));
             $this->assertCount(1, $xp->query('//header[contains(@class,"workspace-top")]//button[@data-theme-toggle]'));
+            $this->assertCount(0, $xp->query('//div[contains(@class,"workspace-main")]/text()[normalize-space(.)=">"]'), 'Stray > must never appear below workspace header.');
+            $this->assertCount(1, $xp->query('//header[contains(@class,"workspace-top")]//a[contains(@class,"workspace-top-site") and @aria-label="Marketplace" and svg and not(normalize-space(text()))]'));
+            $this->assertCount(1, $xp->query('//header[contains(@class,"workspace-top")]//summary[contains(@class,"workspace-language-trigger")]//span[contains(@class,"workspace-language-flag")]'));
+            $this->assertCount(count(config('samith.locales')), $xp->query('//header[contains(@class,"workspace-top")]//div[contains(@class,"workspace-language-list")]//a[span[contains(@class,"workspace-language-flag")]]'));
             $this->assertCount(1, $xp->query('//header[contains(@class,"workspace-top")]//form[@action="'.route('logout').'"]'));
             $this->assertGreaterThanOrEqual(6, $xp->query('//div[contains(@class,"workspace-profile-dropdown")]//a[svg]')->length);
             $this->assertCount(1, $xp->query('//div[contains(@class,"workspace-profile-dropdown")]//form/button[svg]'));

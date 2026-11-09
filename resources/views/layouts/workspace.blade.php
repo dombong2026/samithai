@@ -125,12 +125,21 @@
 @include('partials.workspace-search')
 <div class="workspace-top-actions">
 @if(\App\Support\FrontendPageAvailability::enabled('catalog'))
-<a class="btn small workspace-top-site" href="{{ route('prompts.index') }}"><x-nav-icon name="store"/> Marketplace</a>
+<a class="icon-btn workspace-top-site" href="{{ route('prompts.index') }}" aria-label="Marketplace" title="Marketplace"><x-nav-icon name="store"/></a>
 @endif
 <details class="profile-menu workspace-language-menu" data-workspace-header-menu>
-<summary class="btn small" aria-label="Language">{{ strtoupper(app()->getLocale()) }} <x-nav-icon name="chevron"/></summary>
+<summary class="btn small workspace-language-trigger" aria-label="Language: {{ config('samith.locales')[app()->getLocale()] ?? strtoupper(app()->getLocale()) }}">
+<span class="workspace-language-flag" aria-hidden="true">{{ config('samith.locale_flags.'.app()->getLocale(), '🌐') }}</span>
+<span class="workspace-language-code">{{ strtoupper(app()->getLocale()) }}</span>
+<x-nav-icon name="chevron"/>
+</summary>
 <div class="dropdown workspace-language-list">
-@foreach(config('samith.locales') as $code=>$name)<a href="{{ route('language.switch',$code) }}" lang="{{ $code }}">{{ $name }}</a>@endforeach
+@foreach(config('samith.locales') as $code=>$name)
+<a href="{{ route('language.switch',$code) }}" lang="{{ $code }}" @if($code === app()->getLocale()) aria-current="true" @endif>
+<span class="workspace-language-flag" aria-hidden="true">{{ config('samith.locale_flags.'.$code, '🌐') }}</span>
+<span>{{ $name }}</span>
+</a>
+@endforeach
 </div></details>
 <button class="icon-btn workspace-theme-switch" type="button" data-theme-toggle aria-label="Switch light or dark mode" title="Switch theme"><x-nav-icon name="moon"/><x-nav-icon name="sun"/></button>
 <details class="profile-menu workspace-profile-menu" data-workspace-header-menu>
@@ -153,7 +162,7 @@
 <div class="workspace-profile-separator" role="separator"></div>
 <form method="post" action="{{ route('logout') }}">@csrf<button type="submit"><x-nav-icon name="logout"/> Sign out</button></form>
 </div></details>
-</div></header>>
+</div></header>
 <main class="workspace-body">
 <div class="page-heading"><div><div class="eyebrow">@yield('breadcrumb', 'Workspace')</div><h1>@yield('heading', 'Dashboard')</h1><p>@yield('subtitle')</p></div>
 <div class="toolbar">@yield('toolbar')</div></div>
