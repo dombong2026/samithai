@@ -45,6 +45,8 @@ jobs:
         run: bash tests/acceptance/branding-deployment-syntax.sh
       - name: Check read-only feature-upgrade preflight syntax
         run: bash tests/acceptance/feature-upgrade-preflight-syntax.sh
+      - name: Validate operator-controlled production snapshot utility
+        run: bash tests/acceptance/local-backup-syntax.sh
       - name: PHP syntax validation
         run: find app bootstrap config database routes tests -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Compile all Laravel Blade templates and inspect routes
