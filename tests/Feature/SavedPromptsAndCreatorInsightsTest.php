@@ -81,7 +81,7 @@ class SavedPromptsAndCreatorInsightsTest extends TestCase
         $this->get(route('account.saved'))->assertOk()->assertSee($prompt->title);
         $this->actingAs($customerB)->get(route('account.saved'))->assertOk()
             ->assertDontSee($prompt->title);
-        $this->post(route('prompts.unsave', $prompt))->assertRedirect();
+        $this->delete(route('prompts.unsave', $prompt))->assertRedirect();
         $this->assertDatabaseCount('prompt_saves', 1);
 
         $this->actingAs($customerA)->delete(route('prompts.unsave', $prompt))->assertRedirect();
