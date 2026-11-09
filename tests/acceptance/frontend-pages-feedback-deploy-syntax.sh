@@ -18,4 +18,5 @@ fi
 bash tests/acceptance/frontend-page-visibility-deploy-syntax.sh
 bash tests/acceptance/workspace-header-deploy-syntax.sh
 bash tests/acceptance/workspace-header-refinement-deploy-syntax.sh
+bash tests/acceptance/workspace-boost-deploy-syntax.sh
 echo 'FRONTEND_PAGES_RELEASE_SCRIPT_SYNTAX=PASS'
