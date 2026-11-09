@@ -257,7 +257,7 @@ test('workspace header refinement has no stray character and flags all available
     const options = page.locator('.workspace-language-list a');
     await expect(options).toHaveCount(13);
     await expect(options.locator('.workspace-language-flag')).toHaveCount(13);
-    await expect(options.locator('[aria-current="true"]')).toHaveCount(1);
+    await expect(page.locator('.workspace-language-list a[aria-current="true"]')).toHaveCount(1);
     await page.keyboard.press('Escape');
     expect(await page.evaluate(() => document.documentElement.scrollWidth))
       .toBeLessThanOrEqual(width + 3);

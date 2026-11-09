@@ -505,6 +505,7 @@ html[data-theme=light] .workspace-theme-switch .ui-symbol:last-child{display:non
 }
 @media(max-width:760px) {
   .workspace .workspace-top .workspace-top-site {
+    display: inline-flex;
     width: 36px;
     min-width: 36px;
     height: 36px;
