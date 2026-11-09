@@ -115,36 +115,45 @@
 <a href="{{ route('prompts.index') }}" class="side-link workspace-marketplace-link"><x-nav-icon name="store"/><span>Explore marketplace</span><x-nav-icon name="arrow-up-right"/></a>
 @endif
 </nav></details>
-<div class="workspace-aside-footer">
-<div class="workspace-avatar" aria-hidden="true">{{ strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</div>
-<div class="workspace-aside-identity"><strong>{{ auth()->user()->name }}</strong><span>{{ $adminWorkspace ? 'Administrator' : ($creatorWorkspace ? 'Creator' : 'Member') }}</span></div>
-</div>
 </aside>
 <div class="workspace-main">
-<header class="workspace-top">
-<div class="workspace-breadcrumb"><span class="workspace-breadcrumb-mark"><x-nav-icon name="{{ $adminWorkspace ? 'dashboard' : 'account' }}"/></span><span>Samith AI</span><span class="workspace-breadcrumb-divider">/</span><strong>@yield('breadcrumb', 'Workspace')</strong></div>
+<header class="workspace-top" aria-label="Workspace toolbar">
+<button class="icon-btn workspace-sidebar-toggle" type="button" data-workspace-sidebar-toggle
+  aria-label="Hide sidebar" aria-expanded="true" aria-controls="workspace-sidebar" title="Hide sidebar">
+<x-nav-icon name="sidebar"/>
+</button>
+@include('partials.workspace-search')
 <div class="workspace-top-actions">
+@if(\App\Support\FrontendPageAvailability::enabled('catalog'))
 <a class="btn small workspace-top-site" href="{{ route('prompts.index') }}"><x-nav-icon name="store"/> Marketplace</a>
-<details class="profile-menu"><summary class="btn small" aria-label="Language">{{ strtoupper(app()->getLocale()) }} <x-nav-icon name="chevron"/></summary>
+@endif
+<details class="profile-menu workspace-language-menu" data-workspace-header-menu>
+<summary class="btn small" aria-label="Language">{{ strtoupper(app()->getLocale()) }} <x-nav-icon name="chevron"/></summary>
 <div class="dropdown workspace-language-list">
 @foreach(config('samith.locales') as $code=>$name)<a href="{{ route('language.switch',$code) }}" lang="{{ $code }}">{{ $name }}</a>@endforeach
 </div></details>
-<button class="icon-btn" type="button" data-theme-toggle aria-label="Switch light or dark mode">◐</button>
-<details class="profile-menu"><summary class="btn workspace-user-menu" aria-label="Open profile menu">{{ auth()->user()->name }} <x-nav-icon name="chevron"/></summary>
+<button class="icon-btn workspace-theme-switch" type="button" data-theme-toggle aria-label="Switch light or dark mode" title="Switch theme"><x-nav-icon name="moon"/><x-nav-icon name="sun"/></button>
+<details class="profile-menu workspace-profile-menu" data-workspace-header-menu>
+<summary class="icon-btn workspace-profile-trigger" aria-label="Open profile menu" title="Profile and account">
+<x-nav-icon name="account"/>
+</summary>
 <div class="dropdown workspace-profile-dropdown">
-<a href="{{ route('account') }}">My account</a>
-<a href="{{ route('account.library') }}">My library</a>
-<a href="{{ route('account.saved') }}">Saved prompts</a>
+<div class="workspace-profile-label"><strong>{{ auth()->user()->name }}</strong><span>{{ $adminWorkspace ? 'Administrator' : ($creatorWorkspace ? 'Creator' : 'Member') }}</span></div>
+@if($adminWorkspace)<a href="{{ route('dashboard') }}"><x-nav-icon name="dashboard"/> Admin dashboard</a>@endif
+<a href="{{ route('account') }}"><x-nav-icon name="account"/> My account</a>
+<a href="{{ route('account.library') }}"><x-nav-icon name="library"/> My library</a>
+<a href="{{ route('account.saved') }}"><x-nav-icon name="saved"/> Saved prompts</a>
 @if($creatorWorkspace)
-<a href="{{ route('account.prompts') }}">My prompts</a>
-<a href="{{ route('account.creator.insights') }}">Creator insights</a>
+<a href="{{ route('account.prompts') }}"><x-nav-icon name="posts"/> My prompts</a>
+<a href="{{ route('account.creator.insights') }}"><x-nav-icon name="insights"/> Creator insights</a>
 @endif
-<a href="{{ route('account.orders') }}">My orders</a>
-<a href="{{ route('account.support') }}">Support tickets</a>
-<a href="{{ route('account.settings') }}">Account settings</a>
-<form method="post" action="{{ route('logout') }}">@csrf<button type="submit">Sign out</button></form>
+<a href="{{ route('account.orders') }}"><x-nav-icon name="finance"/> My orders</a>
+<a href="{{ route('account.support') }}"><x-nav-icon name="support"/> Support tickets</a>
+<a href="{{ route('account.settings') }}"><x-nav-icon name="system"/> Account settings</a>
+<div class="workspace-profile-separator" role="separator"></div>
+<form method="post" action="{{ route('logout') }}">@csrf<button type="submit"><x-nav-icon name="logout"/> Sign out</button></form>
 </div></details>
-</div></header>
+</div></header>>
 <main class="workspace-body">
 <div class="page-heading"><div><div class="eyebrow">@yield('breadcrumb', 'Workspace')</div><h1>@yield('heading', 'Dashboard')</h1><p>@yield('subtitle')</p></div>
 <div class="toolbar">@yield('toolbar')</div></div>

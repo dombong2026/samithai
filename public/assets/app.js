@@ -253,3 +253,94 @@
     });
   });
 })();
+
+
+// Workspace header navigation enhancements, isolated from existing marketplace scripts.
+(() => {
+  const workspace = document.querySelector('.workspace');
+  if (!workspace) return;
+
+  const sidebar = document.getElementById('workspace-sidebar');
+  const toggle = document.querySelector('[data-workspace-sidebar-toggle]');
+  const storageKey = 'samith-workspace-sidebar-hidden';
+  const setSidebarHidden = (hidden) => {
+    workspace.classList.toggle('workspace-sidebar-hidden', hidden);
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', String(!hidden));
+      toggle.setAttribute('aria-label', hidden ? 'Show sidebar' : 'Hide sidebar');
+      toggle.title = hidden ? 'Show sidebar' : 'Hide sidebar';
+    }
+    if (sidebar) sidebar.setAttribute('aria-hidden', String(hidden));
+    if (!hidden && matchMedia('(max-width:760px)').matches) {
+      const mobileNav = sidebar?.querySelector('[data-workspace-mobile-nav]');
+      if (mobileNav) mobileNav.open = true;
+    }
+  };
+  let savedSidebar = false;
+  try { savedSidebar = localStorage.getItem(storageKey) === '1'; } catch {}
+  setSidebarHidden(savedSidebar);
+  toggle?.addEventListener('click', () => {
+    const next = !workspace.classList.contains('workspace-sidebar-hidden');
+    setSidebarHidden(next);
+    try { localStorage.setItem(storageKey, next ? '1' : '0'); } catch {}
+  });
+
+  const search = document.querySelector('[data-workspace-search]');
+  const field = search?.querySelector('[data-workspace-search-input]');
+  const results = search?.querySelector('[data-workspace-search-results]');
+  const empty = search?.querySelector('[data-workspace-search-empty]');
+  const links = [...(search?.querySelectorAll('[data-workspace-search-item]') || [])];
+  const closeSearch = () => {
+    if (!results || !field) return;
+    results.hidden = true;
+    field.setAttribute('aria-expanded', 'false');
+  };
+  const refresh = () => {
+    if (!field || !results) return [];
+    const term = field.value.trim().toLocaleLowerCase();
+    let shown = 0;
+    const matches = [];
+    links.forEach((link) => {
+      const match = (link.textContent + ' ' + (link.dataset.searchTerms || '')).toLocaleLowerCase().includes(term);
+      if (match && shown < 7) { link.hidden = false; matches.push(link); shown++; }
+      else link.hidden = true;
+    });
+    if (empty) empty.hidden = matches.length !== 0;
+    results.hidden = false;
+    field.setAttribute('aria-expanded', 'true');
+    return matches;
+  };
+  field?.addEventListener('focus', refresh);
+  field?.addEventListener('input', refresh);
+  field?.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') { closeSearch(); field.blur(); return; }
+    if (event.key === 'ArrowDown') { const first = refresh()[0]; if (first) { event.preventDefault(); first.focus(); } }
+    if (event.key === 'Enter') { const first = refresh()[0]; if (first) { event.preventDefault(); window.location.assign(first.href); } }
+  });
+  results?.addEventListener('keydown', (event) => {
+    const visible = links.filter((link) => !link.hidden);
+    const current = visible.indexOf(document.activeElement);
+    if (event.key === 'Escape') { event.preventDefault(); closeSearch(); field?.focus(); }
+    else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      const next = event.key === 'ArrowDown' ? current + 1 : current - 1;
+      if (next < 0) field?.focus();
+      else visible[Math.min(next, visible.length - 1)]?.focus();
+    }
+  });
+  const menus = [...document.querySelectorAll('[data-workspace-header-menu]')];
+  document.addEventListener('click', (event) => {
+    if (search && !search.contains(event.target)) closeSearch();
+    menus.forEach((menu) => {
+      if (!menu.contains(event.target)) menu.open = false;
+    });
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') menus.forEach((menu) => { menu.open = false; });
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k' && field) {
+      event.preventDefault();
+      field.focus();
+      field.select();
+    }
+  });
+})();
