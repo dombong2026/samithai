@@ -177,3 +177,13 @@
     });
   });
 })();
+
+// Keep native navigation usable without JS; collapse it on small screens when JS is available.
+(() => {
+  const navigation = document.querySelector('[data-workspace-mobile-nav]');
+  if (!navigation || typeof matchMedia !== 'function') return;
+  const mobile = matchMedia('(max-width: 760px)');
+  const synchronize = () => { navigation.open = !mobile.matches; };
+  synchronize();
+  if (typeof mobile.addEventListener === 'function') mobile.addEventListener('change', synchronize);
+})();
