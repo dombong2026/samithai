@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Prompt;
+use App\Models\SupportTicket;
+use App\Support\WorkspaceActivity;
+use App\Support\WorkspaceLaunchpad;
 use App\Support\AuditTrail;
 use App\Support\MailDelivery;
 use Illuminate\Http\RedirectResponse;
@@ -20,6 +23,13 @@ class AccountController extends Controller
         $user = $request->user();
 
         return view('account.index', [
+            'workspaceLaunchpad' => WorkspaceLaunchpad::data($user, 'account'),
+            'workspaceEvents' => WorkspaceActivity::forUser($user->getKey()),
+            'openTicketsCount' => SupportTicket::where('user_id', $user->getKey())->where('status', 'open')->count(),
+            'pendingPromptsCount' => $user->isCreator()
+                ? $user->prompts()->where('status', 'pending')->count() : 0,
+            'recentSavesCount' => \Illuminate\Support\Facades\DB::table('prompt_saves')
+                ->where('user_id', $user->getKey())->where('created_at', '>=', now()->subDays(7))->count(),
             'libraryCount' => $user->entitlements()->count(),
             'cartCount' => $user->cartItems()->count(),
             'savedCount' => $user->savedPrompts()->where('status', 'published')->count(),
