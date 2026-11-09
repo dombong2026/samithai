@@ -187,3 +187,69 @@
   synchronize();
   if (typeof mobile.addEventListener === 'function') mobile.addEventListener('change', synchronize);
 })();
+
+
+// Global feedback notifications and Appearance Frontend Pages editor.
+// Kept independent from other marketplace handlers to avoid UI regressions.
+(() => {
+  const notifications = [...document.querySelectorAll('.toast-stack .toast')];
+  notifications.forEach((toast) => {
+    const expiry = toast.classList.contains('error-toast') ? 9000 : 4500;
+    const duration = expiry;
+    let remaining = duration;
+    let started = Date.now();
+    let timer = null;
+    let closed = false;
+
+    const close = () => {
+      if (closed) return;
+      closed = true;
+      clearTimeout(timer);
+      toast.classList.add('is-closing');
+      window.setTimeout(() => toast.remove(), window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 190);
+    };
+    const pause = () => {
+      if (closed || timer === null) return;
+      clearTimeout(timer);
+      timer = null;
+      remaining = Math.max(0, remaining - (Date.now() - started));
+    };
+    const resume = () => {
+      if (closed || timer !== null) return;
+      started = Date.now();
+      timer = window.setTimeout(close, remaining);
+    };
+
+    toast.querySelector('[data-toast-dismiss]')?.addEventListener('click', close);
+    toast.addEventListener('mouseenter', pause);
+    toast.addEventListener('mouseleave', resume);
+    toast.addEventListener('focusin', pause);
+    toast.addEventListener('focusout', () => {
+      window.requestAnimationFrame(() => {
+        if (!toast.contains(document.activeElement)) resume();
+      });
+    });
+    resume();
+  });
+
+  // Native HTML dialogs: Escape/keyboard focus supported; no injected HTML.
+  document.addEventListener('click', (event) => {
+    const opener = event.target.closest('[data-frontend-dialog]');
+    if (opener) {
+      const dialog = document.getElementById(opener.dataset.frontendDialog);
+      if (dialog instanceof HTMLDialogElement && !dialog.open) {
+        dialog.showModal();
+      }
+      return;
+    }
+    const closer = event.target.closest('[data-frontend-close]');
+    if (closer) {
+      closer.closest('dialog')?.close();
+    }
+  });
+  document.querySelectorAll('dialog.frontend-config-dialog').forEach((dialog) => {
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+  });
+})();
