@@ -61,6 +61,8 @@ jobs:
         run: bash tests/acceptance/premium-admin-dashboard-syntax.sh
       - name: Validate user and creator UI deployment syntax
         run: bash tests/acceptance/account-creator-navigation-deploy-syntax.sh
+      - name: Verify frontend page builder and feedback deployment utility
+        run: bash tests/acceptance/frontend-pages-feedback-deploy-syntax.sh
       - name: PHP syntax validation
         run: find app bootstrap config database routes tests -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Compile all Laravel Blade templates and inspect routes
