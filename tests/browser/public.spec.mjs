@@ -225,19 +225,9 @@ test('shared workspace header search, sidebar visibility and icon profile menu w
   await expect(dropdown.getByRole('button', { name: 'Sign out' }).locator('svg')).toHaveCount(1);
   await page.keyboard.press('Escape');
   await expect(dropdown).toBeHidden();
-});
 
-
-test('workspace header refinement has no stray character and flags all available languages', async ({ page }) => {
-  await page.goto('/register');
-  const email = 'toolbar-qa-' + Date.now() + '-' + Math.floor(Math.random() * 1000000) + '@example.test';
-  await page.locator('#name').fill('Header Refinement QA');
-  await page.locator('#email').fill(email);
-  await page.locator('#password').fill('SecurePass12345');
-  await page.locator('#password_confirmation').fill('SecurePass12345');
-  await page.getByRole('button', { name: 'Create account' }).click();
-  await expect(page).toHaveURL(/\/account$/);
-
+  // Reuse the same authenticated account: a separate registration would exhaust
+  // the deliberately strict rate limit during mobile/desktop smoke tests.
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/account');
@@ -263,3 +253,5 @@ test('workspace header refinement has no stray character and flags all available
       .toBeLessThanOrEqual(width + 3);
   }
 });
+
+
