@@ -26,6 +26,8 @@
 </div>
 </div>
 
+@include('partials.workspace-launchpad', ['context' => 'account'])
+
 <div class="account-section-heading"><div><div class="eyebrow">ACCOUNT SNAPSHOT</div><h2>At a glance</h2></div><span class="muted tiny">Your actual account records</span></div>
 <div class="account-metrics">
 <a class="account-metric" href="{{ route('account.library') }}"><span class="account-metric-icon"><x-nav-icon name="library"/></span><span class="account-metric-label">Licensed library</span><strong>{{ number_format($libraryCount) }}</strong><small>View your prompt library <x-nav-icon name="arrow-up-right"/></small></a>
@@ -33,6 +35,19 @@
 <a class="account-metric" href="{{ route('cart.index') }}"><span class="account-metric-icon"><x-nav-icon name="cart"/></span><span class="account-metric-label">My cart</span><strong>{{ number_format($cartCount) }}</strong><small>Review cart items <x-nav-icon name="arrow-up-right"/></small></a>
 <a class="account-metric" href="{{ route('account.orders') }}"><span class="account-metric-icon"><x-nav-icon name="finance"/></span><span class="account-metric-label">Order records</span><strong>{{ number_format($ordersCount) }}</strong><small>View order history <x-nav-icon name="arrow-up-right"/></small></a>
 </div>
+
+<section class="workspace-pulse-panel" aria-labelledby="account-attention-heading">
+<div class="workspace-pulse-header"><div><div class="eyebrow">YOUR ACTIVITY</div><h2 id="account-attention-heading">Account action center</h2></div><span class="muted tiny">Your records only</span></div>
+<div class="workspace-pulse-grid">
+<a class="workspace-pulse-stat" href="{{ route('account.support') }}"><span>Open support tickets</span><strong>{{ number_format($openTicketsCount) }}</strong><small>Review requests <x-nav-icon name="arrow-up-right"/></small></a>
+<a class="workspace-pulse-stat" href="{{ route('account.saved') }}"><span>Saves in the last 7 days</span><strong>{{ number_format($recentSavesCount) }}</strong><small>View saved prompts <x-nav-icon name="arrow-up-right"/></small></a>
+@if(auth()->user()->isCreator())
+<a class="workspace-pulse-stat" href="{{ route('account.prompts') }}"><span>Prompts under review</span><strong>{{ number_format($pendingPromptsCount) }}</strong><small>Track submissions <x-nav-icon name="arrow-up-right"/></small></a>
+@else
+<a class="workspace-pulse-stat" href="{{ route('account.settings') }}"><span>Email verification</span><strong class="workspace-pulse-word">{{ auth()->user()->hasVerifiedEmail() ? 'Verified' : 'Pending' }}</strong><small>Account security <x-nav-icon name="arrow-up-right"/></small></a>
+@endif
+</div>
+</section>
 
 @if(auth()->user()->isCreator())
 <div class="account-content-grid">
@@ -77,5 +92,10 @@
 <form method="post" action="{{ route('account.creator') }}">@csrf<button type="submit" class="btn primary">Start creating prompts <x-nav-icon name="arrow-up-right"/></button></form>
 </div>
 @endif
+@include('partials.workspace-activity', [
+    'activityHeadingId' => 'account-activity-heading',
+    'activityTitle' => 'Your recent account activity',
+    'activityDescription' => 'Only actions recorded for your signed-in account.',
+])
 </div>
 @endsection

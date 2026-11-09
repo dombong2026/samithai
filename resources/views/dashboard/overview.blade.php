@@ -25,6 +25,8 @@
 </div>
 </section>
 
+@include('partials.workspace-launchpad', ['context' => 'admin'])
+
 <div class="admin-section-heading"><div><div class="eyebrow">AT A GLANCE</div><h2>Marketplace performance</h2></div><span class="admin-heading-note">Live database totals</span></div>
 <div class="admin-metrics">
 <a class="admin-metric" href="{{ route('dashboard.prompts',['status'=>'pending']) }}">
@@ -44,6 +46,16 @@
 <strong>{{ number_format($supportOpenCount) }}</strong><span class="admin-metric-footer">Manage support inbox <x-nav-icon name="arrow-up-right"/></span>
 </a>
 </div>
+
+<section class="workspace-pulse-panel" aria-labelledby="workspace-week-title">
+<div class="workspace-pulse-header"><div><div class="eyebrow">LAST 7 DAYS</div><h2 id="workspace-week-title">Weekly activity pulse</h2></div><span class="muted tiny">Real activity, not estimates</span></div>
+<div class="workspace-pulse-grid">
+<div class="workspace-pulse-stat"><span>New accounts</span><strong>{{ number_format($newUsersWeek) }}</strong></div>
+<div class="workspace-pulse-stat"><span>New prompts</span><strong>{{ number_format($newPromptsWeek) }}</strong></div>
+<div class="workspace-pulse-stat"><span>Support requests</span><strong>{{ number_format($newTicketsWeek) }}</strong></div>
+<div class="workspace-pulse-stat"><span>Prompt saves</span><strong>{{ number_format($newSavesWeek) }}</strong></div>
+</div>
+</section>
 
 @if($categoryCount === 0)
 <section class="admin-setup-strip">
@@ -112,5 +124,10 @@
 <p class="admin-operational-note">Paid checkout is not enabled until the provider verification and compliance requirements are complete.</p>
 </section>
 </div>
+@include('partials.workspace-activity', [
+    'activityHeadingId' => 'admin-activity-heading',
+    'activityTitle' => 'Recent workspace changes',
+    'activityDescription' => 'A privacy-safe summary of management actions.',
+])
 </div>
 @endsection
