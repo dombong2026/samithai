@@ -344,3 +344,37 @@
     }
   });
 })();
+
+
+// Account-scoped workspace shortcut picker: user-visible, server-persisted controls.
+(() => {
+  document.querySelectorAll('[data-workspace-launchpad]').forEach((panel) => {
+    const context = panel.dataset.workspaceLaunchpad;
+    const dialog = document.getElementById('workspace-launchpad-config-' + context);
+    const open = panel.querySelector('[data-launchpad-configure]');
+    const form = dialog?.querySelector('.workspace-launchpad-form');
+    const checks = [...(form?.querySelectorAll('input[name="shortcuts[]"]') || [])];
+    const counter = dialog?.querySelector('[data-launchpad-count]');
+    const save = dialog?.querySelector('[data-launchpad-save]');
+    if (!dialog || !form || !open) return;
+
+    const refresh = () => {
+      const selected = checks.filter((box) => box.checked).length;
+      checks.forEach((box) => { box.disabled = !box.checked && selected >= 6; });
+      if (counter) counter.textContent = selected + ' of 6 selected';
+      if (save) save.disabled = selected === 0 || selected > 6;
+    };
+    open.addEventListener('click', () => { refresh(); dialog.showModal(); });
+    checks.forEach((box) => box.addEventListener('change', refresh));
+    dialog.querySelectorAll('[data-launchpad-close]').forEach((button) => {
+      button.addEventListener('click', () => dialog.close());
+    });
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    form.addEventListener('submit', (event) => {
+      const selected = checks.filter((box) => box.checked).length;
+      if (selected < 1 || selected > 6) event.preventDefault();
+    });
+  });
+})();
