@@ -32,6 +32,22 @@ test('a new customer can register, browse account, switch theme and create a sup
   await expect(page.getByRole('heading', { name:'Account dashboard' })).toBeVisible();
   const screenWidth = await page.evaluate(() => ({ viewport: window.innerWidth, body: document.body.scrollWidth, html: document.documentElement.scrollWidth }));
   expect(screenWidth.html).toBeLessThanOrEqual(screenWidth.viewport + 3);
+  // The compact mobile workspace menu must be closed by default,
+  // keyboard/touch accessible when opened, and reset on desktop.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/account');
+  const mobileNavigation = page.locator('[data-workspace-mobile-nav]');
+  await expect(mobileNavigation).toHaveJSProperty('open', false);
+  await page.locator('.workspace-nav-trigger').click();
+  await expect(mobileNavigation).toHaveJSProperty('open', true);
+  await expect(page.locator('nav[aria-label="Account navigation"]').getByRole('link', { name: 'Saved prompts' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(393);
+  await page.setViewportSize({ width: 1280, height: 850 });
+  await expect(mobileNavigation).toHaveJSProperty('open', true);
+  await page.goto('/account');
+  await expect(page.locator('.workspace-nav-trigger')).toBeHidden();
+  await expect(page.locator('nav[aria-label="Account navigation"]').getByRole('link', { name: 'Saved prompts' })).toBeVisible();
+
   await page.locator('[data-theme-toggle]').first().click();
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
 
