@@ -238,3 +238,56 @@ html[data-theme="dark"] .brand-with-logo .brand-logo-dark{display:block}
  .admin-operation{padding:11px}
  .admin-submission-actions .pill{display:none}
 }
+
+
+/* Member and Creator premium workspace navigation. Admin navigation remains unchanged. */
+.workspace-account .workspace-nav-label{padding-top:16px}
+.workspace-account .workspace-nav>.side-link:first-of-type{margin:4px 0 12px}
+.workspace-account .workspace-nav-group{margin:5px 0}
+.workspace-account .workspace-nav-group>summary{min-height:43px;border:1px solid transparent;transition:background .15s,border-color .15s}
+.workspace-account .workspace-nav-group>summary:hover{background:var(--soft);border-color:var(--line)}
+.workspace-account .workspace-nav-group[open]>summary{color:var(--ink);background:var(--soft)}
+.workspace-account .workspace-nav-group.workspace-creator-group[open]>summary{background:color-mix(in srgb,var(--primary) 10%,var(--panel));color:var(--primary)}
+.workspace-account .workspace-nav-group.workspace-creator-group>summary>.ui-symbol:first-child{color:var(--primary)}
+.workspace-account .workspace-nav-items{padding-top:5px;padding-bottom:7px}
+.workspace-account .workspace-nav-items .side-link[aria-current=page]{box-shadow:inset 3px 0 0 var(--primary)}
+.workspace-account .workspace-marketplace-link{margin-top:10px!important;color:var(--secondary)}
+.account-dashboard-premium{display:grid;gap:21px}
+.account-welcome{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;border:1px solid var(--line);border-radius:18px;padding:clamp(20px,2.6vw,30px);background:linear-gradient(120deg,color-mix(in srgb,var(--primary) 9%,var(--panel)),var(--panel) 65%)}
+.account-welcome h2{margin:9px 0;font-size:clamp(21px,2.3vw,28px)}
+.account-welcome p{margin:0;font-size:13px;max-width:610px}
+.account-welcome-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.account-welcome-actions .btn,.account-create-banner .btn{display:inline-flex;align-items:center;gap:7px}
+.account-welcome-actions .ui-symbol,.account-create-banner .btn .ui-symbol{width:15px;height:15px;flex-basis:15px}
+.account-section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.account-section-heading h2{margin:6px 0 0;font-size:20px}
+.account-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.account-metric{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:19px;border:1px solid var(--line);border-radius:16px;background:var(--panel);min-width:0;transition:transform .15s,border-color .15s}
+.account-metric:hover{border-color:var(--secondary);transform:translateY(-2px)}
+.account-metric-icon,.account-action-icon{display:grid;place-items:center;border-radius:11px;flex-shrink:0;background:color-mix(in srgb,var(--primary) 11%,var(--panel));color:var(--primary)}
+.account-metric-icon{width:37px;height:37px}
+.account-metric-label{font-size:12px;font-weight:720;color:var(--muted)}
+.account-metric strong{font-size:clamp(27px,2.7vw,35px);letter-spacing:-.05em;line-height:1}
+.account-metric small{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;font-size:11px;color:var(--muted);margin-top:4px}
+.account-metric small .ui-symbol{width:14px;height:14px;flex-basis:14px}
+.account-content-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.account-link-panel{padding:21px;border:1px solid var(--line);border-radius:17px;background:var(--panel);min-width:0}
+.account-panel-header{display:flex;justify-content:space-between;align-items:center;gap:13px;margin-bottom:17px}
+.account-panel-header h2{font-size:18px;margin:5px 0 6px}
+.account-panel-header p{margin:0;font-size:12px}
+.account-panel-badge{font-size:11px;white-space:nowrap;background:var(--soft);color:var(--muted);font-weight:740;padding:6px 10px;border-radius:9px}
+.account-action-grid{display:grid;gap:9px}
+.account-action-link{display:flex;align-items:center;gap:12px;min-width:0;padding:12px;border:1px solid var(--line);border-radius:12px;transition:background .15s,border-color .15s}
+.account-action-link:hover{background:var(--soft);border-color:var(--secondary)}
+.account-action-icon{width:37px;height:37px}
+.account-action-link>span:nth-child(2){flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.account-action-link strong{font-size:12px}
+.account-action-link small{font-size:11px;color:var(--muted)}
+.account-action-link>.ui-symbol{width:14px;height:14px;flex-basis:14px;color:var(--muted)}
+.account-create-banner{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:20px 24px;border:1px solid color-mix(in srgb,var(--secondary) 22%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--secondary) 6%,var(--panel))}
+.account-create-banner h2{margin:6px 0;font-size:17px}
+.account-create-banner p{font-size:12px;margin:0;max-width:530px}
+.account-create-banner form{margin:0}
+@media(max-width:1100px){.account-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.account-content-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.account-welcome-actions{width:100%}.account-welcome-actions .btn{flex:1;justify-content:center}.account-metrics{gap:9px}.account-metric{padding:14px}.account-link-panel{padding:16px}.account-create-banner{padding:18px}.account-create-banner form{width:100%}.account-create-banner form .btn{justify-content:center;width:100%}}

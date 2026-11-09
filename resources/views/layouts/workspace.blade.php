@@ -18,12 +18,17 @@
   $commerceGroup = request()->routeIs('dashboard.finance', 'dashboard.legal', 'dashboard.support');
   $appearanceGroup = request()->routeIs('dashboard.appearance', 'dashboard.footer', 'dashboard.languages');
   $systemGroup = request()->routeIs('dashboard.security', 'dashboard.system');
+  $creatorGroup = $creatorWorkspace && (request()->routeIs('account.prompts*', 'account.creator.insights', 'account.media') || request()->routeIs('account'));
+  $collectionGroup = request()->routeIs('account.library*', 'account.saved') || (! $creatorWorkspace && request()->routeIs('account'));
+  $purchaseGroup = request()->routeIs('account.orders', 'cart.*');
+  $accountCareGroup = request()->routeIs('account.support', 'account.settings*');
+
 @endphp
 <div class="workspace {{ $adminWorkspace ? 'workspace-admin' : 'workspace-account' }}">
 <aside class="workspace-aside" id="workspace-sidebar">
 <div class="workspace-brand">
   @include('partials.brand', ['href' => route('home')])
-  <span class="workspace-brand-caption">{{ $adminWorkspace ? 'ADMIN CONSOLE' : 'MY WORKSPACE' }}</span>
+  <span class="workspace-brand-caption">{{ $adminWorkspace ? 'ADMIN CONSOLE' : ($creatorWorkspace ? 'CREATOR WORKSPACE' : 'MEMBER WORKSPACE') }}</span>
 </div>
 <details class="workspace-nav-shell" open data-workspace-mobile-nav>
 <summary class="workspace-nav-trigger"><x-nav-icon name="menu"/> <span>Navigation menu</span><x-nav-icon name="chevron"/></summary>
@@ -71,22 +76,43 @@
 <a href="{{ route('account') }}" class="side-link {{ request()->routeIs('account') ? 'active' : '' }}" @if(request()->routeIs('account')) aria-current="page" @endif><x-nav-icon name="account"/><span>My account</span></a>
 <a href="{{ route('prompts.index') }}" class="side-link"><x-nav-icon name="store"/><span>Explore marketplace</span><x-nav-icon name="arrow-up-right"/></a>
 @else
-<div class="workspace-nav-label">MY WORKSPACE</div>
-<a href="{{ route('account') }}" class="side-link {{ request()->routeIs('account') ? 'active' : '' }}" @if(request()->routeIs('account')) aria-current="page" @endif><x-nav-icon name="dashboard"/><span>Overview</span></a>
+<div class="workspace-nav-label">{{ $creatorWorkspace ? 'CREATOR WORKSPACE' : 'MY ACCOUNT' }}</div>
+<a href="{{ route('account') }}" class="side-link {{ request()->routeIs('account') ? 'active' : '' }}" @if(request()->routeIs('account')) aria-current="page" @endif>
+<x-nav-icon name="dashboard"/><span>{{ $creatorWorkspace ? 'Creator overview' : 'Account overview' }}</span></a>
+
+@if($creatorWorkspace)
+<details class="workspace-nav-group workspace-creator-group" data-nav-group="creator-studio" @if($creatorGroup) open @endif>
+<summary><x-nav-icon name="spark"/><span>Creator Studio</span><x-nav-icon name="chevron"/></summary>
+<div class="workspace-nav-items">
+<a href="{{ route('account.prompts') }}" class="side-link {{ request()->routeIs('account.prompts*') ? 'active' : '' }}" @if(request()->routeIs('account.prompts*')) aria-current="page" @endif><x-nav-icon name="posts"/><span>My prompts</span></a>
+<a href="{{ route('account.media') }}" class="side-link {{ request()->routeIs('account.media') ? 'active' : '' }}" @if(request()->routeIs('account.media')) aria-current="page" @endif><x-nav-icon name="media"/><span>My media</span></a>
+<a href="{{ route('account.creator.insights') }}" class="side-link {{ request()->routeIs('account.creator.insights') ? 'active' : '' }}" @if(request()->routeIs('account.creator.insights')) aria-current="page" @endif><x-nav-icon name="insights"/><span>Creator insights</span></a>
+</div></details>
+@endif
+
+<details class="workspace-nav-group" data-nav-group="collection" @if($collectionGroup) open @endif>
+<summary><x-nav-icon name="library"/><span>Library & Saved</span><x-nav-icon name="chevron"/></summary>
+<div class="workspace-nav-items">
 <a href="{{ route('account.library') }}" class="side-link {{ request()->routeIs('account.library*') ? 'active' : '' }}" @if(request()->routeIs('account.library*')) aria-current="page" @endif><x-nav-icon name="library"/><span>My library</span></a>
 <a href="{{ route('account.saved') }}" class="side-link {{ request()->routeIs('account.saved') ? 'active' : '' }}" @if(request()->routeIs('account.saved')) aria-current="page" @endif><x-nav-icon name="saved"/><span>Saved prompts</span></a>
+</div></details>
+
+<details class="workspace-nav-group" data-nav-group="purchases" @if($purchaseGroup) open @endif>
+<summary><x-nav-icon name="cart"/><span>Purchases</span><x-nav-icon name="chevron"/></summary>
+<div class="workspace-nav-items">
 <a href="{{ route('account.orders') }}" class="side-link {{ request()->routeIs('account.orders') ? 'active' : '' }}" @if(request()->routeIs('account.orders')) aria-current="page" @endif><x-nav-icon name="finance"/><span>My orders</span></a>
-<a href="{{ route('account.support') }}" class="side-link {{ request()->routeIs('account.support') ? 'active' : '' }}" @if(request()->routeIs('account.support')) aria-current="page" @endif><x-nav-icon name="support"/><span>Support tickets</span></a>
-@if($creatorWorkspace)
-<div class="workspace-nav-label">CREATOR STUDIO</div>
-<a href="{{ route('account.prompts') }}" class="side-link {{ request()->routeIs('account.prompts*') ? 'active' : '' }}" @if(request()->routeIs('account.prompts*')) aria-current="page" @endif><x-nav-icon name="posts"/><span>My prompts</span></a>
-<a href="{{ route('account.creator.insights') }}" class="side-link {{ request()->routeIs('account.creator.insights') ? 'active' : '' }}" @if(request()->routeIs('account.creator.insights')) aria-current="page" @endif><x-nav-icon name="insights"/><span>Creator insights</span></a>
-<a href="{{ route('account.media') }}" class="side-link {{ request()->routeIs('account.media') ? 'active' : '' }}" @if(request()->routeIs('account.media')) aria-current="page" @endif><x-nav-icon name="media"/><span>My media</span></a>
-@endif
-<div class="workspace-nav-label">ACCOUNT & SHOPPING</div>
 <a href="{{ route('cart.index') }}" class="side-link {{ request()->routeIs('cart.*') ? 'active' : '' }}" @if(request()->routeIs('cart.*')) aria-current="page" @endif><x-nav-icon name="cart"/><span>My cart</span></a>
+</div></details>
+
+<details class="workspace-nav-group" data-nav-group="account-care" @if($accountCareGroup) open @endif>
+<summary><x-nav-icon name="support"/><span>Help & Settings</span><x-nav-icon name="chevron"/></summary>
+<div class="workspace-nav-items">
+<a href="{{ route('account.support') }}" class="side-link {{ request()->routeIs('account.support') ? 'active' : '' }}" @if(request()->routeIs('account.support')) aria-current="page" @endif><x-nav-icon name="support"/><span>Support tickets</span></a>
 <a href="{{ route('account.settings') }}" class="side-link {{ request()->routeIs('account.settings*') ? 'active' : '' }}" @if(request()->routeIs('account.settings*')) aria-current="page" @endif><x-nav-icon name="account"/><span>Account settings</span></a>
-<a href="{{ route('prompts.index') }}" class="side-link"><x-nav-icon name="store"/><span>Explore marketplace</span><x-nav-icon name="arrow-up-right"/></a>
+</div></details>
+
+<div class="workspace-nav-divider"></div>
+<a href="{{ route('prompts.index') }}" class="side-link workspace-marketplace-link"><x-nav-icon name="store"/><span>Explore marketplace</span><x-nav-icon name="arrow-up-right"/></a>
 @endif
 </nav></details>
 <div class="workspace-aside-footer">
