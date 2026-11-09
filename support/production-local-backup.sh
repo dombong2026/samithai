@@ -111,7 +111,7 @@ test -n "$DB_NAME"
 "$MYSQL" --defaults-extra-file="$CNF" --batch --skip-column-names \
   --execute='SELECT 1' >/dev/null
 NON_INNODB="$("$MYSQL" --defaults-extra-file="$CNF" --batch --skip-column-names \
-  --execute="SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='\${DB_NAME}' AND table_type='BASE TABLE' AND (engine IS NULL OR engine <> 'InnoDB')" | tail -1)"
+  --execute="SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='${DB_NAME}' AND table_type='BASE TABLE' AND (engine IS NULL OR engine <> 'InnoDB')" | tail -1)"
 if [[ "$NON_INNODB" != '0' ]]; then
   echo 'BLOCKED: non-transactional tables require separate backup consistency planning'
   exit 1
