@@ -44,6 +44,10 @@ test "$(id -u)" -eq 0
 test -x "$PHP"
 test -f "$APP/artisan" && test -f "$APP/vendor/autoload.php"
 test -f "$APP/.env" && test -f "$APP/storage/app/installed.lock"
+if [[ -e "$APP/storage/framework/down" ]]; then
+    echo "BLOCKED: production already has maintenance mode enabled"
+    exit 1
+fi
 test -f "$VHOST"
 test -d "$SNAP" && test ! -e "$SNAP/INCOMPLETE"
 test -s "$ENCRYPTED" && test -s "$ENCRYPTED.sha256"
@@ -176,11 +180,11 @@ echo "PINNED_SOURCE_AND_CODE_BACKUP=VERIFIED"
 echo "ROLLBACK_BACKUP_DIRECTORY=$BACKUP"
 
 echo "========== BRIEF MAINTENANCE WINDOW =========="
+MAINTENANCE=1
 (
     cd "$APP"
     runuser -u www -- "$PHP" artisan down --retry=60 --no-ansi
 )
-MAINTENANCE=1
 
 echo "========== INSTALL SCOPED APPLICATION FILES =========="
 CHANGED=1
