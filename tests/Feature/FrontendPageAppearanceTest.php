@@ -207,6 +207,40 @@ class FrontendPageAppearanceTest extends TestCase
         $this->assertArrayNotHasKey('body_html', FrontendPageCopy::definition('policies')['fields']);
     }
 
+    public function test_auth_page_headings_are_editable_but_security_routes_remain_unchanged(): void
+    {
+        $admin = $this->person('admin');
+        $this->actingAs($admin);
+
+        foreach ([
+            'login' => 'Welcome to the prompt studio',
+            'register' => 'Join the creator community',
+            'forgot' => 'Recover your account securely',
+            'reset' => 'Choose a secure password now',
+            'verify' => 'Verify your account email',
+        ] as $key => $title) {
+            $fields = $this->fields($key);
+            $fields['title'] = $title;
+            $this->put(route('dashboard.appearance.frontend.update', $key), [
+                'fields' => $fields,
+            ])->assertRedirect()->assertSessionHasNoErrors();
+        }
+
+        auth()->logout();
+        $this->get(route('login'))->assertOk()->assertSee('Welcome to the prompt studio');
+        $this->get(route('register'))->assertOk()->assertSee('Join the creator community')
+            ->assertSee('minlength="10"', false);
+        $this->get(route('password.request'))->assertOk()
+            ->assertSee('Recover your account securely');
+        $this->get('/reset-password/example-token')->assertOk()
+            ->assertSee('Choose a secure password now')
+            ->assertSee('minlength="12"', false);
+
+        $customer = $this->person('customer');
+        $this->actingAs($customer)->get(route('verification.notice'))->assertOk()
+            ->assertSee('Verify your account email');
+    }
+
     public function test_global_success_and_error_feedback_has_closing_controls_and_accessible_roles(): void
     {
         $this->withSession(['success' => 'Saved successfully.'])->get(route('home'))->assertOk()
