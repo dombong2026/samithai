@@ -11,14 +11,14 @@ if [[ $# -ne 1 || ( "$1" != "--check" && "$1" != "--apply" ) ]]; then
   exit 2
 fi
 MODE="$1"
-SOURCE="6f50e07f6821d83addcbd23f69e86f51e1e60142"
+SOURCE="1a94a08a0a4bf234df7e9a70acb2ca076c1e6ed1"
 APP="/www/wwwroot/samithai-releases/3c9bf3fda1d0df308b94a60b006f36c437e7bf49"
 PHP="/www/server/php/85/bin/php"
 DOMAIN="samithai.com"
 VHOST="/www/server/panel/vhost/nginx/$DOMAIN.conf"
 FILES="$(cat <<'FILEHASHES'
 public/assets/app.css|816b8639a8ca61925b5105b3169e01a33e3fe271|2023c0992b4216f9ef19bcded98ee01e8642482f
-public/assets/app.js|8fd1834100a7354e1c3a67306542c5e0ae3cc6d9|4661db7d612a7b2c55c768e314f66324c4bcee36
+public/assets/app.js|8fd1834100a7354e1c3a67306542c5e0ae3cc6d9|6377fa9a8fae23bb049bdebf03d32e75d037ba58
 resources/views/components/nav-icon.blade.php|a59d210cce70f03dd9db3020e7c73ef625f8b9bb|5993cf0a4b91dd6adecb61359eb01196a592908f
 resources/views/layouts/workspace.blade.php|a5696783fcbc73a81daac2bbb4a3ddb18398624a|935e550d95cff695336e2d4d9017eab87c46b328
 resources/views/partials/workspace-search.blade.php|-|c5f520b721ad26e9f16e54f40acbe23ae3962df6
