@@ -10,5 +10,5 @@ test('after process reload, the persisted MySQL admin can sign in and installer 
   await page.locator('#password').fill('VerySecureInitial12345');
   await page.getByRole('button',{ name:'Sign in' }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByRole('heading',{ name:'Marketplace overview' })).toBeVisible();
+  await expect(page.getByRole('heading',{ name:'Marketplace dashboard' })).toBeVisible();
 });
