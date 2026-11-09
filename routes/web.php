@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\WorkspaceShortcutsController;
 use App\Http\Controllers\SavedPromptController;
 use App\Http\Controllers\CreatorInsightsController;
 use App\Http\Controllers\AuthController;
@@ -84,6 +85,10 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('throttle:3,1')->name('verification.send');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/account', [AccountController::class, 'index'])->name('account');
+    Route::put('/workspace/shortcuts/{context}', [WorkspaceShortcutsController::class, 'update'])
+        ->whereIn('context', ['admin', 'account'])->middleware('throttle:12,1')->name('workspace.shortcuts.update');
+    Route::delete('/workspace/shortcuts/{context}', [WorkspaceShortcutsController::class, 'reset'])
+        ->whereIn('context', ['admin', 'account'])->middleware('throttle:12,1')->name('workspace.shortcuts.reset');
     Route::get('/account/library', [AccountController::class, 'library'])->name('account.library');
     Route::get('/account/saved', [SavedPromptController::class, 'index'])->name('account.saved');
     Route::get('/account/creator/insights', [CreatorInsightsController::class, 'index'])->name('account.creator.insights');
