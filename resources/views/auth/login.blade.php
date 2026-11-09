@@ -15,6 +15,6 @@
 <a class="tiny auth-recovery-link" href="{{ route('password.request') }}">{{ __('account.forgot_password') }}</a>
 </div>
 <button type="submit" class="btn primary">{{ $authCopy['submit'] }}</button>
-</form><div class="auth-bottom">{{ $authCopy['bottom'] }} <a href="{{ route('register') }}">{{ $authCopy['bottom_cta'] }}</a></div>
+</form>@if(\App\Support\FrontendPageAvailability::enabled('register'))<div class="auth-bottom">{{ $authCopy['bottom'] }} <a href="{{ route('register') }}">{{ $authCopy['bottom_cta'] }}</a></div>@endif
 </section></main>@include('partials.feedback')
 </body></html>

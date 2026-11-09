@@ -347,3 +347,17 @@ dialog.frontend-config-dialog{width:min(760px,calc(100vw - 28px));max-width:760p
 .toast.is-closing{opacity:0;transform:translateX(10px)}
 @media(max-width:520px){.toast-stack{top:10px;right:10px;left:10px;width:auto;max-width:none}.toast{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.toast{transition:none}}
+
+/* Frontend Pages: per-row visibility actions */
+.frontend-row-actions{display:flex;align-items:center;justify-content:flex-start;gap:7px;flex-wrap:wrap}
+.frontend-row-actions form{display:inline-flex;margin:0}
+.frontend-row-actions .btn{min-width:69px}
+.frontend-visibility-button.is-enable{color:#088764;border-color:rgba(8,135,100,.35)}
+.frontend-visibility-button.is-disable{color:var(--muted)}
+.frontend-visibility-button.is-enable:hover{background:rgba(8,135,100,.1)}
+.frontend-visibility-button.is-disable:hover{border-color:#b34d4d;color:#b34d4d}
+.frontend-status.is-disabled{color:#bc6770;background:rgba(193,77,89,.1)}
+.frontend-status.is-protected{color:var(--muted);background:var(--soft)}
+.frontend-copy-state{display:block;margin-top:3px}
+.frontend-pages-table td:last-child{min-width:178px}
+@media(max-width:760px){.frontend-row-actions{flex-wrap:nowrap}.frontend-pages-table td:last-child{min-width:173px}}

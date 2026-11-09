@@ -11,14 +11,15 @@
 </head>
 <body>
 @php($shellCopy = \App\Support\FrontendPageCopy::values('shell'))
+@php($availability = \App\Support\FrontendPageAvailability::class)
 <div class="top-strip"><div class="container"><span>{{ __('ui.top') }}</span><span>{{ $shellCopy['top_strip'] }}</span></div></div>
 <header class="main-header"><div class="container">
 @include('partials.brand', ['href' => route('home')])
-<form class="search-bar" action="{{ route('prompts.index') }}" method="get" role="search">
+@if($availability::enabled('catalog'))<form class="search-bar" action="{{ route('prompts.index') }}" method="get" role="search">
 <label class="sr-only" for="site-search">Search prompts</label>
 <input id="site-search" name="q" placeholder="{{ $shellCopy['search_placeholder'] }}" value="{{ request('q') }}">
 <button type="submit" aria-label="Search">⌕</button>
-</form>
+</form>@endif
 <div class="main-nav">
 <a class="btn ghost" href="{{ route('cart.index') }}">{{ __('ui.cart') }}</a>
 <details class="profile-menu"><summary class="icon-btn" aria-label="Account options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c.8-5 4-7 7.5-7s6.7 2 7.5 7"/></svg></summary>
@@ -29,20 +30,23 @@
 <a href="{{ route('account.saved') }}">Saved prompts</a>
 <a href="{{ route('account.settings') }}">{{ __('ui.settings') }}</a>
 @else
-<a href="{{ route('login') }}">{{ __('ui.login') }}</a><a href="{{ route('register') }}">{{ __('ui.register') }}</a>
+<a href="{{ route('login') }}">{{ __('ui.login') }}</a>@if($availability::enabled('register'))<a href="{{ route('register') }}">{{ __('ui.register') }}</a>@endif
 @endauth
 <button type="button" data-theme-toggle><span data-theme-name>Dark mode</span></button>
 @auth<form method="post" action="{{ route('logout') }}">@csrf<button type="submit">{{ __('ui.logout') }}</button></form>@endauth
 </div></details>
 </div></div></header>
 <nav class="sub-header" aria-label="Marketplace navigation"><div class="container">
-<a href="{{ route('home') }}">{{ __('ui.home') }}</a><a href="{{ route('prompts.index') }}">{{ __('ui.prompts') }}</a>
-<a href="{{ route('blog.index') }}">{{ __('ui.blog') }}</a>
+<a href="{{ route('home') }}">{{ __('ui.home') }}</a>
+@if($availability::enabled('catalog'))<a href="{{ route('prompts.index') }}">{{ __('ui.prompts') }}</a>@endif
+@if($availability::enabled('blog'))<a href="{{ route('blog.index') }}">{{ __('ui.blog') }}</a>@endif
 <a href="{{ route('policies.index') }}">{{ __('ui.policies') }}</a>
-<a href="{{ route('support.center') }}">{{ __('ui.support') }}</a>
+@if($availability::enabled('support'))<a href="{{ route('support.center') }}">{{ __('ui.support') }}</a>@endif
+@if($availability::enabled('category'))
 @foreach(\App\Models\Category::where('is_active', true)->orderBy('name')->limit(8)->get() as $navCategory)
 <a href="{{ route('categories.show', $navCategory) }}">{{ $navCategory->name }}</a>
 @endforeach
+@endif
 </div></nav>
 <main>@yield('content')</main>
 <footer class="footer">

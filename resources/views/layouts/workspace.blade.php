@@ -74,7 +74,7 @@
 </div></details>
 <div class="workspace-nav-divider"></div>
 <a href="{{ route('account') }}" class="side-link {{ request()->routeIs('account') ? 'active' : '' }}" @if(request()->routeIs('account')) aria-current="page" @endif><x-nav-icon name="account"/><span>My account</span></a>
-<a href="{{ route('prompts.index') }}" class="side-link"><x-nav-icon name="store"/><span>Explore marketplace</span><x-nav-icon name="arrow-up-right"/></a>
+@if(\App\Support\FrontendPageAvailability::enabled('catalog'))<a href="{{ route('prompts.index') }}" class="side-link"><x-nav-icon name="store"/><span>Explore marketplace</span><x-nav-icon name="arrow-up-right"/></a>@endif
 @else
 <div class="workspace-nav-label">{{ $creatorWorkspace ? 'CREATOR WORKSPACE' : 'MY ACCOUNT' }}</div>
 <a href="{{ route('account') }}" class="side-link {{ request()->routeIs('account') ? 'active' : '' }}" @if(request()->routeIs('account')) aria-current="page" @endif>

@@ -267,7 +267,7 @@ class FrontendPageAppearanceTest extends TestCase
         $this->assertDatabaseHas('audit_events', ['action'=>'frontend_page.visibility','user_id'=>$admin->id]);
         $this->get(route('prompts.index'))->assertNotFound();
         $this->get(route('locale.prompts.index',['locale'=>'en']))->assertNotFound();
-        $this->get(route('home'))->assertOk();
+        $this->get(route('home'))->assertOk()->assertDontSee('>Browse prompts</a>', false);
         $this->get(route('dashboard.appearance'))->assertOk()->assertSee('frontend-visibility-button');
 
         $this->put(route('dashboard.appearance.frontend.visibility','catalog'), ['enabled'=>'1'])
