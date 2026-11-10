@@ -11,7 +11,7 @@ if [[ $# -ne 1 || ( "$1" != "--check" && "$1" != "--apply" ) ]]; then
   exit 2
 fi
 MODE="$1"
-SOURCE="897e2a09ae3f6e765d6f53de91482213bf598692"
+SOURCE="b040485f3274941e8b0e3f22c65a8a601dd9fca7"
 APP="/www/wwwroot/samithai-releases/3c9bf3fda1d0df308b94a60b006f36c437e7bf49"
 PHP="/www/server/php/85/bin/php"
 DOMAIN="samithai.com"
@@ -27,7 +27,7 @@ app/Support/WorkspaceActivity.php|7960e0c7fffb39d4df5bdfde49f10fd6943df5c7|e2612
 app/Support/WorkspaceLaunchpad.php|9081b64c8e817ea39efe88076e5a9ecf49a85549|7c004bd19cdeb31fa3c46fef3a46497b059a4c59
 database/migrations/2026_11_10_000200_create_workspace_tasks.php|-|def09ef5b30fbbd3f5f6a7b7901638716a2ab6f6
 public/assets/app.css|70e0acbb07dc10e32367b9a7fd51a397f2334fe6|332da0a19a0c1bc3ad75d0d552299ed1b996841c
-public/assets/app.js|c9999be6d15327aedbf0aac265432d8380219e79|70eb52dd7ecbb42cad1c693a5ae2042c635c7f25
+public/assets/app.js|c9999be6d15327aedbf0aac265432d8380219e79|d4a7c64386ec66bb6c55aa16ef8675298345bac1
 resources/views/account/index.blade.php|469c24fd7ad7011bb2f574a5937f1cc97b6ffebe|041799e9b29dc40182e425e99960b2af20446d1a
 resources/views/account/settings.blade.php|31568d80bbd4f9b597a36288420d9dbe6f51be9d|8f1eeee410db816de6b22c332c4410756871b9c3
 resources/views/components/nav-icon.blade.php|5993cf0a4b91dd6adecb61359eb01196a592908f|b3c7e4272a8e109a82efee6eb7e63e853c844286
