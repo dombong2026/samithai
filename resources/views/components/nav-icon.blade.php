@@ -67,6 +67,18 @@
 <path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M14 8l4 4-4 4M8 12h10"/>@break
 @case('check')
 <circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>@break
+@case('list-todo')
+<rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="m7 9 1.5 1.5L11 8M13.5 9H17M7 15h.01M13.5 15H17"/>@break
+@case('more-vertical')
+<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>@break
+@case('plus')
+<path d="M12 5v14M5 12h14"/>@break
+@case('edit')
+<path d="M4 20h5L20 9l-5-5L4 15v5zM13 6l5 5"/>@break
+@case('trash')
+<path d="M4 7h16M10 4h4M6 7l1 14h10l1-14M10 11v6M14 11v6"/>@break
+@case('x')
+<path d="M5 5l14 14M19 5L5 19"/>@break
 @case('spark')
 <path d="m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3z"/>@break
 @default

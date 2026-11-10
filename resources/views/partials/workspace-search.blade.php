@@ -19,6 +19,7 @@ $workspaceDestinations = $adminWorkspace ? [
     ['name'=>'Language Manager', 'url'=>route('dashboard.languages'), 'icon'=>'language', 'keywords'=>'translations locale'],
     ['name'=>'Security Center', 'url'=>route('dashboard.security'), 'icon'=>'security', 'keywords'=>'security'],
     ['name'=>'System Center', 'url'=>route('dashboard.system'), 'icon'=>'system', 'keywords'=>'settings'],
+    ['name'=>'My tasks', 'url'=>route('workspace.tasks'), 'icon'=>'list-todo', 'keywords'=>'personal task manager due priority progress'],
 ] : [
     ['name'=>'Account overview', 'url'=>route('account'), 'icon'=>'dashboard', 'keywords'=>'home profile'],
     ['name'=>'My library', 'url'=>route('account.library'), 'icon'=>'library', 'keywords'=>'owned purchased prompts'],
@@ -27,6 +28,7 @@ $workspaceDestinations = $adminWorkspace ? [
     ['name'=>'My cart', 'url'=>route('cart.index'), 'icon'=>'cart', 'keywords'=>'checkout shopping'],
     ['name'=>'Support tickets', 'url'=>route('account.support'), 'icon'=>'support', 'keywords'=>'help'],
     ['name'=>'Account settings', 'url'=>route('account.settings'), 'icon'=>'account', 'keywords'=>'profile password'],
+    ['name'=>'My tasks', 'url'=>route('workspace.tasks'), 'icon'=>'list-todo', 'keywords'=>'personal task manager due priority progress'],
 ];
 if (!$adminWorkspace && $creatorWorkspace) {
     array_push($workspaceDestinations,

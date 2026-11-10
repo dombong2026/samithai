@@ -21,7 +21,7 @@
   $creatorGroup = $creatorWorkspace && (request()->routeIs('account.prompts*', 'account.creator.insights', 'account.media') || request()->routeIs('account'));
   $collectionGroup = request()->routeIs('account.library*', 'account.saved') || (! $creatorWorkspace && request()->routeIs('account'));
   $purchaseGroup = request()->routeIs('account.orders', 'cart.*');
-  $accountCareGroup = request()->routeIs('account.support', 'account.settings*');
+  $accountCareGroup = request()->routeIs('account.support', 'account.settings*', 'workspace.tasks');
 
 @endphp
 <div class="workspace {{ $adminWorkspace ? 'workspace-admin' : 'workspace-account' }}">
@@ -74,6 +74,7 @@
 </div></details>
 <div class="workspace-nav-divider"></div>
 <a href="{{ route('account') }}" class="side-link {{ request()->routeIs('account') ? 'active' : '' }}" @if(request()->routeIs('account')) aria-current="page" @endif><x-nav-icon name="account"/><span>My account</span></a>
+<a href="{{ route('workspace.tasks') }}" class="side-link {{ request()->routeIs('workspace.tasks') ? 'active' : '' }}" @if(request()->routeIs('workspace.tasks')) aria-current="page" @endif><x-nav-icon name="list-todo"/><span>My tasks</span></a>
 @if(\App\Support\FrontendPageAvailability::enabled('catalog'))<a href="{{ route('prompts.index') }}" class="side-link"><x-nav-icon name="store"/><span>Explore marketplace</span><x-nav-icon name="arrow-up-right"/></a>@endif
 @else
 <div class="workspace-nav-label">{{ $creatorWorkspace ? 'CREATOR WORKSPACE' : 'MY ACCOUNT' }}</div>
@@ -108,6 +109,7 @@
 <summary><x-nav-icon name="support"/><span>Help & Settings</span><x-nav-icon name="chevron"/></summary>
 <div class="workspace-nav-items">
 <a href="{{ route('account.support') }}" class="side-link {{ request()->routeIs('account.support') ? 'active' : '' }}" @if(request()->routeIs('account.support')) aria-current="page" @endif><x-nav-icon name="support"/><span>Support tickets</span></a>
+<a href="{{ route('workspace.tasks') }}" class="side-link {{ request()->routeIs('workspace.tasks') ? 'active' : '' }}" @if(request()->routeIs('workspace.tasks')) aria-current="page" @endif><x-nav-icon name="list-todo"/><span>My tasks</span></a>
 <a href="{{ route('account.settings') }}" class="side-link {{ request()->routeIs('account.settings*') ? 'active' : '' }}" @if(request()->routeIs('account.settings*')) aria-current="page" @endif><x-nav-icon name="account"/><span>Account settings</span></a>
 </div></details>
 
@@ -152,6 +154,7 @@
 <a href="{{ route('account') }}"><x-nav-icon name="account"/> My account</a>
 <a href="{{ route('account.library') }}"><x-nav-icon name="library"/> My library</a>
 <a href="{{ route('account.saved') }}"><x-nav-icon name="saved"/> Saved prompts</a>
+<a href="{{ route('workspace.tasks') }}"><x-nav-icon name="list-todo"/> My tasks</a>
 @if($creatorWorkspace)
 <a href="{{ route('account.prompts') }}"><x-nav-icon name="posts"/> My prompts</a>
 <a href="{{ route('account.creator.insights') }}"><x-nav-icon name="insights"/> Creator insights</a>
