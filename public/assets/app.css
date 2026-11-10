@@ -594,13 +594,13 @@ a.workspace-pulse-stat:hover,a.workspace-pulse-stat:focus-visible{border-color:v
 
 
 /* Private workspaces — consistent action menus, status labels and task CRUD panels. */
-.workspace .row-menu a,
-.workspace .row-menu button{
+#global-row-menu a,
+#global-row-menu button{
   display:flex;align-items:center;gap:10px;width:100%;text-align:left;
   padding:10px 12px;color:var(--ink);min-height:38px;
 }
-.workspace .row-menu .ui-symbol{width:16px;height:16px;flex:0 0 16px;color:var(--muted)}
-.workspace .row-menu .danger .ui-symbol{color:#d84a58}
+#global-row-menu .ui-symbol{width:16px;height:16px;flex:0 0 16px;color:var(--muted)}
+#global-row-menu .danger .ui-symbol{color:#d84a58}
 .workspace .table-scroll{max-width:100%;box-shadow:0 3px 14px rgba(8,16,32,.025)}
 .workspace .table-scroll tbody tr:hover{background:color-mix(in srgb,var(--primary) 2%,var(--panel))}
 .workspace .table-scroll td:last-child{white-space:nowrap}

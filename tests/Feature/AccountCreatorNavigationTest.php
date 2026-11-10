@@ -44,7 +44,7 @@ class AccountCreatorNavigationTest extends TestCase
         $expected = [
             route('account'), route('account.library'), route('account.saved'),
             route('account.orders'), route('cart.index'), route('account.support'),
-            route('account.settings'), route('prompts.index'),
+            route('account.settings'), route('workspace.tasks'), route('prompts.index'),
         ];
         if ($creator) {
             array_push($expected, route('account.prompts'), route('account.media'),

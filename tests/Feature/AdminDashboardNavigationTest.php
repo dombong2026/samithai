@@ -56,7 +56,7 @@ class AdminDashboardNavigationTest extends TestCase
             route('dashboard.support'), route('dashboard.appearance'),
             route('dashboard.footer'), route('dashboard.languages'),
             route('dashboard.security'), route('dashboard.system'),
-            route('account'), route('prompts.index'),
+            route('account'), route('workspace.tasks'), route('prompts.index'),
         ] as $destination) {
             $this->assertContains($destination, $destinations);
         }
