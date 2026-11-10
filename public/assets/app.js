@@ -5,7 +5,63 @@
     ? saved : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
   const menu = document.getElementById('global-row-menu');
-  const closeMenu = () => { if (menu) { menu.classList.remove('open'); menu.replaceChildren(); } };
+  const closeMenu = () => {
+    if (!menu) return;
+    document.querySelectorAll('[data-action-toggle][aria-expanded="true"]').forEach(button => {
+      button.setAttribute('aria-expanded', 'false');
+    });
+    menu.classList.remove('open');
+    menu.replaceChildren();
+    delete menu.dataset.openFor;
+  };
+
+  // Single reusable menu renderer across all private CRUD tables.
+  // Preserve the original links/forms: decorating them must never change their actions.
+  const decorateMenu = () => {
+    if (!menu) return;
+    const paths = {
+      edit: 'M4 20h5L20 9l-5-5L4 15v5zM13 6l5 5',
+      trash: 'M4 7h16M10 4h4M6 7l1 14h10l1-14M10 11v6M14 11v6',
+      view: 'M2 12s3.7-6.5 10-6.5S22 12 22 12s-3.7 6.5-10 6.5S2 12 2 12z',
+      check: 'm5 12 4 4L19 6',
+      close: 'M5 5l14 14M19 5L5 19',
+      copy: 'M8 8h12v12H8zM4 16H3V3h13v1',
+      download: 'M12 3v13m-5-5 5 5 5-5M4 19h16',
+      more: 'M5 12h14',
+    };
+    const namespace = 'http://www.w3.org/2000/svg';
+    menu.querySelectorAll('a,button').forEach(action => {
+      if (action.querySelector('svg')) return;
+      const label = action.textContent.trim().toLowerCase();
+      const kind = /delete|remove|revoke/.test(label) ? 'trash'
+        : /edit|rename|change role|configure|update/.test(label) ? 'edit'
+        : /view|preview|history|details|open|read|translations/.test(label) ? 'view'
+        : /approve|publish|activate|enable|submit/.test(label) ? 'check'
+        : /reject|unpublish|disable|close/.test(label) ? 'close'
+        : /copy|duplicate/.test(label) ? 'copy'
+        : /download|export/.test(label) ? 'download' : 'more';
+      const svg = document.createElementNS(namespace, 'svg');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', 'currentColor');
+      svg.setAttribute('stroke-width', '1.8');
+      svg.setAttribute('stroke-linecap', 'round');
+      svg.setAttribute('stroke-linejoin', 'round');
+      svg.setAttribute('aria-hidden', 'true');
+      svg.setAttribute('class', 'ui-symbol');
+      const path = document.createElementNS(namespace, 'path');
+      path.setAttribute('d', paths[kind]);
+      svg.appendChild(path);
+      if (kind === 'view') {
+        const pupil = document.createElementNS(namespace, 'circle');
+        pupil.setAttribute('cx', '12');
+        pupil.setAttribute('cy', '12');
+        pupil.setAttribute('r', '2.5');
+        svg.appendChild(pupil);
+      }
+      action.prepend(svg);
+    });
+  };
 
   document.addEventListener('click', (event) => {
     const theme = event.target.closest('[data-theme-toggle]');
@@ -132,18 +188,38 @@
       }
       const template = document.getElementById(toggle.dataset.actionToggle);
       if (!template) return;
+      closeMenu();
       menu.replaceChildren(template.content.cloneNode(true));
-      const rect = toggle.getBoundingClientRect();
-      const w = 190;
-      menu.style.left = Math.max(10, Math.min(window.innerWidth - w - 10, rect.right - w)) + 'px';
-      menu.style.top = Math.min(window.innerHeight - 190, rect.bottom + 5) + 'px';
+      decorateMenu();
       menu.dataset.openFor = toggle.dataset.actionToggle;
       menu.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+      const rect = toggle.getBoundingClientRect();
+      const width = menu.offsetWidth || 190;
+      const height = menu.offsetHeight || 180;
+      const left = Math.max(10, Math.min(window.innerWidth - width - 10, rect.right - width));
+      let top = rect.bottom + 6;
+      if (top + height > window.innerHeight - 10) {
+        top = Math.max(10, rect.top - height - 6);
+      }
+      menu.style.left = left + 'px';
+      menu.style.top = top + 'px';
       return;
     }
     if (menu && !event.target.closest('#global-row-menu')) closeMenu();
     const dismiss = event.target.closest('[data-toast-dismiss]');
     if (dismiss) dismiss.closest('.toast')?.remove();
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !menu?.classList.contains('open')) return;
+    const openFor = menu.dataset.openFor;
+    closeMenu();
+    if (openFor) {
+      const button = [...document.querySelectorAll('[data-action-toggle]')]
+        .find(item => item.dataset.actionToggle === openFor);
+      button?.focus();
+    }
   });
 
   window.addEventListener('scroll', closeMenu, true);
