@@ -239,6 +239,52 @@ test('shared workspace header search, sidebar visibility and icon profile menu w
   await page.reload();
   await expect(page.locator('[data-workspace-launchpad="account"] [data-launch-key="orders"]')).toBeVisible();
 
+  // End-to-end member task CRUD with the same registered account.
+  await page.goto('/workspace/tasks');
+  await expect(page.getByRole('heading', { name: 'My Tasks' })).toBeVisible();
+  await page.locator('[data-modal-open="workspace-task-modal"]').click();
+  const taskDialog = page.locator('#workspace-task-modal');
+  await expect(taskDialog).toBeVisible();
+  await taskDialog.locator('#task-title').fill('Browser QA priority');
+  await taskDialog.locator('#task-description').fill('Verified through authenticated browser acceptance.');
+  await taskDialog.locator('#task-priority').selectOption('high');
+  await taskDialog.getByRole('button', { name: 'Save task' }).click();
+  await expect(page).toHaveURL(/\/workspace\/tasks$/);
+  const taskRow = page.locator('.workspace-task-table tbody tr').filter({ hasText: 'Browser QA priority' });
+  await expect(taskRow).toHaveCount(1);
+  await expect(taskRow.getByText('High')).toBeVisible();
+
+  await taskRow.locator('[data-action-toggle]').click();
+  await expect(page.locator('#global-row-menu')).toBeVisible();
+  await expect(page.locator('#global-row-menu button svg')).toHaveCount(2);
+  await page.locator('#global-row-menu').getByRole('button', { name: 'Edit task' }).click();
+  await expect(taskDialog).toBeVisible();
+  await taskDialog.locator('#task-title').fill('Browser QA completed');
+  await taskDialog.locator('#task-status').selectOption('done');
+  await taskDialog.getByRole('button', { name: 'Save task' }).click();
+  await expect(page.locator('.workspace-task-table tbody tr').filter({ hasText: 'Browser QA completed' })).toHaveCount(1);
+  await expect(page.locator('.workspace-task-table')).toContainText('Completed');
+
+  const updatedRow = page.locator('.workspace-task-table tbody tr').filter({ hasText: 'Browser QA completed' });
+  await updatedRow.locator('[data-action-toggle]').click();
+  await page.locator('#global-row-menu').getByRole('button', { name: 'Delete task' }).click();
+  await expect(page.locator('#confirmation-modal')).toBeVisible();
+  await page.locator('#confirmation-modal').getByRole('button', { name: 'Confirm', exact: true }).click();
+  await expect(page.locator('.workspace-task-table')).toContainText('No matching tasks.');
+
+  // Account Settings keeps existing secure updates but moves them into dialogs.
+  await page.goto('/account/settings');
+  await expect(page.getByRole('heading', { name: 'Profile details' })).toBeVisible();
+  await page.locator('[data-modal-open="account-profile-dialog"]').click();
+  await expect(page.locator('#account-profile-dialog')).toBeVisible();
+  await expect(page.locator('#account-email')).toHaveValue(email);
+  await page.locator('#account-profile-dialog').getByRole('button', { name: 'Cancel' }).click();
+  await page.locator('[data-modal-open="account-security-dialog"]').click();
+  await expect(page.locator('#account-security-dialog')).toBeVisible();
+  await page.locator('#account-security-dialog button[data-password-toggle="account-new-password"]').click();
+  await expect(page.locator('#account-new-password')).toHaveAttribute('type', 'text');
+  await page.locator('#account-security-dialog').getByRole('button', { name: 'Cancel' }).click();
+
   // Reuse the same authenticated account: a separate registration would exhaust
   // the deliberately strict rate limit during mobile/desktop smoke tests.
   for (const width of [1280, 390]) {
