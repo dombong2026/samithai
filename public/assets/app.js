@@ -63,6 +63,20 @@
     });
   };
 
+  const positionMenu = (trigger) => {
+    if (!menu || !trigger || !menu.classList.contains('open')) return;
+    const rect = trigger.getBoundingClientRect();
+    const width = menu.offsetWidth || 190;
+    const height = menu.offsetHeight || 180;
+    const left = Math.max(10, Math.min(window.innerWidth - width - 10, rect.right - width));
+    let top = rect.bottom + 6;
+    if (top + height > window.innerHeight - 10) {
+      top = Math.max(10, rect.top - height - 6);
+    }
+    menu.style.left = left + 'px';
+    menu.style.top = top + 'px';
+  };
+
   document.addEventListener('click', (event) => {
     const theme = event.target.closest('[data-theme-toggle]');
     if (theme) {
@@ -194,16 +208,7 @@
       menu.dataset.openFor = toggle.dataset.actionToggle;
       menu.classList.add('open');
       toggle.setAttribute('aria-expanded', 'true');
-      const rect = toggle.getBoundingClientRect();
-      const width = menu.offsetWidth || 190;
-      const height = menu.offsetHeight || 180;
-      const left = Math.max(10, Math.min(window.innerWidth - width - 10, rect.right - width));
-      let top = rect.bottom + 6;
-      if (top + height > window.innerHeight - 10) {
-        top = Math.max(10, rect.top - height - 6);
-      }
-      menu.style.left = left + 'px';
-      menu.style.top = top + 'px';
+      positionMenu(toggle);
       return;
     }
     if (menu && !event.target.closest('#global-row-menu')) closeMenu();
@@ -222,7 +227,15 @@
     }
   });
 
-  window.addEventListener('scroll', closeMenu, true);
+  // Auto-scrolling a horizontally scrollable table must not dismiss a freshly
+  // opened row menu. Keep the fixed popover anchored to its active trigger.
+  window.addEventListener('scroll', () => {
+    if (!menu?.classList.contains('open')) return;
+    const active = [...document.querySelectorAll('[data-action-toggle]')]
+      .find(button => button.dataset.actionToggle === menu.dataset.openFor);
+    if (!active) { closeMenu(); return; }
+    positionMenu(active);
+  }, true);
   window.addEventListener('resize', closeMenu);
 
   document.addEventListener('submit', (event) => {
