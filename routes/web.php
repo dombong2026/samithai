@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\WorkspaceShortcutsController;
+use App\Http\Controllers\WorkspaceTasksController;
 use App\Http\Controllers\SavedPromptController;
 use App\Http\Controllers\CreatorInsightsController;
 use App\Http\Controllers\AuthController;
@@ -85,6 +86,10 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('throttle:3,1')->name('verification.send');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/account', [AccountController::class, 'index'])->name('account');
+    Route::get('/workspace/tasks', [WorkspaceTasksController::class, 'index'])->name('workspace.tasks');
+    Route::post('/workspace/tasks', [WorkspaceTasksController::class, 'store'])->middleware('throttle:20,1')->name('workspace.tasks.store');
+    Route::put('/workspace/tasks/{task}', [WorkspaceTasksController::class, 'update'])->middleware('throttle:30,1')->name('workspace.tasks.update');
+    Route::delete('/workspace/tasks/{task}', [WorkspaceTasksController::class, 'destroy'])->middleware('throttle:20,1')->name('workspace.tasks.destroy');
     Route::put('/workspace/shortcuts/{context}', [WorkspaceShortcutsController::class, 'update'])
         ->whereIn('context', ['admin', 'account'])->middleware('throttle:12,1')->name('workspace.shortcuts.update');
     Route::delete('/workspace/shortcuts/{context}', [WorkspaceShortcutsController::class, 'reset'])
