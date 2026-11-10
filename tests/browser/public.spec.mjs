@@ -221,7 +221,7 @@ test('shared workspace header search, sidebar visibility and icon profile menu w
   await profile.click();
   const dropdown = page.locator('.workspace-profile-dropdown');
   await expect(dropdown).toBeVisible();
-  await expect(dropdown.locator('a svg')).toHaveCount(6);
+  await expect(dropdown.locator('a svg')).toHaveCount(7);
   await expect(dropdown.getByRole('button', { name: 'Sign out' }).locator('svg')).toHaveCount(1);
   await page.keyboard.press('Escape');
   await expect(dropdown).toBeHidden();
