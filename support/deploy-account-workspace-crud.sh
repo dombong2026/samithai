@@ -61,6 +61,23 @@ else
 fi
 test -n "$MYSQLDUMP" && test -x "$MYSQLDUMP" || { echo "BLOCKED=MYSQLDUMP_REQUIRED"; exit 1; }
 
+# The existing site has resources/views/, but the new workspace/ child is
+# absent on first deployment. Block symlinks/non-directories before modifying
+# application files. The new directory is created after the MySQL backup.
+WORKSPACE_VIEW_DIR="$APP/resources/views/workspace"
+test -d "$APP/resources/views" && test ! -L "$APP/resources/views" || {
+  echo "BLOCKED=WORKSPACE_VIEWS_PARENT_UNSAFE"; exit 1;
+}
+if [[ -L "$WORKSPACE_VIEW_DIR" || ( -e "$WORKSPACE_VIEW_DIR" && ! -d "$WORKSPACE_VIEW_DIR" ) ]]; then
+  echo "BLOCKED=WORKSPACE_VIEW_DIRECTORY_UNSAFE"
+  exit 1
+fi
+if [[ -d "$WORKSPACE_VIEW_DIR" ]]; then
+  echo "WORKSPACE_VIEW_DIRECTORY=EXISTING"
+else
+  echo "WORKSPACE_VIEW_DIRECTORY=CREATION_REQUIRED"
+fi
+
 BEFORE=0
 AFTER=0
 while IFS='|' read -r path prior target; do
@@ -132,6 +149,7 @@ WORK="$(mktemp -d /root/samithai-account-crud-src.XXXXXXXX)"
 BACKUP=""
 WRITTEN=0
 MAINT=0
+WORKSPACE_DIR_CREATED=0
 finish() {
   code=$?
   trap - EXIT INT TERM
@@ -161,6 +179,14 @@ finish() {
     done <<< "$FILES"
     if [[ "$restored" -eq 1 ]]; then echo "APPLICATION_ROLLBACK=VERIFIED"
     else echo "APPLICATION_ROLLBACK=FAILED"; fi
+    # Only remove a directory this run created, and only if now empty.
+    if [[ "$WORKSPACE_DIR_CREATED" -eq 1 ]]; then
+      if rmdir -- "$WORKSPACE_VIEW_DIR"; then
+        echo "WORKSPACE_VIEW_DIRECTORY_ROLLBACK=REMOVED_EMPTY"
+      else
+        echo "WORKSPACE_VIEW_DIRECTORY_ROLLBACK=PRESERVED_NONEMPTY"
+      fi
+    fi
     if (
       cd "$APP"
       runuser -u www -- "$PHP" artisan route:clear --no-ansi
@@ -249,7 +275,20 @@ if [[ "$SOURCE_STATE" == PREVIOUS ]]; then
   MAINT=1
   (cd "$APP"; runuser -u www -- "$PHP" artisan down --retry=60 --no-ansi)
   WRITTEN=1
+  if [[ ! -d "$WORKSPACE_VIEW_DIR" ]]; then
+    WORKSPACE_DIR_CREATED=1
+    install -d -o root -g www -m 0755 "$WORKSPACE_VIEW_DIR"
+    test -d "$WORKSPACE_VIEW_DIR" && test ! -L "$WORKSPACE_VIEW_DIR"
+    echo "WORKSPACE_VIEW_DIRECTORY=CREATED"
+  else
+    echo "WORKSPACE_VIEW_DIRECTORY=EXISTING"
+  fi
   while IFS='|' read -r path prior target; do
+    # No new file may be installed into a missing or symlinked parent.
+    parent="$APP/$(dirname "$path")"
+    test -d "$parent" && test ! -L "$parent" || {
+      echo "BLOCKED=UNSAFE_INSTALL_PARENT:$path"; exit 1;
+    }
     install -o root -g www -m 0644 "$WORK/$path" "$APP/$path"
     test "$(git hash-object "$APP/$path")" = "$target"
   done <<< "$FILES"
