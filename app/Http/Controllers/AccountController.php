@@ -23,6 +23,11 @@ class AccountController extends Controller
         $user = $request->user();
 
         return view('account.index', [
+            'personalTaskCount' => \App\Models\WorkspaceTask::ownedBy($user->getKey())->where('status', '!=', 'done')->count(),
+            'personalTaskOverdue' => \App\Models\WorkspaceTask::ownedBy($user->getKey())->where('status', '!=', 'done')->whereDate('due_on', '<', today())->count(),
+            'personalNextTasks' => \App\Models\WorkspaceTask::ownedBy($user->getKey())
+                ->where('status', '!=', 'done')->orderByRaw('CASE WHEN due_on IS NULL THEN 1 ELSE 0 END')
+                ->orderBy('due_on')->orderByDesc('id')->limit(4)->get(),
             'workspaceLaunchpad' => WorkspaceLaunchpad::data($user, 'account'),
             'workspaceEvents' => WorkspaceActivity::forUser($user->getKey()),
             'openTicketsCount' => SupportTicket::where('user_id', $user->getKey())->where('status', 'open')->count(),

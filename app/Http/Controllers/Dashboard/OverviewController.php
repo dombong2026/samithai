@@ -21,6 +21,11 @@ class OverviewController extends Controller
         abort_unless(auth()->user()?->isAdmin(), 403);
 
         return view('dashboard.overview', [
+            'personalTaskCount' => \App\Models\WorkspaceTask::ownedBy(auth()->id())->where('status', '!=', 'done')->count(),
+            'personalTaskOverdue' => \App\Models\WorkspaceTask::ownedBy(auth()->id())->where('status', '!=', 'done')->whereDate('due_on', '<', today())->count(),
+            'personalNextTasks' => \App\Models\WorkspaceTask::ownedBy(auth()->id())->where('status', '!=', 'done')
+                ->orderByRaw('CASE WHEN due_on IS NULL THEN 1 ELSE 0 END')
+                ->orderBy('due_on')->orderByDesc('id')->limit(4)->get(),
             'workspaceLaunchpad' => WorkspaceLaunchpad::data(auth()->user(), 'admin'),
             'workspaceEvents' => WorkspaceActivity::forAdmin(),
             'newUsersWeek' => User::where('created_at', '>=', now()->subDays(7))->count(),

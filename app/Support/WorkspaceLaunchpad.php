@@ -19,6 +19,7 @@ final class WorkspaceLaunchpad
             abort_unless($user->isAdmin(), 403);
             return [
                 'moderation' => ['label' => 'Moderation queue', 'description' => 'Review submitted prompts', 'icon' => 'review', 'url' => route('dashboard.prompts', ['status' => 'pending'])],
+                'tasks' => ['label' => 'My tasks', 'description' => 'Manage personal priorities', 'icon' => 'list-todo', 'url' => route('workspace.tasks')],
                 'support' => ['label' => 'Support inbox', 'description' => 'Reply to customer tickets', 'icon' => 'support', 'url' => route('dashboard.support')],
                 'content' => ['label' => 'Content Manager', 'description' => 'Posts, pages and drafts', 'icon' => 'posts', 'url' => route('dashboard.content', 'posts')],
                 'users' => ['label' => 'Users & roles', 'description' => 'Manage account access', 'icon' => 'users', 'url' => route('dashboard.users')],
@@ -32,6 +33,7 @@ final class WorkspaceLaunchpad
         }
 
         $items = [
+            'tasks' => ['label' => 'My tasks', 'description' => 'Manage personal priorities', 'icon' => 'list-todo', 'url' => route('workspace.tasks')],
             'library' => ['label' => 'My library', 'description' => 'Licensed prompt collection', 'icon' => 'library', 'url' => route('account.library')],
             'saved' => ['label' => 'Saved prompts', 'description' => 'Your favorites', 'icon' => 'saved', 'url' => route('account.saved')],
             'orders' => ['label' => 'Order history', 'description' => 'Your order records', 'icon' => 'finance', 'url' => route('account.orders')],

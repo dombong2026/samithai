@@ -26,6 +26,7 @@
 </section>
 
 @include('partials.workspace-launchpad', ['context' => 'admin'])
+@include('partials.workspace-task-summary', ['taskSectionId' => 'admin-tasks-heading'])
 
 <div class="admin-section-heading"><div><div class="eyebrow">AT A GLANCE</div><h2>Marketplace performance</h2></div><span class="admin-heading-note">Live database totals</span></div>
 <div class="admin-metrics">

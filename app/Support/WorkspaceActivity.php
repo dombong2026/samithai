@@ -17,6 +17,9 @@ final class WorkspaceActivity
         'frontend_page.visibility' => 'Changed public page availability',
         'workspace.shortcuts.update' => 'Customized workspace shortcuts',
         'workspace.shortcuts.reset' => 'Reset workspace shortcuts',
+        'workspace.task.create' => 'Created a personal task',
+        'workspace.task.update' => 'Updated a personal task',
+        'workspace.task.delete' => 'Deleted a personal task',
     ];
 
     public static function forUser(int $userId): Collection
@@ -34,6 +37,7 @@ final class WorkspaceActivity
             AuditEvent::query()->whereIn('action', [
                 'user.role.update', 'frontend_page.visibility',
                 'workspace.shortcuts.update', 'workspace.shortcuts.reset',
+                'workspace.task.create', 'workspace.task.update', 'workspace.task.delete',
             ])->orderByDesc('created_at')->orderByDesc('id')->limit(5)->get()
         );
     }

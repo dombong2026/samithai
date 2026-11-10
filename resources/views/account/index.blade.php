@@ -27,6 +27,7 @@
 </div>
 
 @include('partials.workspace-launchpad', ['context' => 'account'])
+@include('partials.workspace-task-summary', ['taskSectionId' => 'account-tasks-heading'])
 
 <div class="account-section-heading"><div><div class="eyebrow">ACCOUNT SNAPSHOT</div><h2>At a glance</h2></div><span class="muted tiny">Your actual account records</span></div>
 <div class="account-metrics">
