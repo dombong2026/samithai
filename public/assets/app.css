@@ -664,3 +664,48 @@ a.workspace-pulse-stat:hover,a.workspace-pulse-stat:focus-visible{border-color:v
  .workspace-task-stat span{font-size:11px}
  .workspace-task-stat strong{font-size:22px}
 }
+
+
+/* Account Settings: compact responsive profile/security overview and centered dialogs. */
+.account-settings-premium{min-width:0}
+.account-settings-notice{margin-bottom:17px}
+.account-settings-notice a{color:var(--primary);font-weight:700}
+.account-settings-hero{display:flex;align-items:center;gap:17px;border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:23px;margin-bottom:17px;min-width:0}
+.account-settings-avatar{display:grid;place-items:center;flex:0 0 62px;width:62px;height:62px;border-radius:17px;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,var(--panel))}
+.account-settings-avatar .ui-symbol{width:31px;height:31px}
+.account-settings-identity{min-width:0;flex:1}
+.account-settings-identity h2{margin:5px 0;font-size:23px;line-height:1.25;overflow-wrap:anywhere}
+.account-settings-identity p{color:var(--muted);font-size:12.5px;overflow-wrap:anywhere;margin:0}
+.account-settings-role{flex:none;font-weight:750;color:var(--primary);border:1px solid color-mix(in srgb,var(--primary) 20%,var(--line));background:color-mix(in srgb,var(--primary) 7%,var(--panel));padding:7px 12px;border-radius:99px;font-size:11px}
+.account-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.account-settings-panel{display:flex;flex-direction:column;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;min-width:0}
+.account-settings-panel h2{font-size:19px;margin:5px 0}
+.account-settings-panel p{font-size:12.5px;color:var(--muted);line-height:1.6;margin:5px 0}
+.account-settings-panel-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:color-mix(in srgb,var(--primary) 9%,var(--panel));color:var(--primary)}
+.account-settings-panel-icon .ui-symbol{width:21px;height:21px}
+.account-settings-details{margin:0;display:flex;flex-direction:column}
+.account-settings-details>div{display:flex;align-items:baseline;justify-content:space-between;gap:14px;border-top:1px solid var(--line);padding:12px 0}
+.account-settings-details dt{font-size:12px;color:var(--muted);flex:0 0 105px}
+.account-settings-details dd{font-size:12.5px;line-height:1.4;overflow-wrap:anywhere;text-align:right;margin:0;min-width:0;font-weight:700}
+.account-settings-state{display:inline-flex;align-items:center;border-radius:99px;padding:5px 9px;background:var(--soft);color:var(--muted);font-size:10px;font-weight:800}
+.account-settings-state.is-good{background:rgba(9,146,102,.1);color:#14a179}
+.account-settings-state.is-pending{background:rgba(211,146,35,.1);color:#d7a134}
+.account-settings-security-note{display:flex;align-items:flex-start;gap:10px;padding:13px;background:var(--soft);border-radius:12px;color:var(--muted);font-size:12px;line-height:1.6;margin-top:auto}
+.account-settings-security-note .ui-symbol{width:18px;height:18px;flex:0 0 18px;color:var(--primary)}
+.account-settings-dialog{width:min(525px,calc(100vw - 26px));max-height:min(86vh,780px);padding:0;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.24)}
+.account-settings-dialog::backdrop{background:rgba(6,13,24,.7)}
+.account-settings-dialog .modal-content{max-height:58vh;overflow-y:auto}
+.account-settings-dialog .modal-head .ui-symbol{width:17px;height:17px}
+.account-settings-password-row{display:flex;align-items:center;gap:6px;min-width:0}
+.account-settings-password-row .field{min-width:0;flex:1}
+.account-settings-password-row .icon-btn{flex:0 0 41px;width:41px;height:41px;border:1px solid var(--line);border-radius:10px}
+.account-settings-password-row .ui-symbol{width:17px;height:17px}
+@media(max-width:760px){
+.account-settings-grid{grid-template-columns:1fr}
+.account-settings-panel{padding:17px}
+.account-settings-hero{padding:17px;gap:12px}
+.account-settings-avatar{width:48px;height:48px;flex-basis:48px;border-radius:13px}
+.account-settings-avatar .ui-symbol{width:25px;height:25px}
+.account-settings-identity h2{font-size:19px}
+.account-settings-role{padding:5px 8px}
+}

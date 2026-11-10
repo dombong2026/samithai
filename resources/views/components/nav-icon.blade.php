@@ -79,6 +79,8 @@
 <path d="M4 7h16M10 4h4M6 7l1 14h10l1-14M10 11v6M14 11v6"/>@break
 @case('x')
 <path d="M5 5l14 14M19 5L5 19"/>@break
+@case('eye')
+<path d="M2 12s3.7-6.5 10-6.5S22 12 22 12s-3.7 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/>@break
 @case('spark')
 <path d="m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3z"/>@break
 @default
