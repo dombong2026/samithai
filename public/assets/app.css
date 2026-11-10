@@ -591,3 +591,76 @@ a.workspace-pulse-stat:hover,a.workspace-pulse-stat:focus-visible{border-color:v
 .workspace-launchpad-dialog-footer{align-items:flex-start;flex-direction:column}.workspace-launchpad-dialog-actions{justify-content:flex-end;width:100%}
 }
 @media(max-width:360px){.workspace-launchpad-grid{grid-template-columns:1fr}}
+
+
+/* Private workspaces — consistent action menus, status labels and task CRUD panels. */
+.workspace .row-menu a,
+.workspace .row-menu button{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  padding:10px 12px;color:var(--ink);min-height:38px;
+}
+.workspace .row-menu .ui-symbol{width:16px;height:16px;flex:0 0 16px;color:var(--muted)}
+.workspace .row-menu .danger .ui-symbol{color:#d84a58}
+.workspace .table-scroll{max-width:100%;box-shadow:0 3px 14px rgba(8,16,32,.025)}
+.workspace .table-scroll tbody tr:hover{background:color-mix(in srgb,var(--primary) 2%,var(--panel))}
+.workspace .table-scroll td:last-child{white-space:nowrap}
+.workspace .toolbar .btn .ui-symbol{width:15px;height:15px}
+.workspace-task-manager{min-width:0}
+.workspace-task-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:6px 0 22px}
+.workspace-task-stat{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:20px;display:flex;flex-direction:column;gap:7px}
+.workspace-task-stat span{font-size:12px;color:var(--muted);font-weight:650}
+.workspace-task-stat strong{font-size:30px;line-height:1.1;font-weight:800;font-variant-numeric:tabular-nums}
+.workspace-task-filters{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.workspace-task-filters #workspace-task-q{flex:1 1 190px;max-width:420px}
+.workspace-task-filters select{min-width:132px}
+.workspace-task-filters .btn .ui-symbol{width:15px;height:15px}
+.workspace-task-title{display:block;font-size:13px;max-width:460px;white-space:normal;overflow-wrap:anywhere}
+.workspace-task-summary{max-width:460px;line-height:1.5;margin-top:4px;overflow-wrap:anywhere}
+.workspace-task-chip{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-weight:750;font-size:11px;white-space:nowrap;background:var(--soft);color:var(--muted)}
+.workspace-task-chip.priority-high{background:rgba(211,75,72,.12);color:#d15d63}
+.workspace-task-chip.priority-low{background:rgba(48,125,188,.11);color:#5d9bd1}
+.workspace-task-chip.status-done{background:rgba(14,144,106,.12);color:#15a87a}
+.workspace-task-chip.status-in_progress{background:rgba(222,150,25,.12);color:#d39732}
+.workspace-task-overdue{color:#d35a60;font-weight:750}
+.workspace-task-overdue-label{display:block;font-size:10px;color:#d35a60;margin-top:3px}
+.workspace-task-table table{min-width:800px}
+.workspace-task-table .icon-btn .ui-symbol{width:18px;height:18px}
+.workspace-task-modal{width:min(560px,calc(100vw - 24px));max-height:min(88vh,800px);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:0;box-shadow:0 22px 65px rgba(0,0,0,.22)}
+.workspace-task-modal::backdrop{background:rgba(4,11,22,.68)}
+.workspace-task-modal .modal-content{max-height:min(61vh,520px);overflow:auto}
+.workspace-task-modal .modal-head .ui-symbol{width:17px;height:17px}
+.workspace-task-overview{margin:18px 0 23px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.workspace-task-overview-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.workspace-task-overview-top h2{font-size:18px;margin:4px 0}
+.workspace-task-overview-top p{font-size:12px;color:var(--muted);margin:4px 0}
+.workspace-task-overview-top .btn .ui-symbol{width:15px;height:15px}
+.workspace-task-overview-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.workspace-task-overview-stats>div{display:flex;align-items:baseline;gap:10px;padding:9px 12px;min-width:136px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}
+.workspace-task-overview-stats span{font-size:11px;color:var(--muted)}
+.workspace-task-overview-stats strong{margin-left:auto;font-size:17px;font-variant-numeric:tabular-nums}
+.workspace-task-overview-empty{color:var(--muted);font-size:12.5px;margin:10px 0 0}
+.workspace-task-overview-list{margin:0;padding:0;list-style:none}
+.workspace-task-overview-list li{border-top:1px solid var(--line)}
+.workspace-task-overview-list li a{display:flex;align-items:center;gap:10px;padding:12px 3px;color:var(--ink);font-size:12.5px;text-decoration:none}
+.workspace-task-overview-list li a:hover{color:var(--primary)}
+.workspace-task-overview-list li a span:nth-child(2){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.workspace-task-overview-list time{margin-left:auto;white-space:nowrap;font-size:11px;color:var(--muted)}
+.workspace-task-overview-list time.workspace-task-overdue{color:#d35a60}
+.workspace-task-dot{display:inline-flex;width:8px;height:8px;border-radius:50%;flex:0 0 8px;background:#7c899a}
+.workspace-task-dot.priority-high{background:#d35a60}
+.workspace-task-dot.priority-low{background:#4a94cd}
+@media(max-width:760px){
+ .workspace-task-stats{gap:9px}
+ .workspace-task-stat{padding:14px}
+ .workspace-task-stat strong{font-size:25px}
+ .workspace-task-filters #workspace-task-q{max-width:none;flex-basis:100%}
+ .workspace-task-filters select{flex:1 1 100px}
+ .workspace-task-overview{padding:15px}
+ .workspace-task-modal .modal-content{max-height:55vh}
+}
+@media(max-width:380px){
+ .workspace-task-overview-stats>div{flex:1 1 120px}
+ .workspace-task-stat{padding:10px}
+ .workspace-task-stat span{font-size:11px}
+ .workspace-task-stat strong{font-size:22px}
+}
