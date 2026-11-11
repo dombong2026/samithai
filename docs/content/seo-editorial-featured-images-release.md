@@ -36,3 +36,21 @@ Each remains a draft until a person reviews its complete content, SEO text, cate
 ## Rollout boundary
 
 This branch is code review, not production deployment. Merging and deploying require independent QA and the owner's authorization. Neither code installation nor SEO seed should publish the six pending articles. Keep the first two existing articles and six informational pages live.
+
+## Read-only editorial release audit (added during acceptance hardening)
+
+The new Artisan command can inspect an authorized isolated database clone without editing any records:
+
+```bash
+php artisan samithai:editorial-release-audit --json --strict
+php artisan samithai:editorial-release-audit --json --strict --expect-starters
+php artisan samithai:publish-scheduled-editorial --check
+```
+
+- The first command reports article counts, stale approval fingerprints, malformed scheduled states, and due schedule candidates. It does not publish, approve, migrate, or edit content.
+- `--expect-starters` additionally checks for all six expected pending article slugs **still in draft** and at least 30 prompt product records. This is an explicit migration-baseline assertion; use it only when those records are expected on the target environment.
+- A passing audit cannot certify an actual MySQL restore, private media integrity, cron execution, or mobile behavior. Run `samith:recovery-inventory` on authorized data alongside a separately validated database/media backup-and-restore rehearsal.
+- Featured/social media attached to a published article cannot be swapped without unpublishing and fresh approval. Approved draft social-image changes revoke approval; referenced SEO media cannot be deleted until unlinked. This protects public OG media and avoids silent asset replacement.
+- Eight image drafts from the supplied 4-by-2 concept sheet are available in a separate review ZIP with per-file SHA-256 manifest. They remain approval-gated, with stylized S symbols requiring brand verification before any media-library upload.
+
+For the rehearsal, first verify the cloned application, **separate** MySQL credentials and private-media storage, then compare pre/post inventories and test the dashboard routes with authenticated administrator and non-administrator accounts. Do not run migrations or backup restore scripts against production as an acceptance shortcut.
