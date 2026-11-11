@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContentEntry;
+use App\Models\ContentEditorialRevision;
+use App\Support\SafeHtml;
 use App\Models\User;
 use App\Support\AuditTrail;
 use App\Support\EditorialGate;
@@ -141,5 +143,71 @@ class EditorialWorkflowController extends Controller
         EditorialGate::revision($entry,$request->user()->id,'schedule');
         AuditTrail::record($request,'content.editorial.schedule',$entry,['scheduled_for'=>$scheduled->toIso8601String()]);
         return back()->with('success','Publication scheduled; the Laravel scheduler must be operational.');
+    }
+
+    public function revision(Request $request, ContentEntry $entry, ContentEditorialRevision $revision): View
+    {
+        $this->authorizeAdmin($request); $this->editable($entry);
+        abort_unless((int) $revision->content_entry_id === (int) $entry->getKey(),404);
+        $snapshot = json_decode((string)$revision->snapshot, true, flags: JSON_THROW_ON_ERROR);
+        return view('dashboard.editorial.revision', [
+            'entry'=>$entry,'revision'=>$revision->load('actor'), 'snapshot'=>$snapshot,
+        ]);
+    }
+
+    public function restore(Request $request, ContentEntry $entry, ContentEditorialRevision $revision): RedirectResponse
+    {
+        $this->authorizeAdmin($request); $this->editable($entry);
+        abort_unless((int) $revision->content_entry_id === (int) $entry->getKey(),404);
+        if ($entry->status !== 'draft') {
+            return back()->withErrors(['revision'=>'Unpublish before restoring historical content.']);
+        }
+        DB::transaction(function () use ($entry,$revision,$request): void {
+            $current = ContentEntry::query()->lockForUpdate()->findOrFail($entry->getKey());
+            if ($current->status !== 'draft') {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'revision'=>'Only unpublished drafts may be restored.',
+                ]);
+            }
+            $snapshot=json_decode((string)$revision->snapshot,true,flags:JSON_THROW_ON_ERROR);
+            if (!is_array($snapshot)
+                || ($snapshot['slug'] ?? null) !== $current->slug
+                || ($snapshot['kind'] ?? null) !== $current->kind
+                || !is_string($snapshot['title'] ?? null)
+                || mb_strlen($snapshot['title']) > 160
+                || !is_string($snapshot['body_html'] ?? null)
+                || strlen($snapshot['body_html']) > 180000) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'revision'=>'The stored revision is incompatible with the current document.',
+                ]);
+            }
+            EditorialGate::revision($current,$request->user()->id,'before_restore');
+            $current->update([
+                'title'=>$snapshot['title'],
+                'excerpt'=>$snapshot['excerpt'] ?? null,
+                'body_html'=>SafeHtml::clean($snapshot['body_html']),
+                'featured_media_id'=>$snapshot['featured_media_id'] ?? null,
+            ]);
+            EditorialGate::invalidate($current);
+            EditorialGate::revision($current,$request->user()->id,'after_restore');
+            AuditTrail::record($request,'content.editorial.restore',$current,[
+                'revision_id'=>$revision->getKey(),'approval_invalidated'=>true,
+            ]);
+        },3);
+        return redirect()->route('dashboard.editorial.show',$entry)
+            ->with('success','Prior version restored as a draft. Submit it for fresh review.');
+    }
+
+    public function cancelSchedule(Request $request, ContentEntry $entry): RedirectResponse
+    {
+        $this->authorizeAdmin($request); $this->editable($entry);
+        if ($entry->status !== 'draft' || $entry->editorial_status !== 'scheduled'
+            || !EditorialGate::approved($entry)) {
+            return back()->withErrors(['scheduled_for'=>'Only a currently approved, scheduled draft can be cancelled.']);
+        }
+        $entry->update(['editorial_status'=>'approved','scheduled_for'=>null]);
+        EditorialGate::revision($entry,$request->user()->id,'cancel_schedule');
+        AuditTrail::record($request,'content.editorial.cancel_schedule',$entry);
+        return back()->with('success','Schedule cancelled; approval retained for the unchanged content.');
     }
 }

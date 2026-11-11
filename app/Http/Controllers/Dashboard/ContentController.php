@@ -85,10 +85,7 @@ class ContentController extends Controller
             || $entry->excerpt !== ($next['excerpt'] ?? null)
             || $entry->body_html !== $sanitized
             || (int)($entry->featured_media_id ?? 0) !== (int)($next['featured_media_id'] ?? 0);
-        $textChanged = $entry->title !== $next['title']
-            || $entry->excerpt !== ($next['excerpt'] ?? null)
-            || $entry->body_html !== $sanitized;
-        if (EditorialGate::requiresReview($entry) && $entry->status === 'published' && $textChanged) {
+        if (EditorialGate::requiresReview($entry) && $entry->status === 'published' && $changed) {
             return back()->withErrors(['body_html' =>
                 'Unpublish this page or post before making substantive edits; the revised draft needs new editorial approval.']);
         }

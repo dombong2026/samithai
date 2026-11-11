@@ -181,6 +181,9 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/dashboard/editorial/{entry}/assign', [EditorialWorkflowController::class, 'assign'])->middleware('throttle:20,1')->name('dashboard.editorial.assign');
     Route::post('/dashboard/editorial/{entry}/decide', [EditorialWorkflowController::class, 'decide'])->middleware('throttle:12,1')->name('dashboard.editorial.decide');
     Route::post('/dashboard/editorial/{entry}/schedule', [EditorialWorkflowController::class, 'schedule'])->middleware('throttle:12,1')->name('dashboard.editorial.schedule');
+    Route::post('/dashboard/editorial/{entry}/cancel', [EditorialWorkflowController::class, 'cancelSchedule'])->middleware('throttle:12,1')->name('dashboard.editorial.cancel');
+    Route::get('/dashboard/editorial/{entry}/revisions/{revision}', [EditorialWorkflowController::class, 'revision'])->name('dashboard.editorial.revision');
+    Route::post('/dashboard/editorial/{entry}/revisions/{revision}/restore', [EditorialWorkflowController::class, 'restore'])->middleware('throttle:6,1')->name('dashboard.editorial.restore');
     Route::get('/dashboard/{section}', [ContentController::class, 'index'])->whereIn('section', ['posts','pages','policies','knowledge'])->name('dashboard.content');
     Route::post('/dashboard/content/{kind}', [ContentController::class, 'store'])->whereIn('kind',['post','page','policy','article'])->name('dashboard.content.store');
     Route::put('/dashboard/content/{entry}', [ContentController::class, 'update'])->name('dashboard.content.update');

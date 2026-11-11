@@ -52,6 +52,11 @@
 @else
 <p class="muted">Requires a current human approval of this exact draft.</p>
 @endif
+@if($entry->status==='draft' && $entry->editorial_status==='scheduled')
+<form method="post" action="{{ route('dashboard.editorial.cancel',$entry) }}" style="margin-top:10px">
+@csrf <button class="btn" type="submit">Cancel scheduled publication</button>
+</form>
+@endif
 <p class="tiny muted">Scheduled publication requires the actual Laravel cron scheduler to be configured and verified. Scheduling alone does not prove the job has run.</p>
 </div>
 </div>
@@ -63,6 +68,7 @@
 <strong>{{ ucfirst(str_replace('_',' ',$revision->action)) }}</strong>
 <p class="tiny muted" style="margin:6px 0">{{ $revision->created_at?->format('d M Y H:i') }} · {{ $revision->actor?->name ?? 'Scheduler' }}</p>
 <code style="font-size:10px">{{ substr($revision->content_sha256,0,16) }}…</code>
+<p style="margin:6px 0"><a class="btn small" href="{{ route('dashboard.editorial.revision',['entry'=>$entry,'revision'=>$revision]) }}">Inspect revision</a></p>
 </div>
 @empty<p class="muted">No revisions recorded since installation.</p>@endforelse
 <p class="muted tiny">Revision snapshots are stored privately. This view does not expose prior drafts publicly.</p>
