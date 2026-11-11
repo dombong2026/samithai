@@ -21,7 +21,7 @@ class SeoEditorialSafetyTest extends TestCase
         return $admin;
     }
 
-    private function post(User $user, string $status = 'draft'): ContentEntry
+    private function makeEntry(User $user, string $status = 'draft'): ContentEntry
     {
         return ContentEntry::query()->create([
             'user_id'=>$user->getKey(),
@@ -38,7 +38,7 @@ class SeoEditorialSafetyTest extends TestCase
     public function test_editable_seo_preview_uses_public_canonical_not_dashboard_url(): void
     {
         $admin=$this->admin();
-        $post=$this->post($admin,'published');
+        $post=$this->makeEntry($admin,'published');
         $response=$this->actingAs($admin)->get(route('dashboard.seo.edit',[
             'kind'=>'post', 'id'=>$post->getKey(),
         ]));
@@ -51,7 +51,7 @@ class SeoEditorialSafetyTest extends TestCase
     public function test_json_ld_can_be_disabled_without_hiding_og_or_canonical_metadata(): void
     {
         $admin=$this->admin();
-        $post=$this->post($admin,'published');
+        $post=$this->makeEntry($admin,'published');
         $this->actingAs($admin)->put(route('dashboard.seo.update',[
             'kind'=>'post','id'=>$post->getKey(),
         ]),[
@@ -81,7 +81,7 @@ class SeoEditorialSafetyTest extends TestCase
     {
         Storage::fake('local');
         $admin=$this->admin();
-        $post=$this->post($admin);
+        $post=$this->makeEntry($admin);
         $path='media/'.$admin->getKey().'/private-original.webp';
         Storage::disk('local')->put($path,'fake-image-bytes');
         $asset=MediaAsset::query()->create([
@@ -106,7 +106,7 @@ class SeoEditorialSafetyTest extends TestCase
     public function test_revision_restoration_is_private_and_resets_approval(): void
     {
         $admin=$this->admin();
-        $post=$this->post($admin);
+        $post=$this->makeEntry($admin);
         $this->actingAs($admin)->post(route('dashboard.editorial.submit',$post))->assertRedirect();
         $this->post(route('dashboard.editorial.assign',$post),[
             'reviewer_id'=>$admin->getKey(),
@@ -143,7 +143,7 @@ class SeoEditorialSafetyTest extends TestCase
     public function test_revisions_cannot_be_cross_read_or_restored_while_published(): void
     {
         $admin=$this->admin();
-        $one=$this->post($admin);
+        $one=$this->makeEntry($admin);
         $two=ContentEntry::query()->create([
             'user_id'=>$admin->getKey(),'kind'=>'post','title'=>'Another article',
             'slug'=>'another-article','body_html'=>'<p>Original information.</p>','status'=>'draft',
@@ -165,7 +165,7 @@ class SeoEditorialSafetyTest extends TestCase
     public function test_scheduled_publication_can_be_cancelled_without_auto_publishing(): void
     {
         $admin=$this->admin();
-        $post=$this->post($admin);
+        $post=$this->makeEntry($admin);
         $this->actingAs($admin)->post(route('dashboard.editorial.submit',$post))->assertRedirect();
         $this->post(route('dashboard.editorial.assign',$post),['reviewer_id'=>$admin->getKey()])->assertRedirect();
         $this->post(route('dashboard.editorial.decide',$post),[
@@ -186,7 +186,7 @@ class SeoEditorialSafetyTest extends TestCase
     public function test_published_post_featured_image_cannot_change_without_re_review(): void
     {
         $admin=$this->admin();
-        $post=$this->post($admin,'published');
+        $post=$this->makeEntry($admin,'published');
         $media=MediaAsset::query()->create([
             'user_id'=>$admin->getKey(),'title'=>'Unreviewed replacement',
             'kind'=>'image','mime'=>'image/webp',
