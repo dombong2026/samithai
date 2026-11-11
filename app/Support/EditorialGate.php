@@ -27,7 +27,11 @@ final class EditorialGate
 
     public static function requiresReview(ContentEntry $entry): bool
     {
-        return in_array($entry->kind, ['post','page'], true);
+        // Blog articles require review before first publication.
+        // Preserve existing custom-page publishing; pages opt in by entering review.
+        return $entry->kind === 'post' || ($entry->kind === 'page'
+            && in_array($entry->editorial_status,
+                ['in_review','changes_requested','approved','scheduled'], true));
     }
 
     public static function revision(ContentEntry $entry, ?int $actorId, string $action): void
