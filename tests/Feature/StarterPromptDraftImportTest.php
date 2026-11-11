@@ -74,8 +74,9 @@ class StarterPromptDraftImportTest extends TestCase
             ->assertDontSee('30-Day Social Media Content Planner');
         $this->get(route('home'))->assertOk()
             ->assertDontSee('30-Day Social Media Content Planner');
-        $this->actingAs($author)->get(route('dashboard.prompts'))
-            ->assertOk()->assertSee('30-Day Social Media Content Planner');
+        $this->actingAs($author)->get(route('dashboard.prompts', [
+            'q' => '30-Day Social Media Content Planner',
+        ]))->assertOk()->assertSee('30-Day Social Media Content Planner');
     }
 
     public function test_repeated_import_is_idempotent_and_does_not_overwrite(): void
