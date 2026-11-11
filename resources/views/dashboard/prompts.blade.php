@@ -5,6 +5,7 @@
 @section('subtitle','Manage prompt drafts, publication and revisions.')
 @section('toolbar')
 <a class="btn" href="{{ route('prompts.index') }}">View marketplace</a>
+<a class="btn" href="{{ $isAdmin && request()->routeIs('dashboard.prompts') ? route('dashboard.prompt-quality') : route('account.prompt-quality') }}"><x-nav-icon name="check"/> Quality Center</a>
 <button class="btn primary" type="button" data-modal-open="prompt-modal">+ New prompt</button>
 @endsection
 @section('content')
