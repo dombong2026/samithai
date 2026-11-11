@@ -138,11 +138,15 @@ echo "========== VERIFY DATABASE RELEASE STATUS =========="
  runuser -u www -- "$PHP" artisan "$COMMAND" --check --reviewer-email="$ADMIN_EMAIL" --no-ansi
 )
 for path in $URLS; do
- curl --noproxy '*' --fail --silent --show-error --insecure \
+ HTTP_CODE="$(curl --noproxy '*' --fail --silent --show-error --insecure \
   --retry 2 --connect-timeout 8 --max-time 25 \
   --resolve "samithai.com:443:127.0.0.1" \
-  "https://samithai.com$path" -o /dev/null
- printf 'PUBLIC_URL=HTTP_2XX:%s\n' "$path"
+  "https://samithai.com$path" --output /dev/null --write-out '%{http_code}')"
+ if [[ "$HTTP_CODE" != "200" ]]; then
+  echo "BLOCKED=PUBLIC_URL_NOT_HTTP_200:$path:$HTTP_CODE"
+  exit 1
+ fi
+ printf 'PUBLIC_URL=HTTP_200:%s\n' "$path"
 done
 echo "EDITORIAL_STAGE_PUBLICATION_AND_HTTP=VERIFIED"
 echo "EDITORIAL_STAGE=$STAGE"
