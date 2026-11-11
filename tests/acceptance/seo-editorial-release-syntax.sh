@@ -7,6 +7,7 @@ for path in \
  app/Http/Controllers/Dashboard/EditorialWorkflowController.php \
  app/Console/Commands/PublishScheduledEditorialContent.php \
  app/Console/Commands/SeedEducationalBlogSeo.php \
+ app/Console/Commands/AuditEditorialRelease.php \
  database/migrations/2026_11_11_000200_create_seo_editorial_workflow.php \
  tests/Feature/SeoEditorialWorkflowTest.php \
  tests/Feature/SeoEditorialSafetyTest.php \
@@ -21,6 +22,9 @@ grep -Fq 'structured_data_enabled' app/Support/SeoHead.php
 grep -Fq "whereHas('contentEntry'" app/Http/Controllers/Dashboard/MediaController.php
 grep -Fq 'private function makeEntry(' tests/Feature/SeoEditorialSafetyTest.php
 grep -Fq 'EditorialGate::approved' app/Console/Commands/PublishScheduledEditorialContent.php
+grep -Fq 'samithai:editorial-release-audit' app/Console/Commands/AuditEditorialRelease.php
+grep -Fq "SeoMetadata::where('og_media_id'" app/Http/Controllers/Dashboard/MediaController.php
+grep -Fq "'og_media_id' => \$entry->seo?->og_media_id" app/Support/EditorialGate.php
 if grep -Eq 'migrate:(fresh|refresh)|db:wipe|DROP TABLE|TRUNCATE TABLE' \
   app/Console/Commands/PublishScheduledEditorialContent.php \
   app/Console/Commands/SeedEducationalBlogSeo.php; then
