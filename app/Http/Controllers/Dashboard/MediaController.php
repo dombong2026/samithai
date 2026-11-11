@@ -140,6 +140,7 @@ class MediaController extends Controller
         $this->authorizeAsset($request, $mediaAsset);
         if (Prompt::where('featured_media_id', $mediaAsset->id)->exists()
             || ContentEntry::where('featured_media_id', $mediaAsset->id)->exists()
+            || SeoMetadata::where('og_media_id', $mediaAsset->id)->exists()
             || SiteSetting::text('logo_media_id') === (string) $mediaAsset->id) {
             return back()->withErrors(['media' => 'Remove this asset from featured content before deleting it.']);
         }
