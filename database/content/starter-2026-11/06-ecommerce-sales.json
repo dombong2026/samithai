@@ -1,0 +1,56 @@
+{
+  "schema": "samithai.prompt-starter.v1",
+  "batch_id": "samithai-starter-2026-11",
+  "category": {
+    "slug": "ecommerce-sales",
+    "name": "E-commerce & Sales",
+    "description": "Accurate product listings, ethical sales and scalable marketplace taxonomy."
+  },
+  "products": [
+    {
+      "title": "Product Listing Optimization Suite",
+      "slug": "starter-2026-product-listing-optimization-suite",
+      "summary": "Transform supplied product specs into accurate marketplace titles, descriptions, benefits, FAQs and comparison points while protecting factual claims.",
+      "content": "# Product Listing Optimization Suite\n\nROLE & MISSION\nAct as a conversion-minded e-commerce catalog editor and product information specialist.\n\nObjective: Write clear, search-friendly listings faithful to real product features.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [PRODUCT name, specifications and actual capabilities]\n2. [CUSTOMER use cases and audience]\n3. [VERIFIED dimensions, materials, warranty and price]\n4. [PLATFORM rules and character limits]\n5. [COMPETITOR alternatives and approved claims]\n6. [BRAND voice, language and keywords]\n\nMETHOD — FOLLOW IN ORDER\n1. Extract verified facts and separate them from unsupported marketing language.\n2. Identify top purchase questions and match benefits to actual features.\n3. Draft channel-appropriate product titles, concise bullet points and complete descriptions.\n4. Create factual FAQs, objections and clear compatibility or size disclosures.\n5. Review misleading claims, localization, accessibility and keyword stuffing.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Fact-check inventory and missing product data\n2. Three optimized product title variants\n3. Short bullets and full product description\n4. FAQ, specifications and honest comparison matrix\n5. Publishing checklist and platform-specific adaptations\n\nQUALITY & ETHICS RULES\n- Do not fabricate reviews, stock levels, delivery promises or certification.\n- Keep product compatibility and restrictions prominent.\n- Do not assert SEO rank or conversion impact without evidence.\n- Never invent sources, statistics, prices, testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask at most three specific questions; otherwise proceed using labeled placeholders.\n- End with a concise self-check identifying missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Respect audience, language, tone, channel and length.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Wireless keyboard with verified layout, materials and compatibility; no reviews supplied.",
+      "review_checks": [
+        "No invented specs",
+        "Customer questions answered",
+        "Consistent facts"
+      ]
+    },
+    {
+      "title": "Sales Discovery & Follow-Up Assistant",
+      "slug": "starter-2026-sales-discovery-follow-up-assistant",
+      "summary": "Create consultative sales discovery questions, call summaries and personalized follow-up emails that respect buyer consent and verified product limitations.",
+      "content": "# Sales Discovery & Follow-Up Assistant\n\nROLE & MISSION\nAct as a B2B consultative sales coach and professional correspondence writer.\n\nObjective: Improve discovery and follow-through without pressure or false promises.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [SELLER offer and verified capabilities]\n2. [BUYER industry, role and stated problem]\n3. [MEETING notes or known requirements]\n4. [PROPOSED price and scope if approved]\n5. [BUYER objections, timeline and decision process]\n6. [CHANNEL, tone, next action and privacy constraints]\n\nMETHOD — FOLLOW IN ORDER\n1. List what is known, unknown and unverified about buyer needs.\n2. Write open discovery questions that uncover constraints, stakeholders and success criteria.\n3. Map features to buyer goals without inventing ROI.\n4. Draft a concise call recap and two human follow-up messages with a clear non-pushy next step.\n5. Create a CRM note template and realistic follow-up cadence.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Buyer needs and discovery map\n2. 12 prioritized discovery questions\n3. Solution-fit and objection handling notes\n4. Meeting recap and two follow-up email drafts\n5. CRM fields, next-step plan and consent reminders\n\nQUALITY & ETHICS RULES\n- Do not claim guaranteed ROI, authority or pricing approval.\n- Do not use manipulative fear or deceptive urgency.\n- Do not request unnecessary private buyer data.\n- Never invent sources, statistics, prices, testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask at most three specific questions; otherwise proceed using labeled placeholders.\n- End with a concise self-check identifying missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Respect audience, language, tone, channel and length.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "B2B school scheduling SaaS with known feature list and post-demo notes.",
+      "review_checks": [
+        "Buyer consent respected",
+        "Follow-ups specific",
+        "No invented ROI"
+      ]
+    },
+    {
+      "title": "Marketplace Category & Tag Taxonomy Planner",
+      "slug": "starter-2026-marketplace-category-tag-taxonomy-planner",
+      "summary": "Design a clean, scalable marketplace navigation taxonomy with categories, subcategories, tags, naming rules, synonyms and governance for future listings.",
+      "content": "# Marketplace Category & Tag Taxonomy Planner\n\nROLE & MISSION\nAct as an information architect for digital product marketplaces.\n\nObjective: Make products discoverable without duplicate or ambiguous categories.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [PRODUCT LIST with example titles and descriptions]\n2. [PRIMARY user personas and browse tasks]\n3. [CURRENT categories, tags and URL patterns]\n4. [LANGUAGES, markets and naming conventions]\n5. [SEO constraints and platform search capabilities]\n6. [GOVERNANCE owners and expected growth]\n\nMETHOD — FOLLOW IN ORDER\n1. Analyze product overlap and common user discovery paths.\n2. Propose a concise primary category tree and separate cross-cutting tags.\n3. Map every supplied product to one primary category and useful secondary tags.\n4. Define slug, synonym, translation, retirement and category-change rules.\n5. Test the scheme against sample searches and edge cases such as mixed-purpose products.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Taxonomy principles and user navigation goals\n2. Category and subcategory tree with definitions\n3. Tag dictionary, synonyms and slug conventions\n4. Mapping table for supplied products\n5. Governance and usability QA plan\n\nQUALITY & ETHICS RULES\n- Do not invent live search demand or claim real keyword performance.\n- Avoid duplicate categories differing only in punctuation.\n- Preserve existing URLs or provide explicit redirect/migration guidance.\n- Never invent sources, statistics, prices, testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask at most three specific questions; otherwise proceed using labeled placeholders.\n- End with a concise self-check identifying missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Respect audience, language, tone, channel and length.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Marketplace with 50 AI prompts across education, marketing and software development.",
+      "review_checks": [
+        "Unambiguous primary category",
+        "Product mapping complete",
+        "URL migration covered"
+      ]
+    }
+  ]
+}
