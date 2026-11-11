@@ -47,8 +47,8 @@ class AccountCreatorNavigationTest extends TestCase
             route('account.settings'), route('workspace.tasks'), route('prompts.index'),
         ];
         if ($creator) {
-            array_push($expected, route('account.prompts'), route('account.media'),
-                route('account.creator.insights'));
+            array_push($expected, route('account.prompts'), route('account.prompt-quality'),
+                route('account.media'), route('account.creator.insights'));
         }
         sort($expected);
         sort($destinations);
@@ -104,6 +104,7 @@ class AccountCreatorNavigationTest extends TestCase
 
         foreach ([
             [route('account.prompts'), 'creator-studio'],
+            [route('account.prompt-quality'), 'creator-studio'],
             [route('account.creator.insights'), 'creator-studio'],
             [route('account.media'), 'creator-studio'],
             [route('account.library'), 'collection'],

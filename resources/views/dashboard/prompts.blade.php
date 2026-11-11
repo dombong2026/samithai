@@ -5,6 +5,7 @@
 @section('subtitle','Manage prompt drafts, publication and revisions.')
 @section('toolbar')
 <a class="btn" href="{{ route('prompts.index') }}">View marketplace</a>
+<a class="btn" href="{{ $isAdmin && request()->routeIs('dashboard.prompts') ? route('dashboard.prompt-quality') : route('account.prompt-quality') }}"><x-nav-icon name="check"/> Quality Center</a>
 <button class="btn primary" type="button" data-modal-open="prompt-modal">+ New prompt</button>
 @endsection
 @section('content')
@@ -20,14 +21,18 @@
 <td>{{ $prompt->user->name }}</td><td>{{ $prompt->category->name }}</td>
 <td>{{ $prompt->isFree() ? 'Free' : '$'.number_format((float)$prompt->price,2) }}</td>
 <td><span class="pill {{ $prompt->status }}">{{ ucfirst($prompt->status) }}</span>
+@if(\App\Support\PromptQualityGate::requiresReview($prompt))
+<a href="{{ route('account.prompts.quality', $prompt) }}" class="prompt-quality-small" title="View private AI testing and editorial readiness">{{ \App\Support\PromptQualityGate::status($prompt) }}</a>
+@endif
 @if(in_array($prompt->status, ['draft', 'rejected'], true) && $prompt->latestReview?->action === 'rejected' && filled($prompt->latestReview->note))
 <details class="prompt-review-feedback"><summary>Reviewer feedback</summary>
 <p>{{ $prompt->latestReview->note }}</p></details>
 @endif
 </td>
 <td>{{ $prompt->updated_at->format('d M Y') }}</td>
-<td><button class="icon-btn" type="button" aria-label="Actions for {{ $prompt->title }}" data-action-toggle="prompt-actions-{{ $prompt->id }}">⋮</button>
+<td><button class="icon-btn" type="button" aria-label="Actions for {{ $prompt->title }}" data-action-toggle="prompt-actions-{{ $prompt->id }}"><x-nav-icon name="more-vertical"/></button>
 <template id="prompt-actions-{{ $prompt->id }}">
+<a href="{{ route('account.prompts.quality', $prompt) }}"><x-nav-icon name="review"/> Quality testing</a>
 @if($prompt->status === 'published')<a href="{{ route('prompts.show',$prompt) }}">View on marketplace</a>@endif
 @if($prompt->review_events_count > 0)<a href="{{ route('account.prompts.reviews',$prompt) }}">Review history ({{ $prompt->review_events_count }})</a>@endif
 <button type="button" data-modal-open="prompt-modal" data-resource-url="{{ route('account.prompts.update',$prompt) }}"

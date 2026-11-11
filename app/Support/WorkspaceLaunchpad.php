@@ -19,6 +19,7 @@ final class WorkspaceLaunchpad
             abort_unless($user->isAdmin(), 403);
             return [
                 'moderation' => ['label' => 'Moderation queue', 'description' => 'Review submitted prompts', 'icon' => 'review', 'url' => route('dashboard.prompts', ['status' => 'pending'])],
+                'prompt_qa' => ['label' => 'Prompt Quality Center', 'description' => 'Test starter prompt drafts', 'icon' => 'check', 'url' => route('dashboard.prompt-quality')],
                 'tasks' => ['label' => 'My tasks', 'description' => 'Manage personal priorities', 'icon' => 'list-todo', 'url' => route('workspace.tasks')],
                 'support' => ['label' => 'Support inbox', 'description' => 'Reply to customer tickets', 'icon' => 'support', 'url' => route('dashboard.support')],
                 'content' => ['label' => 'Content Manager', 'description' => 'Posts, pages and drafts', 'icon' => 'posts', 'url' => route('dashboard.content', 'posts')],
@@ -44,6 +45,7 @@ final class WorkspaceLaunchpad
         if ($user->isCreator()) {
             $items += [
                 'prompts' => ['label' => 'My prompts', 'description' => 'Drafts and submissions', 'icon' => 'posts', 'url' => route('account.prompts')],
+                'prompt_qa' => ['label' => 'Prompt Quality Center', 'description' => 'Track model test results', 'icon' => 'check', 'url' => route('account.prompt-quality')],
                 'media' => ['label' => 'My media', 'description' => 'Creator uploads', 'icon' => 'media', 'url' => route('account.media')],
                 'insights' => ['label' => 'Creator insights', 'description' => 'Real marketplace interest', 'icon' => 'insights', 'url' => route('account.creator.insights')],
             ];

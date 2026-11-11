@@ -4,6 +4,7 @@
 $workspaceDestinations = $adminWorkspace ? [
     ['name'=>'Overview', 'url'=>route('dashboard'), 'icon'=>'dashboard', 'keywords'=>'admin dashboard home'],
     ['name'=>'Prompt moderation', 'url'=>route('dashboard.prompts'), 'icon'=>'review', 'keywords'=>'reviews marketplace'],
+    ['name'=>'Prompt Quality Center', 'url'=>route('dashboard.prompt-quality'), 'icon'=>'check', 'keywords'=>'starter30 human AI model test evidence QA'],
     ['name'=>'Categories', 'url'=>route('dashboard.categories'), 'icon'=>'categories', 'keywords'=>'marketplace category'],
     ['name'=>'Users & Roles', 'url'=>route('dashboard.users'), 'icon'=>'users', 'keywords'=>'user manager permission'],
     ['name'=>'Post Manager', 'url'=>route('dashboard.content','posts'), 'icon'=>'posts', 'keywords'=>'articles blog'],
@@ -33,6 +34,7 @@ $workspaceDestinations = $adminWorkspace ? [
 if (!$adminWorkspace && $creatorWorkspace) {
     array_push($workspaceDestinations,
         ['name'=>'My prompts', 'url'=>route('account.prompts'), 'icon'=>'posts', 'keywords'=>'creator edit'],
+        ['name'=>'Prompt Quality Center', 'url'=>route('account.prompt-quality'), 'icon'=>'check', 'keywords'=>'starter30 QA model tests'],
         ['name'=>'My media', 'url'=>route('account.media'), 'icon'=>'media', 'keywords'=>'creator uploads'],
         ['name'=>'Creator insights', 'url'=>route('account.creator.insights'), 'icon'=>'insights', 'keywords'=>'analytics']
     );

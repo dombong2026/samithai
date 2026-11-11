@@ -43,6 +43,16 @@ class Prompt extends Model
         return $this->hasOne(PromptReview::class)->latestOfMany();
     }
 
+    public function qualityReviews()
+    {
+        return $this->hasMany(PromptQualityReview::class);
+    }
+
+    public function latestQualityReview()
+    {
+        return $this->hasOne(PromptQualityReview::class)->latestOfMany();
+    }
+
     public function savers()
     {
         return $this->belongsToMany(User::class, 'prompt_saves')->withTimestamps();

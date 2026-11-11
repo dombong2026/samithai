@@ -53,7 +53,8 @@ class FrontendPageInventoryTest extends TestCase
             'verification.notice', 'cart.index', 'account', 'account.library',
             'account.library.show', 'account.saved', 'account.orders',
             'orders.show', 'account.settings', 'account.prompts',
-            'account.prompts.reviews', 'account.creator.insights',
+            'account.prompts.reviews', 'account.prompts.quality', 'account.prompt-quality',
+            'dashboard.prompt-quality', 'account.creator.insights',
             'account.support', 'support.show', 'account.media', 'workspace.tasks',
         ];
         $this->assertEqualsCanonicalizing($expected, $covered);

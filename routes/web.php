@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\WorkspaceShortcutsController;
+use App\Http\Controllers\PromptQualityController;
 use App\Http\Controllers\WorkspaceTasksController;
 use App\Http\Controllers\SavedPromptController;
 use App\Http\Controllers\CreatorInsightsController;
@@ -110,6 +111,11 @@ Route::middleware('auth')->group(function (): void {
     Route::delete('/account/prompts/{prompt}', [PromptController::class, 'destroy'])->name('account.prompts.destroy');
     Route::post('/account/prompts/{prompt}/submit', [PromptController::class, 'submit'])->middleware(RequireVerifiedEmailWhenEnabled::class)->name('account.prompts.submit');
     Route::get('/account/prompts/{prompt}/reviews', [PromptController::class, 'reviewHistory'])->name('account.prompts.reviews');
+    Route::get('/account/prompt-quality', [PromptQualityController::class, 'index'])->name('account.prompt-quality');
+    Route::get('/dashboard/prompt-quality', [PromptQualityController::class, 'index'])->name('dashboard.prompt-quality');
+    Route::get('/account/prompts/{prompt}/quality', [PromptQualityController::class, 'show'])->name('account.prompts.quality');
+    Route::post('/account/prompts/{prompt}/quality', [PromptQualityController::class, 'store'])
+        ->middleware('throttle:12,1')->name('account.prompts.quality.store');
 
     Route::get('/account/orders', [FinanceController::class, 'index'])->name('account.orders');
     Route::get('/dashboard/users', [UsersController::class, 'index'])->name('dashboard.users');

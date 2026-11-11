@@ -13,12 +13,12 @@
 @php
   $adminWorkspace = auth()->user()->isAdmin();
   $creatorWorkspace = auth()->user()->isCreator();
-  $marketplaceGroup = request()->routeIs('dashboard.prompts', 'dashboard.categories', 'dashboard.users');
+  $marketplaceGroup = request()->routeIs('dashboard.prompts', 'dashboard.prompt-quality', 'dashboard.categories', 'dashboard.users');
   $contentGroup = request()->routeIs('dashboard.media', 'dashboard.translations*') || request()->is('dashboard/posts','dashboard/pages','dashboard/policies','dashboard/knowledge');
   $commerceGroup = request()->routeIs('dashboard.finance', 'dashboard.legal', 'dashboard.support');
   $appearanceGroup = request()->routeIs('dashboard.appearance', 'dashboard.footer', 'dashboard.languages');
   $systemGroup = request()->routeIs('dashboard.security', 'dashboard.system');
-  $creatorGroup = $creatorWorkspace && (request()->routeIs('account.prompts*', 'account.creator.insights', 'account.media') || request()->routeIs('account'));
+  $creatorGroup = $creatorWorkspace && (request()->routeIs('account.prompts*', 'account.prompt-quality', 'account.creator.insights', 'account.media') || request()->routeIs('account'));
   $collectionGroup = request()->routeIs('account.library*', 'account.saved') || (! $creatorWorkspace && request()->routeIs('account'));
   $purchaseGroup = request()->routeIs('account.orders', 'cart.*');
   $accountCareGroup = request()->routeIs('account.support', 'account.settings*', 'workspace.tasks');
@@ -40,6 +40,7 @@
 <summary><x-nav-icon name="store"/><span>Marketplace</span><x-nav-icon name="chevron"/></summary>
 <div class="workspace-nav-items">
 <a href="{{ route('dashboard.prompts') }}" class="side-link {{ request()->routeIs('dashboard.prompts') ? 'active' : '' }}" @if(request()->routeIs('dashboard.prompts')) aria-current="page" @endif><x-nav-icon name="review"/><span>Prompt moderation</span></a>
+<a href="{{ route('dashboard.prompt-quality') }}" class="side-link {{ request()->routeIs('dashboard.prompt-quality') ? 'active' : '' }}" @if(request()->routeIs('dashboard.prompt-quality')) aria-current="page" @endif><x-nav-icon name="check"/><span>Prompt Quality Center</span></a>
 <a href="{{ route('dashboard.categories') }}" class="side-link {{ request()->routeIs('dashboard.categories') ? 'active' : '' }}" @if(request()->routeIs('dashboard.categories')) aria-current="page" @endif><x-nav-icon name="categories"/><span>Categories</span></a>
 <a href="{{ route('dashboard.users') }}" class="side-link {{ request()->routeIs('dashboard.users') ? 'active' : '' }}" @if(request()->routeIs('dashboard.users')) aria-current="page" @endif><x-nav-icon name="users"/><span>Users & Roles</span></a>
 </div></details>
@@ -86,6 +87,7 @@
 <summary><x-nav-icon name="spark"/><span>Creator Studio</span><x-nav-icon name="chevron"/></summary>
 <div class="workspace-nav-items">
 <a href="{{ route('account.prompts') }}" class="side-link {{ request()->routeIs('account.prompts*') ? 'active' : '' }}" @if(request()->routeIs('account.prompts*')) aria-current="page" @endif><x-nav-icon name="posts"/><span>My prompts</span></a>
+<a href="{{ route('account.prompt-quality') }}" class="side-link {{ request()->routeIs('account.prompt-quality') ? 'active' : '' }}" @if(request()->routeIs('account.prompt-quality')) aria-current="page" @endif><x-nav-icon name="check"/><span>Prompt Quality Center</span></a>
 <a href="{{ route('account.media') }}" class="side-link {{ request()->routeIs('account.media') ? 'active' : '' }}" @if(request()->routeIs('account.media')) aria-current="page" @endif><x-nav-icon name="media"/><span>My media</span></a>
 <a href="{{ route('account.creator.insights') }}" class="side-link {{ request()->routeIs('account.creator.insights') ? 'active' : '' }}" @if(request()->routeIs('account.creator.insights')) aria-current="page" @endif><x-nav-icon name="insights"/><span>Creator insights</span></a>
 </div></details>
