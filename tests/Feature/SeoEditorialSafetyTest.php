@@ -197,4 +197,86 @@ class SeoEditorialSafetyTest extends TestCase
         ])->assertSessionHasErrors('body_html');
         $this->assertNull($post->fresh()->featured_media_id);
     }
+
+    public function test_published_post_social_image_is_immutable_until_re_review(): void
+    {
+        $admin = $this->admin();
+        $post = $this->makeEntry($admin, 'published');
+        $original = MediaAsset::query()->create([
+            'user_id' => $admin->getKey(), 'title' => 'Reviewed social image',
+            'kind' => 'image', 'mime' => 'image/webp',
+        ]);
+        $replacement = MediaAsset::query()->create([
+            'user_id' => $admin->getKey(), 'title' => 'Unreviewed social image',
+            'kind' => 'image', 'mime' => 'image/webp',
+        ]);
+        $post->seo()->create(['og_media_id' => $original->getKey()]);
+
+        $this->actingAs($admin)->put(route('dashboard.seo.update', [
+            'kind' => 'post', 'id' => $post->getKey(),
+        ]), [
+            'og_media_id' => $replacement->getKey(),
+            'robots_index' => 1,
+        ])->assertSessionHasErrors('og_media_id');
+
+        $this->assertDatabaseHas('seo_metadata', [
+            'content_entry_id' => $post->getKey(),
+            'og_media_id' => $original->getKey(),
+        ]);
+        // SEO-linked images cannot be removed from the private media store by mistake.
+        $this->delete(route('media.destroy', $original))
+            ->assertSessionHasErrors('media');
+        $this->assertDatabaseHas('media_assets', ['id' => $original->getKey()]);
+    }
+
+    public function test_changing_approved_draft_social_image_revokes_approval_and_schedule(): void
+    {
+        $admin = $this->admin();
+        $post = $this->makeEntry($admin);
+        $image = MediaAsset::query()->create([
+            'user_id' => $admin->getKey(), 'title' => 'New draft sharing image',
+            'kind' => 'image', 'mime' => 'image/webp',
+        ]);
+
+        $this->actingAs($admin)->post(route('dashboard.editorial.submit', $post))
+            ->assertRedirect();
+        $this->post(route('dashboard.editorial.assign', $post), [
+            'reviewer_id' => $admin->getKey(),
+        ])->assertRedirect();
+        $this->post(route('dashboard.editorial.decide', $post), [
+            'decision' => 'approve',
+            'notes' => 'Current article reviewed for claims, rights, links and publication readiness.',
+        ])->assertRedirect();
+        $this->assertTrue(EditorialGate::approved($post->fresh()));
+
+        $this->put(route('dashboard.seo.update', [
+            'kind' => 'post', 'id' => $post->getKey(),
+        ]), [
+            'og_media_id' => $image->getKey(), 'robots_index' => 1,
+        ])->assertRedirect()->assertSessionHas('success');
+
+        $fresh = $post->fresh();
+        $this->assertSame('draft', $fresh->editorial_status);
+        $this->assertNull($fresh->editorial_approved_at);
+        $this->assertNull($fresh->scheduled_for);
+        $this->assertFalse(EditorialGate::approved($fresh));
+        $this->assertDatabaseHas('seo_metadata', [
+            'content_entry_id' => $post->getKey(),
+            'og_media_id' => $image->getKey(),
+        ]);
+        $this->post(route('dashboard.content.publish', $post), [
+            'status' => 'published',
+        ])->assertSessionHasErrors('status');
+
+        // Defense in depth: even a direct relation write cannot reuse an old approval hash.
+        $this->post(route('dashboard.editorial.submit', $post))->assertRedirect();
+        $this->post(route('dashboard.editorial.decide', $post), [
+            'decision' => 'approve',
+            'notes' => 'The updated sharing image and its usage rights were reviewed independently.',
+        ])->assertRedirect();
+        $this->assertTrue(EditorialGate::approved($post->fresh()));
+        $post->seo()->update(['og_media_id' => null]);
+        $this->assertFalse(EditorialGate::approved($post->fresh()));
+    }
+
 }
