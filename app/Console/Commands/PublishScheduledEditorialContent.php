@@ -37,7 +37,13 @@ class PublishScheduledEditorialContent extends Command
                     !$entry->scheduled_for || $entry->scheduled_for->isFuture() ||
                     !EditorialGate::approved($entry)) return;
 
-                $entry->update(['status'=>'published','published_at'=>now()]);
+                $scheduledAt = $entry->scheduled_for->toIso8601String();
+                $entry->update([
+                    'status'=>'published',
+                    'published_at'=>now(),
+                    'editorial_status'=>'approved',
+                    'scheduled_for'=>null,
+                ]);
                 EditorialGate::revision($entry, null, 'scheduled_publish');
                 AuditEvent::query()->create([
                     'user_id' => $entry->reviewer_id,
@@ -45,7 +51,7 @@ class PublishScheduledEditorialContent extends Command
                     'subject_type' => class_basename($entry),
                     'subject_id' => $entry->getKey(),
                     'ip_hash' => null,
-                    'details' => ['scheduled_for'=>$entry->scheduled_for->toIso8601String()],
+                    'details' => ['scheduled_for'=>$scheduledAt],
                     'created_at' => now(),
                 ]);
                 ++$published;

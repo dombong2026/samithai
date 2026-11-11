@@ -201,6 +201,8 @@ class SeoEditorialWorkflowTest extends TestCase
         Carbon::setTestNow(Carbon::parse('2026-11-11 11:00:00','UTC'));
         $this->artisan('samithai:publish-scheduled-editorial')->assertSuccessful();
         $this->assertSame('published',$post->fresh()->status);
+        $this->assertSame('approved',$post->fresh()->editorial_status);
+        $this->assertNull($post->fresh()->scheduled_for);
         $this->assertDatabaseCount('content_editorial_revisions',5);
         $this->artisan('samithai:publish-scheduled-editorial')->assertSuccessful();
         $this->assertSame(1,\App\Models\AuditEvent::where('action','content.editorial.auto_publish')->count());
