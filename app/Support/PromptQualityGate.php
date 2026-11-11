@@ -31,6 +31,10 @@ final class PromptQualityGate
 
     public static function latest(Prompt $prompt): ?PromptQualityReview
     {
+        if ($prompt->relationLoaded('latestQualityReview')) {
+            return $prompt->latestQualityReview;
+        }
+
         return $prompt->qualityReviews()->with('reviewer:id,name,role')
             ->orderByDesc('id')->first();
     }

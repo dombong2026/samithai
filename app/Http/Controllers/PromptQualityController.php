@@ -15,6 +15,39 @@ use Illuminate\View\View;
 
 class PromptQualityController extends Controller
 {
+    public function index(Request $request): View
+    {
+        abort_unless($request->user()?->isCreator(), 403);
+        $isAdmin = $request->user()->isAdmin();
+        if ($request->routeIs('dashboard.prompt-quality')) {
+            abort_unless($isAdmin, 403);
+        }
+        $filters = $request->validate([
+            'q' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', Rule::in(['draft', 'rejected', 'pending', 'published'])],
+        ]);
+        $query = Prompt::query()->where('slug', 'like', 'starter-2026-%');
+        if (!$isAdmin || $request->routeIs('account.prompt-quality')) {
+            $query->where('user_id', $request->user()->getKey());
+        }
+        $base = clone $query;
+        if (filled($filters['q'] ?? null)) {
+            $query->where('title', 'like', '%'.$filters['q'].'%');
+        }
+        if (filled($filters['status'] ?? null)) {
+            $query->where('status', $filters['status']);
+        }
+
+        return view('dashboard.prompt-quality-index', [
+            'prompts' => $query->with(['category:id,name', 'user:id,name', 'latestQualityReview.reviewer:id,name,role'])
+                ->orderByDesc('updated_at')->orderByDesc('id')->paginate(10)->withQueryString(),
+            'totalCount' => (clone $base)->count(),
+            'untestedCount' => (clone $base)->doesntHave('qualityReviews')->count(),
+            'draftCount' => (clone $base)->where('status', 'draft')->count(),
+            'isAdmin' => $isAdmin && $request->routeIs('dashboard.prompt-quality'),
+        ]);
+    }
+
     private function authorizePrompt(Request $request, Prompt $prompt): void
     {
         $user = $request->user();

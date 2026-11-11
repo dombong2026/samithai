@@ -111,6 +111,8 @@ Route::middleware('auth')->group(function (): void {
     Route::delete('/account/prompts/{prompt}', [PromptController::class, 'destroy'])->name('account.prompts.destroy');
     Route::post('/account/prompts/{prompt}/submit', [PromptController::class, 'submit'])->middleware(RequireVerifiedEmailWhenEnabled::class)->name('account.prompts.submit');
     Route::get('/account/prompts/{prompt}/reviews', [PromptController::class, 'reviewHistory'])->name('account.prompts.reviews');
+    Route::get('/account/prompt-quality', [PromptQualityController::class, 'index'])->name('account.prompt-quality');
+    Route::get('/dashboard/prompt-quality', [PromptQualityController::class, 'index'])->name('dashboard.prompt-quality');
     Route::get('/account/prompts/{prompt}/quality', [PromptQualityController::class, 'show'])->name('account.prompts.quality');
     Route::post('/account/prompts/{prompt}/quality', [PromptQualityController::class, 'store'])
         ->middleware('throttle:12,1')->name('account.prompts.quality.store');
