@@ -24,4 +24,5 @@ bash tests/acceptance/all-frontend-pages-deploy-syntax.sh
 bash tests/acceptance/starter30-content-deploy-syntax.sh
 bash tests/acceptance/prompt-quality-deploy-syntax.sh
 bash tests/acceptance/essential-page-drafts-deploy-syntax.sh
+bash tests/acceptance/educational-blog-drafts-deploy-syntax.sh
 echo 'FRONTEND_PAGES_RELEASE_SCRIPT_SYNTAX=PASS'
