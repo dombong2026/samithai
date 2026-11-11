@@ -29,7 +29,7 @@ class FrontendPageInventoryTest extends TestCase
         $this->assertSame($covered, array_values(array_unique($covered)));
 
         $excludedOperations = [
-            'language.switch', 'installer.show', 'media.serve',
+            'language.switch', 'installer.show', 'media.serve', 'storage.local',
             'verification.verify',
         ];
         foreach (Route::getRoutes() as $route) {
@@ -85,7 +85,7 @@ class FrontendPageInventoryTest extends TestCase
             ->assertSee('Creator media library')
             ->assertSee('Support conversation')
             ->assertSee('Personal tasks')
-            ->assertSee('Account & protected')
+            ->assertSee('Account & protected', false)
             ->assertSee('Add custom page');
 
         $this->get(route('dashboard.appearance', ['page_type' => 'system']))->assertOk()
@@ -122,7 +122,7 @@ class FrontendPageInventoryTest extends TestCase
             ->assertSessionHasErrors('page_type');
 
         ContentEntry::create([
-            'kind' => 'page', 'title' => 'Company mission',
+            'user_id' => $admin->id, 'kind' => 'page', 'title' => 'Company mission',
             'slug' => 'company-mission', 'body_html' => '<p>Company mission</p>',
             'status' => 'draft',
         ]);
