@@ -42,6 +42,19 @@ final class FrontendPageCopy
                 'show_hero_art' => ['label' => 'Show hero decoration', 'default' => true, 'type' => 'toggle'],
             ],
         ],
+        'cart' => [
+            'name' => 'Shopping cart',
+            'path' => '/cart',
+            'description' => 'Authenticated cart presentation; checkout, payments and legal acceptance remain protected.',
+            'fields' => [
+                'title' => ['label' => 'Page heading', 'default' => 'Shopping cart'],
+                'subtitle' => ['label' => 'Page description', 'default' => 'Review your selected AI prompts.', 'type' => 'textarea'],
+                'empty_title' => ['label' => 'Empty cart heading', 'default' => 'Your cart is empty'],
+                'empty_message' => ['label' => 'Empty cart description', 'default' => 'Browse the marketplace to find useful prompts.', 'type' => 'textarea'],
+                'browse_cta' => ['label' => 'Browse prompts link', 'default' => 'Browse prompts'],
+                'remove_cta' => ['label' => 'Remove item action', 'default' => 'Remove'],
+            ],
+        ],
         'catalog' => [
             'name' => 'Browse prompts',
             'path' => '/prompts',
