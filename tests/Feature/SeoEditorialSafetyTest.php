@@ -279,4 +279,34 @@ class SeoEditorialSafetyTest extends TestCase
         $this->assertFalse(EditorialGate::approved($post->fresh()));
     }
 
+
+    public function test_release_audit_is_read_only_and_starter_baseline_is_opt_in(): void
+    {
+        $admin = $this->admin();
+        $post = $this->makeEntry($admin);
+        $this->artisan('samithai:editorial-release-audit', ['--strict' => true])
+            ->assertSuccessful();
+        $this->artisan('samithai:editorial-release-audit', [
+            '--strict' => true, '--expect-starters' => true,
+        ])->assertFailed();
+        $this->assertSame('draft', $post->fresh()->status);
+        $this->assertDatabaseCount('content_entries', 1);
+        $this->assertDatabaseCount('content_editorial_revisions', 0);
+    }
+
+    public function test_release_audit_reports_unapproved_schedules_without_processing_them(): void
+    {
+        $admin = $this->admin();
+        $post = $this->makeEntry($admin);
+        $post->update([
+            'editorial_status' => 'scheduled',
+            'scheduled_for' => now()->subMinute(),
+        ]);
+        $this->artisan('samithai:editorial-release-audit', ['--strict' => true])
+            ->assertFailed();
+        $this->assertSame('draft', $post->fresh()->status);
+        $this->assertSame('scheduled', $post->fresh()->editorial_status);
+        $this->assertDatabaseCount('content_editorial_revisions', 0);
+    }
+
 }
