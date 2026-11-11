@@ -102,17 +102,17 @@ class SeoManagerController extends Controller
             ]);
         }
 
+        $approvalInvalidated = $socialImageChanged && $item instanceof ContentEntry
+            && $item->status === 'draft' && EditorialGate::requiresReview($item);
         $item->seo()->updateOrCreate([], $data);
-        if ($socialImageChanged && $item instanceof ContentEntry
-            && EditorialGate::requiresReview($item) && $item->status === 'draft') {
+        if ($approvalInvalidated) {
             EditorialGate::invalidate($item);
             EditorialGate::revision($item, $request->user()->id, 'seo_image_changed');
         }
         AuditTrail::record($request, 'seo.update', $item, [
             'kind' => $kind,
             'social_image_changed' => $socialImageChanged,
-            'approval_invalidated' => $socialImageChanged && $item instanceof ContentEntry
-                && $item->status === 'draft' && EditorialGate::requiresReview($item),
+            'approval_invalidated' => $approvalInvalidated,
         ]);
 
         return back()->with('success', 'SEO metadata saved. Review the public preview before sharing.');
