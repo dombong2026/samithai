@@ -7,6 +7,7 @@ use App\Models\MediaAsset;
 use App\Models\ContentEntry;
 use App\Support\FrontendPageCopy;
 use App\Support\FrontendPageAvailability;
+use App\Support\FrontendPageRegistry;
 use App\Models\SiteSetting;
 use App\Support\AuditTrail;
 use Illuminate\Http\RedirectResponse;
@@ -32,45 +33,78 @@ class AppearanceController extends Controller
         foreach (self::DEFAULTS as $key => $default) $settings[$key] = SiteSetting::text($key,$default);
 
 
-        $filters = $request->validate(['page_q' => ['nullable', 'string', 'max:80']]);
+        $filters = $request->validate([
+            'page_q' => ['nullable', 'string', 'max:80'],
+            'page_type' => ['nullable', 'in:all,builtin,managed,system,custom'],
+        ]);
         $q = trim($filters['page_q'] ?? '');
+        $type = $filters['page_type'] ?? 'all';
+
+        // The inventory includes actual browser pages, not installer operations,
+        // streaming endpoints, route mutations or administrative back-office forms.
+        $matches = static fn (array $entry): bool =>
+            $q === '' || str_contains(
+                mb_strtolower(implode(' ', [
+                    $entry['name'] ?? '', $entry['path'] ?? '',
+                    $entry['description'] ?? '', $entry['audience'] ?? '',
+                    $entry['label'] ?? '',
+                ])), mb_strtolower($q)
+            );
+
         $builtins = [];
-        foreach (FrontendPageCopy::definitions() as $key => $definition) {
-            if ($q !== '' && !str_contains(mb_strtolower($definition['name'].' '.$definition['path']), mb_strtolower($q))) {
-                continue;
+        if (in_array($type, ['all', 'builtin'], true)) {
+            foreach (FrontendPageCopy::definitions() as $key => $definition) {
+                if (!$matches($definition)) continue;
+                $builtins[$key] = [
+                    ...$definition,
+                    'values' => FrontendPageCopy::values($key),
+                    'customized' => FrontendPageCopy::hasCustomCopy($key),
+                    'enabled' => FrontendPageAvailability::enabled($key),
+                    'toggleable' => FrontendPageAvailability::toggleable($key),
+                    'preview_route' => FrontendPageRegistry::previewRoute($key),
+                ];
             }
-            $builtins[$key] = [
-                ...$definition,
-                'values' => FrontendPageCopy::values($key),
-                'customized' => FrontendPageCopy::hasCustomCopy($key),
-                'enabled' => FrontendPageAvailability::enabled($key),
-                'toggleable' => FrontendPageAvailability::toggleable($key),
-            ];
         }
-        $managed = [
-            ['key' => 'blog_detail', 'name' => 'Blog article detail', 'path' => '/blog/{slug}', 'manager' => 'posts', 'label' => 'Post Manager'],
-            ['key' => 'policy_detail', 'name' => 'Published policy detail', 'path' => '/policies/{slug}', 'manager' => 'policies', 'label' => 'Policy Center'],
-            ['key' => 'support_detail', 'name' => 'Support article detail', 'path' => '/support-center/articles/{slug}', 'manager' => 'knowledge', 'label' => 'Knowledge Base'],
-        ];
-        $managed = array_map(fn (array $entry) => [
-            ...$entry,
-            'enabled' => FrontendPageAvailability::enabled($entry['key']),
-            'toggleable' => FrontendPageAvailability::toggleable($entry['key']),
-        ], $managed);
-        if ($q !== '') {
-            $managed = array_values(array_filter($managed,
-                fn ($entry) => str_contains(mb_strtolower($entry['name'].' '.$entry['path']), mb_strtolower($q))));
+
+        $managed = [];
+        if (in_array($type, ['all', 'managed'], true)) {
+            foreach (FrontendPageRegistry::managed() as $entry) {
+                if (!$matches($entry)) continue;
+                $managed[] = [
+                    ...$entry,
+                    'enabled' => FrontendPageAvailability::enabled($entry['key']),
+                    'toggleable' => FrontendPageAvailability::toggleable($entry['key']),
+                ];
+            }
         }
+
+        $systemPages = [];
+        if (in_array($type, ['all', 'system'], true)) {
+            $systemPages = array_values(array_filter(
+                FrontendPageRegistry::protected(), $matches
+            ));
+        }
+
         $customPages = ContentEntry::where('kind', 'page')
-            ->when($q !== '', fn ($query) => $query->where('title', 'like', '%'.$q.'%'))
+            ->when(!in_array($type, ['all', 'custom'], true),
+                fn ($query) => $query->whereRaw('1 = 0'))
+            ->when($q !== '', fn ($query) => $query->where(
+                fn ($inner) => $inner->where('title', 'like', '%'.$q.'%')
+                    ->orWhere('slug', 'like', '%'.$q.'%')
+            ))
             ->latest('id')->paginate(10, ['*'], 'custom_page')->withQueryString();
+        $visibleTotal = count($builtins) + count($managed)
+            + count($systemPages) + $customPages->total();
 
         return view('dashboard.appearance', [
             'settings' => $settings,
             'frontendPages' => $builtins,
             'managedPages' => $managed,
+            'systemPages' => $systemPages,
             'customPages' => $customPages,
             'pageSearch' => $q,
+            'pageType' => $type,
+            'visiblePagesCount' => $visibleTotal,
             'images' => MediaAsset::where('kind','image')->latest()->take(100)->get(),
         ]);
     }
