@@ -11,7 +11,7 @@ if [[ $# -ne 1 || ( "$1" != "--check" && "$1" != "--apply" ) ]]; then
   exit 2
 fi
 MODE="$1"
-SOURCE="1405ed3cd8089408e13a47b10274884bfd29353b"
+SOURCE="55ac09f22cdade88a4bb53c67e29a5c00c7d1d4a"
 APP="/www/wwwroot/samithai-releases/3c9bf3fda1d0df308b94a60b006f36c437e7bf49"
 PHP="/www/server/php/85/bin/php"
 DOMAIN="samithai.com"
