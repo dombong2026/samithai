@@ -156,6 +156,13 @@ class MediaController extends Controller
 
         $public = Prompt::published()->where('featured_media_id', $mediaAsset->id)->exists()
             || ContentEntry::where('featured_media_id', $mediaAsset->id)->where('status','published')->exists();
+        $public = $public ||
+            \App\Models\SeoMetadata::query()
+                ->where('og_media_id',$mediaAsset->id)
+                ->where(function ($q): void {
+                    $q->whereHas('contentEntry',fn ($builder) => $builder->where('status','published'))
+                        ->orWhereHas('prompt',fn ($builder) => $builder->where('status','published'));
+                })->exists();
         $public = $public || (SiteSetting::text('logo_media_id') === (string) $mediaAsset->id);
         $allowed = $public || ($request->user()
             && ($request->user()->isAdmin() || $request->user()->id === $mediaAsset->user_id));

@@ -30,13 +30,13 @@ class SeoEditorialWorkflowTest extends TestCase
         return $user;
     }
 
-    private function page(User $author, string $kind = 'post', string $status = 'draft'): ContentEntry
+    private function page(User $author, string $kind = 'post', string $status = 'draft', ?string $slug = null): ContentEntry
     {
         return ContentEntry::query()->create([
             'user_id' => $author->getKey(),
             'kind' => $kind,
             'title' => $kind === 'post' ? 'Educational Article' : 'Informational Page',
-            'slug' => $kind === 'post' ? 'educational-article' : 'informational-page',
+            'slug' => $slug ?? ($kind === 'post' ? 'educational-article' : 'informational-page'),
             'excerpt' => 'Original editorial summary with validated facts.',
             'body_html' => '<h2>Complete article</h2><p>Original reviewed content and verified facts.</p>',
             'status' => $status,
@@ -63,8 +63,8 @@ class SeoEditorialWorkflowTest extends TestCase
         $owner=$this->user();
         $customer=$this->user('customer');
         for($i=0;$i<12;$i++){
-            $entry=$this->page($owner);
-            $entry->update(['slug'=>'education-post-'.$i,'title'=>'Educational Article '.$i]);
+            $entry=$this->page($owner, 'post', 'draft', 'education-post-'.$i);
+            $entry->update(['title'=>'Educational Article '.$i]);
         }
 
         $this->get(route('dashboard.seo'))->assertRedirect(route('login'));
@@ -201,7 +201,7 @@ class SeoEditorialWorkflowTest extends TestCase
         Carbon::setTestNow(Carbon::parse('2026-11-11 11:00:00','UTC'));
         $this->artisan('samithai:publish-scheduled-editorial')->assertSuccessful();
         $this->assertSame('published',$post->fresh()->status);
-        $this->assertDatabaseCount('content_editorial_revisions',4);
+        $this->assertDatabaseCount('content_editorial_revisions',5);
         $this->artisan('samithai:publish-scheduled-editorial')->assertSuccessful();
         $this->assertSame(1,\App\Models\AuditEvent::where('action','content.editorial.auto_publish')->count());
     }
