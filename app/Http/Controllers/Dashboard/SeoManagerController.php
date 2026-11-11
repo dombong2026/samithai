@@ -7,6 +7,7 @@ use App\Models\ContentEntry;
 use App\Models\MediaAsset;
 use App\Models\Prompt;
 use App\Support\AuditTrail;
+use App\Support\EditorialGate;
 use App\Support\SeoHead;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -88,8 +89,31 @@ class SeoManagerController extends Controller
         }
 
         $data = array_map(static fn ($v) => is_string($v) && trim($v) === '' ? null : $v, $data);
+
+        // Published articles must not expose unreviewed images via OG metadata.
+        // Draft approvals and schedules are also invalidated when the social
+        // image changes, just as they are for changes to the featured image.
+        $socialImageChanged = array_key_exists('og_media_id', $data)
+            && (int) ($item->seo?->og_media_id ?? 0) !== (int) ($data['og_media_id'] ?? 0);
+        if ($socialImageChanged && $item instanceof ContentEntry
+            && $item->status === 'published') {
+            return back()->withErrors([
+                'og_media_id' => 'Unpublish this article or page and obtain fresh human review before changing its public social image.',
+            ]);
+        }
+
         $item->seo()->updateOrCreate([], $data);
-        AuditTrail::record($request, 'seo.update', $item, ['kind' => $kind]);
+        if ($socialImageChanged && $item instanceof ContentEntry
+            && EditorialGate::requiresReview($item) && $item->status === 'draft') {
+            EditorialGate::invalidate($item);
+            EditorialGate::revision($item, $request->user()->id, 'seo_image_changed');
+        }
+        AuditTrail::record($request, 'seo.update', $item, [
+            'kind' => $kind,
+            'social_image_changed' => $socialImageChanged,
+            'approval_invalidated' => $socialImageChanged && $item instanceof ContentEntry
+                && $item->status === 'draft' && EditorialGate::requiresReview($item),
+        ]);
 
         return back()->with('success', 'SEO metadata saved. Review the public preview before sharing.');
     }
