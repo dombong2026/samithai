@@ -26,4 +26,5 @@ bash tests/acceptance/prompt-quality-deploy-syntax.sh
 bash tests/acceptance/essential-page-drafts-deploy-syntax.sh
 bash tests/acceptance/educational-blog-drafts-deploy-syntax.sh
 bash tests/acceptance/reviewed-editorial-release-syntax.sh
+bash tests/acceptance/seo-editorial-release-syntax.sh
 echo 'FRONTEND_PAGES_RELEASE_SCRIPT_SYNTAX=PASS'
