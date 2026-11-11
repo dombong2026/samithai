@@ -20,7 +20,7 @@ class StarterPromptDraftImportTest extends TestCase
         return $user;
     }
 
-    private function options(User $author, string $mode): array
+    private function importOptions(User $author, string $mode): array
     {
         return ['--author-email' => $author->email, '--'.$mode => true];
     }
@@ -28,7 +28,7 @@ class StarterPromptDraftImportTest extends TestCase
     public function test_check_is_read_only_and_data_bundle_has_thirty_full_prompts(): void
     {
         $author = $this->author();
-        $this->artisan('samithai:import-starter-drafts', $this->options($author, 'check'))
+        $this->artisan('samithai:import-starter-drafts', $this->importOptions($author, 'check'))
             ->expectsOutput('CONTENT_BUNDLE=30_PRODUCTS_7_CATEGORIES_VALID')
             ->expectsOutput('DRAFTS_ALREADY_MATCHING=0')
             ->expectsOutput('DRAFTS_TO_CREATE=30')
@@ -42,7 +42,7 @@ class StarterPromptDraftImportTest extends TestCase
     public function test_import_creates_thirty_unpublished_zero_price_owner_scoped_drafts(): void
     {
         $author = $this->author();
-        $this->artisan('samithai:import-starter-drafts', $this->options($author, 'apply'))
+        $this->artisan('samithai:import-starter-drafts', $this->importOptions($author, 'apply'))
             ->expectsOutput('STARTER_DRAFT_IMPORT=SUCCESS')
             ->expectsOutput('NEW_DRAFTS_CREATED=30')
             ->expectsOutput('PUBLIC_PROMPTS_PUBLISHED=0')
@@ -81,17 +81,17 @@ class StarterPromptDraftImportTest extends TestCase
     public function test_repeated_import_is_idempotent_and_does_not_overwrite(): void
     {
         $author = $this->author('creator');
-        $this->artisan('samithai:import-starter-drafts', $this->options($author, 'apply'))
+        $this->artisan('samithai:import-starter-drafts', $this->importOptions($author, 'apply'))
             ->assertSuccessful();
 
         $original = Prompt::query()->where('slug', 'starter-2026-30-day-social-media-content-planner')->firstOrFail();
         $firstUpdatedAt = $original->updated_at?->toIso8601String();
 
-        $this->artisan('samithai:import-starter-drafts', $this->options($author, 'check'))
+        $this->artisan('samithai:import-starter-drafts', $this->importOptions($author, 'check'))
             ->expectsOutput('DRAFTS_ALREADY_MATCHING=30')
             ->expectsOutput('DRAFTS_TO_CREATE=0')
             ->assertSuccessful();
-        $this->artisan('samithai:import-starter-drafts', $this->options($author, 'apply'))
+        $this->artisan('samithai:import-starter-drafts', $this->importOptions($author, 'apply'))
             ->expectsOutput('NEW_DRAFTS_CREATED=0')
             ->assertSuccessful();
 
@@ -99,7 +99,7 @@ class StarterPromptDraftImportTest extends TestCase
         $this->assertSame($firstUpdatedAt, $original->fresh()->updated_at?->toIso8601String());
 
         $original->update(['summary' => 'Human edited; preserve this draft']);
-        $this->artisan('samithai:import-starter-drafts', $this->options($author, 'apply'))
+        $this->artisan('samithai:import-starter-drafts', $this->importOptions($author, 'apply'))
             ->assertFailed();
         $this->assertSame('Human edited; preserve this draft', $original->fresh()->summary);
         $this->assertDatabaseCount('prompts', 30);
@@ -108,7 +108,7 @@ class StarterPromptDraftImportTest extends TestCase
     public function test_conflict_or_unqualified_user_does_not_create_any_starter_records(): void
     {
         $customer = $this->author('customer');
-        $this->artisan('samithai:import-starter-drafts', $this->options($customer, 'apply'))
+        $this->artisan('samithai:import-starter-drafts', $this->importOptions($customer, 'apply'))
             ->assertFailed();
         $this->assertDatabaseCount('categories', 0);
         $this->assertDatabaseCount('prompts', 0);
@@ -126,8 +126,8 @@ class StarterPromptDraftImportTest extends TestCase
             'price' => 25, 'status' => 'published', 'published_at' => now(),
             'license_type' => 'regular',
         ]);
-        $this->artisan('samithai:import-starter-drafts', $this->options($admin, 'check'))->assertFailed();
-        $this->artisan('samithai:import-starter-drafts', $this->options($admin, 'apply'))->assertFailed();
+        $this->artisan('samithai:import-starter-drafts', $this->importOptions($admin, 'check'))->assertFailed();
+        $this->artisan('samithai:import-starter-drafts', $this->importOptions($admin, 'apply'))->assertFailed();
         $this->assertDatabaseCount('categories', 1);
         $this->assertDatabaseCount('prompts', 1);
         $this->assertSame('Existing customer-owned content',
@@ -141,7 +141,7 @@ class StarterPromptDraftImportTest extends TestCase
             'name' => 'Marketing & Social Media', 'slug' => 'marketing',
             'description' => 'Existing marketplace grouping', 'is_active' => true,
         ]);
-        $this->artisan('samithai:import-starter-drafts', $this->options($author, 'apply'))
+        $this->artisan('samithai:import-starter-drafts', $this->importOptions($author, 'apply'))
             ->assertSuccessful();
         $this->assertDatabaseCount('categories', 7);
         $this->assertSame(6, Prompt::where('category_id', $existing->id)->count());
@@ -155,7 +155,7 @@ class StarterPromptDraftImportTest extends TestCase
             'name' => 'Data & Research', 'slug' => 'data-research',
             'description' => 'Disabled in production', 'is_active' => false,
         ]);
-        $this->artisan('samithai:import-starter-drafts', $this->options($author, 'apply'))
+        $this->artisan('samithai:import-starter-drafts', $this->importOptions($author, 'apply'))
             ->assertFailed();
         $this->assertDatabaseCount('prompts', 0);
         $this->artisan('samithai:import-starter-drafts', ['--author-email' => $author->email])
