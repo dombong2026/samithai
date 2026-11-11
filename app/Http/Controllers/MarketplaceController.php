@@ -90,7 +90,8 @@ class MarketplaceController extends Controller
         abort_unless($prompt->status === 'published', 404);
 
         return view('marketplace.show', [
-            'prompt' => $prompt->load(['category', 'user', 'featuredMedia']),
+            'prompt' => $prompt->load(['category', 'user', 'featuredMedia','seo.ogMedia']),
+            'seo' => \App\Support\SeoHead::prompt($prompt),
             'saved' => auth()->check() && auth()->user()->savedPrompts()->whereKey($prompt->id)->exists(),
             'owned' => auth()->check() && (
                 auth()->user()->isAdmin() ||

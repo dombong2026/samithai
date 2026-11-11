@@ -107,6 +107,10 @@ class ContentController extends Controller
     public function preview(Request $request, ContentEntry $entry): View
     {
         $this->admin($request);
-        return view('marketplace.content', ['entry' => $entry->load('media'), 'preview' => true]);
+        return view('marketplace.content', [
+            'entry' => $entry->load(['media','seo.ogMedia','author']),
+            'preview' => true,
+            'seo' => \App\Support\SeoHead::content($entry, null, true),
+        ]);
     }
 }

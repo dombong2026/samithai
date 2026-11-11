@@ -10,7 +10,7 @@ class PublicContentController extends Controller
     public function show(string $kind, string $slug): View
     {
         abort_unless(in_array($kind, ['page','post','policy','article'], true), 404);
-        $entry = ContentEntry::with(['media','translations'])->where('kind', $kind)
+        $entry = ContentEntry::with(['media','translations','seo.ogMedia','author'])->where('kind', $kind)
             ->where('slug', $slug)->where('status', 'published')->firstOrFail();
 
         $locale=app()->getLocale();
@@ -18,6 +18,10 @@ class PublicContentController extends Controller
 
         return view('marketplace.content', [
             'entry'=>$entry, 'preview'=>false,
+            'seo'=>\App\Support\SeoHead::content($entry, [
+                'title'=>$translated?->title ?? $entry->title,
+                'excerpt'=>$translated?->excerpt ?? $entry->excerpt,
+            ]),
             'display'=>[
                 'title'=>$translated?->title ?? $entry->title,
                 'excerpt'=>$translated?->excerpt ?? $entry->excerpt,

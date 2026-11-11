@@ -1,5 +1,11 @@
 @extends('layouts.site')
 @section('title',$prompt->title)
+@if(isset($seo))
+@section('seo_title', $seo['title'])
+@section('seo_head')
+@include('partials.seo-head',['seo'=>$seo])
+@endsection
+@endif
 @section('content')
 @php($pageCopy = \App\Support\FrontendPageCopy::values('prompt'))
 <section class="section"><div class="container" style="max-width:1050px">

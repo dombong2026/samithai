@@ -1,5 +1,11 @@
 @extends('layouts.site')
 @section('title',($display['title'] ?? $entry->title))
+@if(isset($seo))
+@section('seo_title', $seo['title'])
+@section('seo_head')
+@include('partials.seo-head',['seo'=>$seo])
+@endsection
+@endif
 @section('content')
 <section class="section"><div class="container" style="max-width:900px">
 @if($preview)<div class="notice warning" style="margin-bottom:20px">Administrator preview — this content is not necessarily published.</div>@endif
