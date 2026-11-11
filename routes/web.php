@@ -21,6 +21,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\InstallerController;
 use App\Http\Controllers\Dashboard\MediaController;
 use App\Http\Controllers\Dashboard\ContentController;
+use App\Http\Controllers\Dashboard\SeoManagerController;
+use App\Http\Controllers\Dashboard\EditorialWorkflowController;
 use App\Http\Controllers\Dashboard\ContentTranslationController;
 use App\Http\Controllers\PublicContentController;
 use App\Http\Controllers\Dashboard\FooterController;
@@ -170,6 +172,15 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/dashboard/content/{entry}/translations/{locale}', [ContentTranslationController::class,'update'])->name('dashboard.translations.update');
     Route::post('/dashboard/content/{entry}/translations/{locale}/review', [ContentTranslationController::class,'review'])->name('dashboard.translations.review');
 
+    Route::get('/dashboard/seo', [SeoManagerController::class, 'index'])->name('dashboard.seo');
+    Route::get('/dashboard/seo/{kind}/{id}/edit', [SeoManagerController::class, 'edit'])->whereIn('kind',['post','page','prompt'])->whereNumber('id')->name('dashboard.seo.edit');
+    Route::put('/dashboard/seo/{kind}/{id}', [SeoManagerController::class, 'update'])->whereIn('kind',['post','page','prompt'])->whereNumber('id')->middleware('throttle:30,1')->name('dashboard.seo.update');
+    Route::get('/dashboard/editorial', [EditorialWorkflowController::class, 'index'])->name('dashboard.editorial');
+    Route::get('/dashboard/editorial/{entry}', [EditorialWorkflowController::class, 'show'])->name('dashboard.editorial.show');
+    Route::post('/dashboard/editorial/{entry}/submit', [EditorialWorkflowController::class, 'submit'])->middleware('throttle:20,1')->name('dashboard.editorial.submit');
+    Route::post('/dashboard/editorial/{entry}/assign', [EditorialWorkflowController::class, 'assign'])->middleware('throttle:20,1')->name('dashboard.editorial.assign');
+    Route::post('/dashboard/editorial/{entry}/decide', [EditorialWorkflowController::class, 'decide'])->middleware('throttle:12,1')->name('dashboard.editorial.decide');
+    Route::post('/dashboard/editorial/{entry}/schedule', [EditorialWorkflowController::class, 'schedule'])->middleware('throttle:12,1')->name('dashboard.editorial.schedule');
     Route::get('/dashboard/{section}', [ContentController::class, 'index'])->whereIn('section', ['posts','pages','policies','knowledge'])->name('dashboard.content');
     Route::post('/dashboard/content/{kind}', [ContentController::class, 'store'])->whereIn('kind',['post','page','policy','article'])->name('dashboard.content.store');
     Route::put('/dashboard/content/{entry}', [ContentController::class, 'update'])->name('dashboard.content.update');

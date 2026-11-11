@@ -165,3 +165,7 @@ Artisan::command('samith:smtp-acceptance {--to= : Operator-controlled destinatio
         return 1;
     }
 })->purpose('One explicitly authorized staging-only test message; never proof of inbox delivery');
+
+// Scheduled editorial publication is opt-in through approved draft reviews.
+// The host cron/worker must be independently verified before relying on timed delivery.
+\Illuminate\Support\Facades\Schedule::command('samithai:publish-scheduled-editorial')->everyMinute()->withoutOverlapping(10);

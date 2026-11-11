@@ -9,6 +9,8 @@ $workspaceDestinations = $adminWorkspace ? [
     ['name'=>'Users & Roles', 'url'=>route('dashboard.users'), 'icon'=>'users', 'keywords'=>'user manager permission'],
     ['name'=>'Post Manager', 'url'=>route('dashboard.content','posts'), 'icon'=>'posts', 'keywords'=>'articles blog'],
     ['name'=>'Page Manager', 'url'=>route('dashboard.content','pages'), 'icon'=>'pages', 'keywords'=>'content custom pages'],
+    ['name'=>'Editorial Workflow', 'url'=>route('dashboard.editorial'), 'icon'=>'review', 'keywords'=>'review schedule approve revisions'],
+    ['name'=>'SEO Manager', 'url'=>route('dashboard.seo'), 'icon'=>'insights', 'keywords'=>'search titles meta canonical schema'],
     ['name'=>'Policy Center', 'url'=>route('dashboard.content','policies'), 'icon'=>'policies', 'keywords'=>'legal content'],
     ['name'=>'Knowledge Base', 'url'=>route('dashboard.content','knowledge'), 'icon'=>'knowledge', 'keywords'=>'articles faq'],
     ['name'=>'Media Library', 'url'=>route('dashboard.media'), 'icon'=>'media', 'keywords'=>'images uploads video'],
