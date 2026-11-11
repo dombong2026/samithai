@@ -93,6 +93,9 @@ final class FrontendPageRegistry
             self::system('creator_prompt_reviews', 'Creator review history', '/account/prompts/{prompt}/reviews',
                 'Private moderation feedback for the creator of each prompt.', 'Creator account',
                 'dashboard.prompts', 'Review prompts', 'account.prompts.reviews'),
+            self::system('creator_prompt_quality', 'Prompt quality testing', '/account/prompts/{prompt}/quality',
+                'Private AI-model test evidence, revisions and quality review for prompt creators and administrators.', 'Creator account',
+                'dashboard.prompts', 'Review prompts', 'account.prompts.quality'),
             self::system('creator_media', 'Creator media library', '/account/media',
                 'Creator upload and media-management workspace.', 'Creator account',
                 'dashboard.media', 'Manage media', 'account.media'),
@@ -155,7 +158,7 @@ final class FrontendPageRegistry
             'password.reset', 'verification.notice', 'account',
             'account.library', 'account.library.show', 'account.saved',
             'account.creator.insights', 'account.settings',
-            'account.prompts', 'account.prompts.reviews',
+            'account.prompts', 'account.prompts.reviews', 'account.prompts.quality',
             'account.orders', 'orders.show', 'account.support', 'support.show',
             'account.media', 'cart.index', 'workspace.tasks',
         ];

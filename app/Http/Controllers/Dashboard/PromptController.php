@@ -8,6 +8,7 @@ use App\Models\OrderItem;
 use App\Models\Prompt;
 use App\Models\MediaAsset;
 use App\Support\AuditTrail;
+use App\Support\PromptQualityGate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -117,6 +118,10 @@ class PromptController extends Controller
             $locked = Prompt::whereKey($prompt->id)->lockForUpdate()->firstOrFail();
             $this->authorizePrompt($locked);
             abort_unless(in_array($locked->status, ['draft', 'rejected'], true), 422);
+            if (PromptQualityGate::requiresReview($locked)) {
+                abort_unless(PromptQualityGate::passes($locked), 422,
+                    'This starter prompt requires a current administrator-approved test record before submission.');
+            }
 
             $locked->update(['status' => 'pending', 'published_at' => null]);
             $locked->reviewEvents()->create([
@@ -157,6 +162,10 @@ class PromptController extends Controller
         DB::transaction(function () use ($prompt, $request, $approve, $note): void {
             $locked = Prompt::whereKey($prompt->id)->lockForUpdate()->firstOrFail();
             abort_unless($locked->status === 'pending', 422);
+            if ($approve && PromptQualityGate::requiresReview($locked)) {
+                abort_unless(PromptQualityGate::passes($locked), 422,
+                    'This starter prompt cannot be published without current verified quality evidence.');
+            }
 
             $locked->update([
                 'status' => $approve ? 'published' : 'rejected',
