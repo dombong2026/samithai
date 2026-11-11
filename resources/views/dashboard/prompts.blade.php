@@ -21,8 +21,8 @@
 <td>{{ $prompt->user->name }}</td><td>{{ $prompt->category->name }}</td>
 <td>{{ $prompt->isFree() ? 'Free' : '$'.number_format((float)$prompt->price,2) }}</td>
 <td><span class="pill {{ $prompt->status }}">{{ ucfirst($prompt->status) }}</span>
-@if(AppSupportPromptQualityGate::requiresReview($prompt))
-<a href="{{ route('account.prompts.quality', $prompt) }}" class="prompt-quality-small" title="View private AI testing and editorial readiness">{{ AppSupportPromptQualityGate::status($prompt) }}</a>
+@if(\App\Support\PromptQualityGate::requiresReview($prompt))
+<a href="{{ route('account.prompts.quality', $prompt) }}" class="prompt-quality-small" title="View private AI testing and editorial readiness">{{ \App\Support\PromptQualityGate::status($prompt) }}</a>
 @endif
 @if(in_array($prompt->status, ['draft', 'rejected'], true) && $prompt->latestReview?->action === 'rejected' && filled($prompt->latestReview->note))
 <details class="prompt-review-feedback"><summary>Reviewer feedback</summary>
