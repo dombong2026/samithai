@@ -14,6 +14,8 @@ final class EditorialGate
             'title' => $entry->title, 'excerpt' => $entry->excerpt,
             'body_html' => $entry->body_html,
             'featured_media_id' => $entry->featured_media_id,
+            // Public social images are part of the reviewed artifact.
+            'og_media_id' => $entry->seo?->og_media_id,
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
     }
 
