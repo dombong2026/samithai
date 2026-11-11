@@ -21,4 +21,5 @@ bash tests/acceptance/workspace-header-refinement-deploy-syntax.sh
 bash tests/acceptance/workspace-boost-deploy-syntax.sh
 bash tests/acceptance/account-workspace-crud-deploy-syntax.sh
 bash tests/acceptance/all-frontend-pages-deploy-syntax.sh
+bash tests/acceptance/starter30-content-deploy-syntax.sh
 echo 'FRONTEND_PAGES_RELEASE_SCRIPT_SYNTAX=PASS'

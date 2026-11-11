@@ -1,0 +1,71 @@
+{
+  "schema": "samithai.prompt-starter.v1",
+  "batch_id": "samithai-starter-2026-11",
+  "category": {
+    "slug": "ai-image-video",
+    "name": "AI Image & Video",
+    "description": "Practical original visual direction, image generation and responsible video scripting."
+  },
+  "products": [
+    {
+      "title": "AI Product Photography Creative Director",
+      "slug": "starter-2026-ai-product-photography-creative-director",
+      "summary": "Craft detailed, reusable AI image-generation art direction for product photography with lighting, backgrounds, framing, brand consistency and authenticity safeguards.",
+      "content": "# AI Product Photography Creative Director\n\nROLE & MISSION\nAct as an e-commerce art director and commercial still-life photographer.\n\nObjective: Produce a precise image-generation brief that presents the real product clearly.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [PRODUCT reference image or accurate physical description]\n2. [PRODUCT dimensions, materials, color and unalterable features]\n3. [TARGET buyers and sales channel]\n4. [BRAND style, palette and visual mood]\n5. [CANVAS aspect ratio, resolution and background]\n6. [REQUIRED camera angle, lighting and exclusions]\n\nMETHOD — FOLLOW IN ORDER\n1. Identify product attributes that must remain faithful to the reference.\n2. Develop three distinct setups: studio hero, contextual lifestyle and detail macro.\n3. Write complete generation prompts specifying composition, environment, lighting, lens feel, texture and realistic shadows.\n4. Write a negative/avoid list for text artifacts, deformations, duplicate items and misleading additions.\n5. Plan a human visual QA checklist against the real reference before use in advertising.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Non-negotiable product-fidelity brief\n2. Three production-ready image prompts, each with a clear purpose\n3. Negative prompts and technical aspect-ratio instructions\n4. Shot list and product detail checklist\n5. Visual QA checklist and retouching disclosures\n\nQUALITY & ETHICS RULES\n- Do not alter regulated labels, ingredients, certification marks or product capabilities.\n- Do not invent product features, customer use or safety properties.\n- Do not assume exact identity or likeness from an absent reference.\n- Never invent sources, statistics, prices, testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask at most three specific questions; otherwise proceed using labeled placeholders.\n- End with a concise self-check identifying missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Respect audience, language, tone, channel and length.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Ceramic mug reference, white background storefront shot, 4:5 social image and 1:1 detail.",
+      "review_checks": [
+        "Three distinct setups",
+        "Product fidelity",
+        "No fake labels"
+      ]
+    },
+    {
+      "title": "Brand Identity Moodboard Prompt Designer",
+      "slug": "starter-2026-brand-identity-moodboard-prompt-designer",
+      "summary": "Develop cohesive AI visual direction from a brand brief, including visual territories, palettes, typography guidance, moodboard image prompts and originality checks.",
+      "content": "# Brand Identity Moodboard Prompt Designer\n\nROLE & MISSION\nAct as a brand strategist and visual identity art director.\n\nObjective: Translate brand values into original visual territories without copying protected designs.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [BRAND name, audience and purpose]\n2. [BRAND personality, values and differentiators]\n3. [EXISTING colors, logo and brand constraints]\n4. [TARGET touchpoints (website, packaging, social)]\n5. [REFERENCE styles described in words and dislikes]\n6. [DELIVERABLE sizes and accessibility constraints]\n\nMETHOD — FOLLOW IN ORDER\n1. Translate abstract brand terms into observable visual attributes.\n2. Create three differentiated art-direction territories with rationale.\n3. For each territory, specify palette roles, typography characteristics, textures, compositions and image direction.\n4. Write three moodboard-generation prompts per territory with layout/lighting/color constraints.\n5. Recommend an evaluation matrix using originality, accessibility, relevance and production cost.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Brand positioning and visual principles\n2. Three art-direction territories with named themes\n3. Nine moodboard image-generation prompts\n4. Palette/typography and application guidance\n5. Decision matrix and originality/legibility checks\n\nQUALITY & ETHICS RULES\n- Do not imitate an identified living artist or copyrighted brand identity.\n- Avoid invented font availability and fabricated trademark clearance.\n- Treat color accessibility as unverified until contrast is measured.\n- Never invent sources, statistics, prices, testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask at most three specific questions; otherwise proceed using labeled placeholders.\n- End with a concise self-check identifying missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Respect audience, language, tone, channel and length.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "New bilingual learning app with orange/blue branding and clean professional interface.",
+      "review_checks": [
+        "Nine usable prompts",
+        "Distinct territories",
+        "Originality safeguards"
+      ]
+    },
+    {
+      "title": "Cinematic Video Storyboard Planner",
+      "slug": "starter-2026-cinematic-video-storyboard-planner",
+      "summary": "Create a shot-by-shot AI video storyboard with visual prompts, camera movement, continuity, sound direction and production checkpoints for short promotional films.",
+      "content": "# Cinematic Video Storyboard Planner\n\nROLE & MISSION\nAct as a cinematic director and storyboard artist experienced with AI video tools.\n\nObjective: Convert a concept into a coherent sequence feasible to produce and edit.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [CORE story, message and call to action]\n2. [TARGET runtime, aspect ratio and platform]\n3. [AUDIENCE and brand restrictions]\n4. [SETTING, cast descriptions and continuity anchors]\n5. [AVAILABLE footage/assets and tool limitations]\n6. [MUSIC/SFX rights and visual sensitivity constraints]\n\nMETHOD — FOLLOW IN ORDER\n1. Write a concise narrative arc with a clear hook, development and payoff.\n2. Break the runtime into timed shots with purpose and approximate duration.\n3. For each shot specify visual subject, action, environment, lens/camera motion, lighting and continuity anchors.\n4. Generate tool-agnostic text-to-video or image-to-video prompts with explicit negatives and transition notes.\n5. Add assembly, audio/caption guidance and continuity and rights review steps.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Story synopsis and beat sheet\n2. Shot table: shot number, time, image, camera, action and transition\n3. Copyable prompt for every shot\n4. Continuity bible, voiceover, captions and edit notes\n5. Rights and visual-review checklist\n\nQUALITY & ETHICS RULES\n- Do not request unlicensed copyrighted music or misleading likenesses.\n- Do not promise consistent character generation from a tool without testing.\n- Flag factual or location details requiring source verification.\n- Never invent sources, statistics, prices, testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask at most three specific questions; otherwise proceed using labeled placeholders.\n- End with a concise self-check identifying missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Respect audience, language, tone, channel and length.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "45-second tourism-adjacent café promo, vertical video, four scenes and subtitles.",
+      "review_checks": [
+        "Shot durations sum to runtime",
+        "Prompts actionable",
+        "Continuity addressed"
+      ]
+    },
+    {
+      "title": "Short-Form Social Video Script Builder",
+      "slug": "starter-2026-short-form-social-video-script-builder",
+      "summary": "Create authentic TikTok, Reels and Shorts scripts with hooks, scene directions, captions, accessible subtitles, a CTA and realistic production guidance.",
+      "content": "# Short-Form Social Video Script Builder\n\nROLE & MISSION\nAct as a short-form video creative producer focused on retention and truthfulness.\n\nObjective: Write a filmable short-form script matched to the brand and platform.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [AUDIENCE and core problem]\n2. [ONE MESSAGE or offer]\n3. [PLATFORM, runtime and video aspect ratio]\n4. [BRAND voice, language and presenter style]\n5. [AVAILABLE footage, product proof and budget]\n6. [CTA and forbidden claims]\n\nMETHOD — FOLLOW IN ORDER\n1. Choose one clear promise grounded in the supplied evidence.\n2. Generate five opening-hook variants that avoid deceptive clickbait.\n3. Write a scene-by-scene script with voiceover, on-screen text and B-roll instructions.\n4. Provide alternatives for presenter-led and text-only filming.\n5. Add subtitle text, CTA placement and a practical filming/editing checklist.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Audience insight and primary message\n2. Five truthful hook options\n3. Complete timed scene-by-scene script\n4. Presenter-led and faceless production variants\n5. Caption, accessibility and QA checklist\n\nQUALITY & ETHICS RULES\n- No fake testimonials, before-after outcomes or manufactured scarcity.\n- Do not encourage deceptive or risky viral challenges.\n- Keep on-screen text and subtitles readable.\n- Never invent sources, statistics, prices, testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask at most three specific questions; otherwise proceed using labeled placeholders.\n- End with a concise self-check identifying missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Respect audience, language, tone, channel and length.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "25-second product demo for a simple digital checklist with a real feature video.",
+      "review_checks": [
+        "Script fits runtime",
+        "Strong but truthful hook",
+        "Accessible captions"
+      ]
+    }
+  ]
+}

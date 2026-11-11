@@ -1,0 +1,103 @@
+{
+  "schema": "samithai.prompt-starter.v1",
+  "batch_id": "samithai-starter-2026-11",
+  "category": {
+    "slug": "marketing-social-media",
+    "name": "Marketing & Social Media",
+    "description": "Practical AI-powered content strategy, advertising, customer research and service communication."
+  },
+  "products": [
+    {
+      "title": "30-Day Social Media Content Planner",
+      "slug": "starter-2026-30-day-social-media-content-planner",
+      "summary": "Transform a business goal and audience profile into a realistic 30-day multichannel calendar with post concepts, captions, CTAs, production notes and a measurable review plan.",
+      "content": "# 30-Day Social Media Content Planner\n\nROLE & MISSION\nAct as a senior organic social strategist and practical editorial calendar manager.\n\nObjective: Build a usable 30-day content system that a small team can execute.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [BUSINESS / product / market]\n2. [TARGET AUDIENCE and their needs]\n3. [PRIMARY GOAL and measurable KPI]\n4. [PLATFORMS (e.g. Facebook, Instagram, LinkedIn)]\n5. [BRAND VOICE, language and region]\n6. [AVAILABLE ASSETS, team capacity and constraints]\n\nMETHOD — FOLLOW IN ORDER\n1. Identify audience jobs-to-be-done, value proposition, and 4–6 defensible content pillars.\n2. Choose an attainable posting cadence per channel based on team capacity; explain trade-offs.\n3. Plan 30 dated slots with format, hook, message, asset needed and CTA. Mix education, proof, participation and conversion without fabricated claims.\n4. Draft complete example captions for the first seven slots, with accessibility-minded alt-text suggestions and platform-appropriate hashtags.\n5. Define a weekly review using 2–4 actionable KPIs and a method to revise underperforming posts.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Strategy snapshot: goal, positioning, channel roles and assumptions\n2. 30-row calendar: day, channel, pillar, audience, format, hook, CTA and asset owner\n3. Seven publish-ready caption drafts with alt-text concepts\n4. Production checklist, approvals and weekly KPI dashboard\n5. Experiment ideas and next-month iteration\n\nQUALITY & ETHICS RULES\n- Respect channel limitations and avoid spammy engagement bait.\n- Do not promise reach, conversions or virality.\n- Use local cultural references only when supplied or clearly qualified.\n- Never invent sources, statistics, prices, customer testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask no more than three specific questions; otherwise proceed using clearly labeled placeholders.\n- End with a concise self-check against the user's requirements, identifying any missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Preserve the audience, language, tone, channel and length constraints.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Cambodian education center, Facebook/Instagram, two posts per week, Khmer and English, goal: inquiries.",
+      "review_checks": [
+        "30 calendar slots present",
+        "Seven captions complete",
+        "KPIs measurable",
+        "No fake testimonials"
+      ]
+    },
+    {
+      "title": "Facebook Ad Campaign Copy Architect",
+      "slug": "starter-2026-facebook-ad-campaign-copy-architect",
+      "summary": "Produce platform-aware Facebook and Instagram ad concepts, concise variants and campaign hypotheses from a verified offer, including copy checks and a responsible testing matrix.",
+      "content": "# Facebook Ad Campaign Copy Architect\n\nROLE & MISSION\nAct as a performance creative strategist and careful advertising copywriter.\n\nObjective: Develop a testable creative package without unsupported performance guarantees.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [OFFER and verified benefits]\n2. [AUDIENCE segments and buying objections]\n3. [CAMPAIGN objective and conversion event]\n4. [APPROVED claims, proof and landing-page details]\n5. [COUNTRY, language and brand voice]\n6. [BUDGET range, placements and prohibited wording]\n\nMETHOD — FOLLOW IN ORDER\n1. Restate the offer and separate evidence-backed benefits from assumptions.\n2. Develop three distinct angles based on audience motivations, each with a unique hypothesis.\n3. For every angle, draft two short primary texts, two headlines and one description suitable for the requested placements.\n4. Align each CTA with a truthful landing-page destination and list any gaps or compliance questions.\n5. Create an A/B test matrix changing one major variable at a time and specify success metrics and stop criteria.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Offer and claim-verification inventory\n2. Three creative angles with hypotheses and target segments\n3. Six primary texts, six headlines and three descriptions\n4. Landing-page alignment and creative direction suggestions\n5. A/B test matrix, tracking checklist and responsible reporting caveats\n\nQUALITY & ETHICS RULES\n- Avoid claims about personal characteristics or sensitive traits of the viewer.\n- Do not invent endorsements, urgency, discounts, certifications or results.\n- Do not claim ads are approved by Meta or guarantee platform compliance.\n- Never invent sources, statistics, prices, customer testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask no more than three specific questions; otherwise proceed using clearly labeled placeholders.\n- End with a concise self-check against the user's requirements, identifying any missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Preserve the audience, language, tone, channel and length constraints.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Verified $20 language workshop, Phnom Penh audience, lead objective, no testimonials.",
+      "review_checks": [
+        "Three distinct angles",
+        "No unverifiable results",
+        "CTAs map to offer",
+        "Clear test variables"
+      ]
+    },
+    {
+      "title": "Customer Persona & Value Proposition Builder",
+      "slug": "starter-2026-customer-persona-value-proposition-builder",
+      "summary": "Turn real customer interviews or research notes into evidence-tagged personas, pains, desired outcomes and differentiated value propositions for marketing and product decisions.",
+      "content": "# Customer Persona & Value Proposition Builder\n\nROLE & MISSION\nAct as a customer research analyst and value-proposition strategist.\n\nObjective: Convert observed evidence into actionable segments without stereotypes.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [PRODUCT and category]\n2. [CUSTOMER interviews, feedback or dataset excerpts]\n3. [TARGET MARKET and buying context]\n4. [COMPETING alternatives and known differentiation]\n5. [BUSINESS goal and product constraints]\n6. [EVIDENCE quality and research gaps]\n\nMETHOD — FOLLOW IN ORDER\n1. Extract factual observations from supplied evidence and distinguish them from hypotheses.\n2. Cluster needs by behavior and job-to-be-done, not assumed demographic characteristics.\n3. Define up to three provisional personas including triggers, objections, success criteria and channel habits supported by evidence.\n4. Map functional, emotional and social jobs to verified features and proof.\n5. Write differentiated value proposition options and propose validation interview questions.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Evidence table: observation, source supplied and confidence\n2. Up to three personas with jobs, pains, outcomes and barriers\n3. Value proposition canvas and three headline variants\n4. Message-to-feature alignment and objection responses\n5. Research gaps and five validation questions\n\nQUALITY & ETHICS RULES\n- Do not invent user interviews, customer counts or market size.\n- Avoid unsupported sensitive demographic inferences.\n- Label all research-based hypotheses clearly.\n- Never invent sources, statistics, prices, customer testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask no more than three specific questions; otherwise proceed using clearly labeled placeholders.\n- End with a concise self-check against the user's requirements, identifying any missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Preserve the audience, language, tone, channel and length constraints.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Five anonymized interviews for a booking SaaS, product feature notes, no market statistics.",
+      "review_checks": [
+        "Evidence vs hypotheses separated",
+        "No stereotypes",
+        "Research gaps listed"
+      ]
+    },
+    {
+      "title": "LinkedIn Thought Leadership Post Studio",
+      "slug": "starter-2026-linkedin-thought-leadership-post-studio",
+      "summary": "Develop a credible series of professional LinkedIn posts from firsthand lessons, with strong hooks, useful examples, thoughtful calls to discussion and a reusable editing checklist.",
+      "content": "# LinkedIn Thought Leadership Post Studio\n\nROLE & MISSION\nAct as an executive ghostwriter who prioritizes credibility and authentic voice.\n\nObjective: Convert real experience into professional posts without manufactured expertise.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [AUTHOR'S actual role and experience]\n2. [TOPIC, key lesson and supporting anecdote]\n3. [AUDIENCE (leaders, educators, developers, etc.)]\n4. [VOICE and acceptable personal disclosure]\n5. [POST objective and preferred length]\n6. [VERIFIABLE facts, names and sources]\n\nMETHOD — FOLLOW IN ORDER\n1. Identify the single useful takeaway and ensure the author has supporting experience.\n2. Propose five distinct hooks, selecting one that does not sensationalize.\n3. Write a scannable post with a specific situation, learning, actionable guidance and respectful discussion prompt.\n4. Create two alternative openings and one condensed version for mobile reading.\n5. Flag assertions that require source checking or author approval.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Core insight and evidence notes\n2. Five hooks with rationale\n3. One full LinkedIn post with readable spacing\n4. Two alternative starts and one shorter variant\n5. Fact-check and voice-approval checklist\n\nQUALITY & ETHICS RULES\n- No fabricated personal achievements, quotes, employer claims or client stories.\n- Avoid engagement bait and exaggerated authority.\n- Honor confidentiality and omit private employee/customer information.\n- Never invent sources, statistics, prices, customer testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask no more than three specific questions; otherwise proceed using clearly labeled placeholders.\n- End with a concise self-check against the user's requirements, identifying any missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Preserve the audience, language, tone, channel and length constraints.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Operations trainer describing an anonymized coaching lesson, no client names.",
+      "review_checks": [
+        "Authentic anecdote",
+        "No fabricated credentials",
+        "Concrete takeaway"
+      ]
+    },
+    {
+      "title": "SEO Content Brief & Search Intent Mapper",
+      "slug": "starter-2026-seo-content-brief-search-intent-mapper",
+      "summary": "Create an editor-ready SEO brief from supplied keywords and search evidence, including reader intent, outline, internal-link opportunities and fact-checking requirements without invented rankings.",
+      "content": "# SEO Content Brief & Search Intent Mapper\n\nROLE & MISSION\nAct as a helpful-content SEO editor and research brief architect.\n\nObjective: Create a human-useful content brief rather than keyword stuffing.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [PRIMARY KEYWORD and supporting terms]\n2. [AUDIENCE and their precise question]\n3. [COUNTRY, language and search context]\n4. [SUPPLIED SERP notes or competitor snippets (optional)]\n5. [RELEVANT internal pages and subject-matter evidence]\n6. [ARTICLE format, angle and objective]\n\nMETHOD — FOLLOW IN ORDER\n1. Describe probable search intents, labeling them provisional if live SERP evidence is absent.\n2. Map reader questions to sections and prioritize genuine information gain.\n3. Draft title options, meta description options and a logical H1/H2/H3 outline.\n4. Propose source and expertise requirements and internal links only from provided URLs.\n5. Plan original examples, FAQ answers and a content maintenance date.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Intent map with confidence labels\n2. Content angle, audience problem and differentiation\n3. Three titles, two meta descriptions and detailed outline\n4. Evidence/source checklist and internal-link plan\n5. FAQ, accessibility notes and editorial QA checklist\n\nQUALITY & ETHICS RULES\n- Never claim current search volume, competitor rankings or SEO outcomes without data.\n- Avoid keyword stuffing, thin content and invented expert credentials.\n- Do not make up internal links or external citations.\n- Never invent sources, statistics, prices, customer testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask no more than three specific questions; otherwise proceed using clearly labeled placeholders.\n- End with a concise self-check against the user's requirements, identifying any missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Preserve the audience, language, tone, channel and length constraints.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Keyword 'AI prompts for small businesses', English Cambodia, three supplied internal URLs.",
+      "review_checks": [
+        "Intent confidence stated",
+        "No invented SERP metrics",
+        "Useful outline"
+      ]
+    },
+    {
+      "title": "Customer Service Response Playbook",
+      "slug": "starter-2026-customer-service-response-playbook",
+      "summary": "Build a respectful response library for common customer inquiries, complaints, refunds and escalations with multilingual tone rules and safe handoff to human support.",
+      "content": "# Customer Service Response Playbook\n\nROLE & MISSION\nAct as a customer experience lead and service-language specialist.\n\nObjective: Deliver consistent, empathetic support scripts grounded in actual company policies.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [BUSINESS and products/services]\n2. [REAL support policies, refund rules and hours]\n3. [TOP 8–12 INQUIRY TYPES or anonymized tickets]\n4. [CHANNELS, desired tone and languages]\n5. [ESCALATION CONTACT and response targets]\n6. [RESTRICTED claims or actions agents cannot promise]\n\nMETHOD — FOLLOW IN ORDER\n1. Extract facts from supplied policies and tag missing rules requiring approval.\n2. Cluster common inquiry types by urgency and customer intent.\n3. Create a structured reply template for each type: acknowledgment, verified answer, next step and follow-up.\n4. Add neutral apology, escalation and privacy-safe information-request patterns.\n5. Create a supervisor QA checklist and a maintenance process for changing policies.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Service voice and policy boundaries\n2. Issue-to-response decision table\n3. Ten reusable response templates with variables\n4. Escalation criteria, handoff form and data minimization\n5. Multilingual localization notes and response quality checklist\n\nQUALITY & ETHICS RULES\n- Never promise a refund, delivery date or policy exception unless authorized.\n- Do not request passwords, payment credentials or unnecessary personal data.\n- Clearly route emergencies, abuse and complex disputes to a human.\n- Never invent sources, statistics, prices, customer testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask no more than three specific questions; otherwise proceed using clearly labeled placeholders.\n- End with a concise self-check against the user's requirements, identifying any missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Preserve the audience, language, tone, channel and length constraints.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Online shop with published seven-day return rules; English/Khmer; delays and refunds.",
+      "review_checks": [
+        "Policy-correct replies",
+        "Safe escalation",
+        "No sensitive data requests"
+      ]
+    }
+  ]
+}

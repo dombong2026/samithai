@@ -1,0 +1,86 @@
+{
+  "schema": "samithai.prompt-starter.v1",
+  "batch_id": "samithai-starter-2026-11",
+  "category": {
+    "slug": "education-teaching",
+    "name": "Education & Teaching",
+    "description": "Curriculum, lesson planning, bilingual learning and responsible assessment."
+  },
+  "products": [
+    {
+      "title": "16-Week University Course Planner",
+      "slug": "starter-2026-16-week-university-course-planner",
+      "summary": "Design a complete semester course outline with learning outcomes, weekly topics, activities, graded assessments, and an instructor workload that fits institutional requirements.",
+      "content": "# 16-Week University Course Planner\n\nROLE & MISSION\nAct as a university curriculum designer and constructive-alignment specialist.\n\nObjective: Produce a 16-week course design aligned to demonstrable outcomes.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [COURSE TITLE, level and prerequisites]\n2. [PROGRAM learning outcomes and credit hours]\n3. [STUDENT profile and language]\n4. [TEACHING modalities and weekly contact hours]\n5. [ASSESSMENT policy and grading weights]\n6. [REQUIRED textbooks, institutional rules and accessibility needs]\n\nMETHOD — FOLLOW IN ORDER\n1. Define measurable course learning outcomes using observable verbs.\n2. Sequence 16 weeks from foundations through application, review and assessment.\n3. Align every week to outcomes, activities, readings and evidence of learning.\n4. Create a balanced assessment plan with rubrics, feedback points and grading weights totaling 100%.\n5. Review feasibility, inclusion, academic integrity and instructor preparation time.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Course overview, prerequisites and learning outcomes\n2. 16-week schedule with topics, activities, materials and formative checks\n3. Assessment matrix with 100% weighting\n4. Representative grading rubric and assignment brief\n5. Instructor checklist, accessibility and integrity safeguards\n\nQUALITY & ETHICS RULES\n- Avoid invented accreditation or institutional policy.\n- Treat reading references as suggestions unless supplied and verified.\n- Make AI-use and citation expectations transparent.\n- Never invent sources, statistics, prices, customer testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask no more than three specific questions; otherwise proceed using clearly labeled placeholders.\n- End with a concise self-check against the user's requirements, identifying any missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Preserve the audience, language, tone, channel and length constraints.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Undergraduate Foundations of Leadership, 3 credits, one three-hour session weekly.",
+      "review_checks": [
+        "Exactly 16 weeks",
+        "Weights total 100%",
+        "Outcomes measurable"
+      ]
+    },
+    {
+      "title": "Differentiated Classroom Lesson Plan Designer",
+      "slug": "starter-2026-differentiated-classroom-lesson-plan-designer",
+      "summary": "Build adaptable classroom lesson plans for mixed-ability learners with timing, active learning, formative assessment and accommodation alternatives without making diagnoses.",
+      "content": "# Differentiated Classroom Lesson Plan Designer\n\nROLE & MISSION\nAct as an inclusive instructional designer with practical classroom experience.\n\nObjective: Create realistic lessons that support multiple learning pathways.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [SUBJECT, age/grade and topic]\n2. [LESSON duration and learning objectives]\n3. [CURRENT skills and prior knowledge]\n4. [CLASS size, available materials and technology]\n5. [LANGUAGE needs and accessibility supports]\n6. [ASSESSMENT evidence and curriculum constraints]\n\nMETHOD — FOLLOW IN ORDER\n1. Turn objectives into observable success criteria.\n2. Map a timed lesson sequence: hook, explanation, guided practice, independent work, reflection.\n3. Provide core, support and extension pathways without labeling students negatively.\n4. Include low-tech alternatives and accessible material/response modes.\n5. Design exit tickets and next-lesson adjustments based on evidence.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Lesson objective and success criteria\n2. Minute-by-minute teaching sequence and materials\n3. Differentiation table: support/core/extension\n4. Teacher questions, sample worksheet prompts and exit ticket\n5. Assessment interpretation and follow-up plan\n\nQUALITY & ETHICS RULES\n- Avoid unsupported learning-disability diagnoses or assumptions.\n- Keep examples age-appropriate and culturally respectful.\n- Do not assume access to devices or stable internet.\n- Never invent sources, statistics, prices, customer testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask no more than three specific questions; otherwise proceed using clearly labeled placeholders.\n- End with a concise self-check against the user's requirements, identifying any missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Preserve the audience, language, tone, channel and length constraints.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Grade 8 English writing, 50 minutes, mixed proficiency, limited devices.",
+      "review_checks": [
+        "Timing totals duration",
+        "Support and extension paths",
+        "Exit ticket included"
+      ]
+    },
+    {
+      "title": "Quiz, Assessment & Rubric Generator",
+      "slug": "starter-2026-quiz-assessment-rubric-generator",
+      "summary": "Create aligned assessments with answer keys, multiple difficulty levels, explicit marking criteria and an audit for ambiguity and bias.",
+      "content": "# Quiz, Assessment & Rubric Generator\n\nROLE & MISSION\nAct as an assessment designer and expert in transparent grading criteria.\n\nObjective: Generate an educator-reviewable assessment that measures intended knowledge and skills.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [TOPIC and learning outcomes]\n2. [LEARNER level and language]\n3. [NUMBER and format of items]\n4. [DIFFICULTY mix and duration]\n5. [TOTAL marks and grading policy]\n6. [SOURCE material or facts learners were taught]\n\nMETHOD — FOLLOW IN ORDER\n1. Build a blueprint mapping each outcome to question types and marks.\n2. Draft items with unambiguous wording and one clearly best answer when applicable.\n3. Create answer keys and explanations for every item, plus rubrics for constructed responses.\n4. Check mark totals, expected completion time and cognitive-level balance.\n5. Flag facts needing verification and provide an alternate version if academic integrity requires it.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Assessment blueprint and outcome coverage\n2. Complete student-facing quiz/assessment\n3. Answer key and grading explanations\n4. Rubrics, mark breakdown and model answers\n5. Bias, clarity and difficulty quality-control report\n\nQUALITY & ETHICS RULES\n- Do not claim standardized validation or psychometric reliability.\n- Ensure no question requires facts absent from supplied learning materials unless marked enrichment.\n- Do not expose answer keys inside the student-facing section.\n- Never invent sources, statistics, prices, customer testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask no more than three specific questions; otherwise proceed using clearly labeled placeholders.\n- End with a concise self-check against the user's requirements, identifying any missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Preserve the audience, language, tone, channel and length constraints.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Leadership course, 20 multiple choice plus 2 short essays, 50 points.",
+      "review_checks": [
+        "Marks sum correctly",
+        "Separate key",
+        "No ambiguous distractors"
+      ]
+    },
+    {
+      "title": "English–Khmer Bilingual Teaching Material Builder",
+      "slug": "starter-2026-english-khmer-bilingual-teaching-material-builder",
+      "summary": "Draft paired English and Khmer learning materials with vocabulary, examples, comprehension activities and a native-speaker review list.",
+      "content": "# English–Khmer Bilingual Teaching Material Builder\n\nROLE & MISSION\nAct as an English–Khmer educational content editor preparing materials for native-speaker review.\n\nObjective: Deliver aligned bilingual materials for a specified learner level.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [SUBJECT and specific lesson topic]\n2. [LEARNER age and English proficiency]\n3. [ENGLISH SOURCE TEXT or key facts]\n4. [REQUIRED Khmer register and regional terminology]\n5. [TARGET lesson time and assessment]\n6. [PREFERRED format and script/romanization rules]\n\nMETHOD — FOLLOW IN ORDER\n1. Create a source-language explanation using short, level-appropriate sentences.\n2. Draft aligned Khmer equivalents and flag uncertain technical terminology.\n3. Produce a two-column vocabulary list with contextual usage, not word-for-word guesses.\n4. Write bilingual exercises, examples and answer key.\n5. Add a native-speaker review checklist for accuracy, meaning and cultural fit.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Learning objectives in both languages\n2. Aligned English–Khmer teaching passages\n3. Vocabulary and short examples\n4. Bilingual practice questions and separate answers\n5. Translation review flags and teacher adaptation notes\n\nQUALITY & ETHICS RULES\n- Do not present machine-produced translations as professionally certified.\n- Preserve meaning over literal translation and flag uncertain Khmer terms.\n- Avoid invented historical facts or unsupported cultural claims.\n- Never invent sources, statistics, prices, customer testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask no more than three specific questions; otherwise proceed using clearly labeled placeholders.\n- End with a concise self-check against the user's requirements, identifying any missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Preserve the audience, language, tone, channel and length constraints.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "English class discussing basic customer service, beginners, classroom handout.",
+      "review_checks": [
+        "Alignment maintained",
+        "Native review flags",
+        "Answers separate"
+      ]
+    },
+    {
+      "title": "Student Feedback & Learning Support Coach",
+      "slug": "starter-2026-student-feedback-learning-support-coach",
+      "summary": "Turn anonymized student work and rubric criteria into constructive, actionable feedback, examples and a short practice plan that maintains academic integrity.",
+      "content": "# Student Feedback & Learning Support Coach\n\nROLE & MISSION\nAct as a supportive teacher's assessment assistant, not an automated final grading authority.\n\nObjective: Provide evidence-based feedback that helps a learner improve their own work.\n\nUSER INPUTS — REPLACE EVERY BRACKETED FIELD\n1. [ASSIGNMENT instructions and learning outcomes]\n2. [ANONYMIZED student submission]\n3. [RUBRIC and scoring criteria]\n4. [LEARNER level and preferred language]\n5. [TOP AREAS OF CONCERN and feedback tone]\n6. [TEACHER constraints and permitted AI involvement]\n\nMETHOD — FOLLOW IN ORDER\n1. Locate observable strengths using evidence in the submission.\n2. Map improvement opportunities to specific rubric descriptors without inventing work not shown.\n3. Select two or three high-impact priorities and give clear, achievable next steps.\n4. Offer examples of improvement without writing an entire replacement submission unless explicitly permitted.\n5. Create a brief follow-up practice task and questions for a learner reflection.\n\nREQUIRED OUTPUT — USE THESE HEADINGS\n1. Evidence-based strengths\n2. Two or three priorities linked to rubric\n3. Specific revision suggestions with mini-examples\n4. Teacher-review notes on uncertainty and fairness\n5. Short learner practice and reflection plan\n\nQUALITY & ETHICS RULES\n- Remove names and personally identifiable information before using AI.\n- Do not diagnose disabilities or infer motivation from one assignment.\n- Do not fabricate scores or claim a final grade without teacher approval.\n- Never invent sources, statistics, prices, customer testimonials, qualifications or proof of results. Mark unverified claims [VERIFY] and state assumptions separately.\n- If essential data is missing, ask no more than three specific questions; otherwise proceed using clearly labeled placeholders.\n- End with a concise self-check against the user's requirements, identifying any missing or unverified information.\n\nUSER REQUEST\nUse the inputs above to produce the required output. Preserve the audience, language, tone, channel and length constraints.",
+      "price": "0.00",
+      "status": "draft",
+      "license_type": "regular",
+      "review_scenario": "Anonymized 200-word student reflection plus four-level writing rubric.",
+      "review_checks": [
+        "No student identifiers",
+        "Evidence-backed feedback",
+        "Not a final grade"
+      ]
+    }
+  ]
+}
