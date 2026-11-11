@@ -27,6 +27,13 @@
 <select class="field" name="og_media_id" id="seo-media"><option value="">Use featured image if available</option>
 @foreach($assets as $asset)<option value="{{ $asset->id }}" @selected((string)old('og_media_id',$item->seo?->og_media_id)===(string)$asset->id)>{{ $asset->title }}</option>@endforeach
 </select><a href="{{ route('dashboard.media') }}" class="tiny">Manage original images in Media Library</a></div>
+<div class="field-group"><label for="seo-schema">Structured data for published content</label>
+<select class="field" id="seo-schema" name="structured_data_enabled">
+<option value="1" @selected((string)old('structured_data_enabled',$item->seo?->structured_data_enabled ?? true)==='1')>Enabled — safe generated schema</option>
+<option value="0" @selected((string)old('structured_data_enabled',$item->seo?->structured_data_enabled ?? true)==='0')>Disabled</option>
+</select>
+<p class="tiny muted">Schema type follows the record: BlogPosting for posts, WebPage for pages, Product for published prompts. No unverified offers, reviews or ratings are emitted.</p>
+</div>
 <div class="field-group"><label for="seo-index">Search visibility</label>
 <select class="field" id="seo-index" name="robots_index">
 <option value="1" @selected((string)old('robots_index',$item->seo?->robots_index ?? true)==='1')>Index published content</option>

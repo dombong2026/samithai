@@ -7,6 +7,7 @@ use App\Models\ContentEntry;
 use App\Models\MediaAsset;
 use App\Models\Prompt;
 use App\Models\SiteSetting;
+use App\Models\SeoMetadata;
 use App\Support\AuditTrail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -164,6 +165,15 @@ class MediaController extends Controller
                         ->orWhereHas('prompt',fn ($builder) => $builder->where('status','published'));
                 })->exists();
         $public = $public || (SiteSetting::text('logo_media_id') === (string) $mediaAsset->id);
+        // Only an actually published record can expose its sharing image.
+        // Draft-only OG assets remain private until editorial publication.
+        if (!$public && $mediaAsset->kind === 'image') {
+            $public = SeoMetadata::query()->where('og_media_id', $mediaAsset->id)
+                ->where(function ($query): void {
+                    $query->whereHas('contentEntry', fn ($q) => $q->where('status','published'))
+                        ->orWhereHas('prompt', fn ($q) => $q->where('status','published'));
+                })->exists();
+        }
         $allowed = $public || ($request->user()
             && ($request->user()->isAdmin() || $request->user()->id === $mediaAsset->user_id));
         abort_unless($allowed, 403);

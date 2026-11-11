@@ -10,12 +10,12 @@ class SeoMetadata extends Model
 
     protected $fillable = [
         'content_entry_id','prompt_id','seo_title','meta_description',
-        'canonical_path','og_title','og_description','og_media_id','robots_index',
+        'canonical_path','og_title','og_description','og_media_id','robots_index','structured_data_enabled',
     ];
 
     protected function casts(): array
     {
-        return ['robots_index' => 'boolean'];
+        return ['robots_index' => 'boolean', 'structured_data_enabled' => 'boolean'];
     }
 
     public function contentEntry() { return $this->belongsTo(ContentEntry::class); }

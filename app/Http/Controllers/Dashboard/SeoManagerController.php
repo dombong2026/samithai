@@ -77,6 +77,7 @@ class SeoManagerController extends Controller
             'og_description' => ['nullable','string','max:300'],
             'og_media_id' => ['nullable','integer',Rule::exists('media_assets','id')->where('kind','image')],
             'robots_index' => ['required','boolean'],
+            'structured_data_enabled' => ['sometimes','boolean'],
         ]);
         // Canonical may only point inside the same type's public URL family.
         $expected = $kind === 'post' ? '/blog/' :

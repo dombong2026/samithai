@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('og_description', 300)->nullable();
             $table->foreignId('og_media_id')->nullable()->constrained('media_assets')->nullOnDelete();
             $table->boolean('robots_index')->default(true);
+            $table->boolean('structured_data_enabled')->default(true);
             $table->timestamps();
         });
 

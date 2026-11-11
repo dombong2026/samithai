@@ -18,7 +18,9 @@ final class SeoHead
         $type = $entry->kind === 'post' ? 'article' : 'website';
         $article = $entry->kind === 'post';
         $image = self::image($seo?->ogMedia, $entry->media);
-        $url = self::canonical($seo?->canonical_path);
+        $url = self::canonical(
+            $seo?->canonical_path, '/'.($entry->kind === 'post' ? 'blog' : 'pages').'/'.$entry->slug
+        );
         $data = $article ? [
             '@context' => 'https://schema.org',
             '@type' => 'BlogPosting',
@@ -50,7 +52,8 @@ final class SeoHead
             'og_type' => $type,
             'image' => $image,
             'index' => !$preview && $entry->status === 'published' && ($seo?->robots_index ?? true),
-            'schema' => $preview || $entry->status !== 'published' ? null : $data,
+            'schema' => $preview || $entry->status !== 'published' ||
+                ($seo?->structured_data_enabled === false) ? null : $data,
         ];
     }
 
@@ -59,7 +62,7 @@ final class SeoHead
         $prompt->loadMissing(['seo.ogMedia','featuredMedia']);
         $seo = $prompt->seo;
         $title = $prompt->title;
-        $url = self::canonical($seo?->canonical_path);
+        $url = self::canonical($seo?->canonical_path, '/prompts/'.$prompt->slug);
         $image = self::image($seo?->ogMedia, $prompt->featuredMedia);
         $data = [
             '@context' => 'https://schema.org',
@@ -80,7 +83,8 @@ final class SeoHead
             'og_type' => 'product',
             'image' => $image,
             'index' => $prompt->status === 'published' && ($seo?->robots_index ?? true),
-            'schema' => $prompt->status === 'published' ? $data : null,
+            'schema' => $prompt->status === 'published' &&
+                ($seo?->structured_data_enabled !== false) ? $data : null,
         ];
     }
 
@@ -94,12 +98,12 @@ final class SeoHead
         return Str::limit(trim(strip_tags((string) ($override ?: $fallback ?: ''))), 300, '');
     }
 
-    private static function canonical(?string $path): string
+    private static function canonical(?string $path, string $fallbackPath): string
     {
         if ($path && preg_match('~^/(?:pages|blog|prompts)/[a-z0-9]+(?:-[a-z0-9]+)*$~D', $path)) {
             return url($path);
         }
-        return request()->url();
+        return url($fallbackPath);
     }
 
     private static function image(?object $custom, ?object $featured): ?string
