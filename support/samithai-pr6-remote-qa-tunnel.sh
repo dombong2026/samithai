@@ -40,7 +40,7 @@ done
     fail "QA operator, backup or restricted workspace identity changed"
 
 echo "========== CHECK REMOTE MYSQL SSH TUNNEL =========="
-python3 - "$PORT" <<'PY'
+if python3 - "$PORT" <<'PY'
 import re,subprocess,sys
 port=int(sys.argv[1])
 lines=subprocess.check_output(
@@ -56,8 +56,10 @@ for line in lines:
         raise SystemExit('BLOCKED=QA_TUNNEL_NOT_OPENSSH')
 print('REMOTE_QA_SSH_TUNNEL=LOCALHOST_ONLY')
 PY
-status=$?
-if [[ "$status" != 0 ]]; then
+then
+    :
+else
+    status=$?
     if [[ "$MODE" == --probe && "$status" == 4 ]]; then
         echo "QA_MYSQL_CREDENTIALS=NOT_CONFIGURED"
         echo "INDEPENDENT_RESTORE=NOT_PERFORMED"
@@ -86,20 +88,19 @@ if [[ "$MODE" == --configure ]]; then
     [[ -n "$PASSWORD" && "$PASSWORD" != *$'\n'* &&
        "$PASSWORD" != *$'\r'* ]] ||
         fail "Invalid QA password"
-    ESCAPED="${PASSWORD//\/\\}"
-    ESCAPED="${ESCAPED//"/\"}"
     {
         printf '[client]\n'
         printf 'protocol=tcp\n'
         printf 'host=127.0.0.1\n'
         printf 'port=%s\n' "$PORT"
         printf 'user="%s"\n' "$USERNAME"
-        printf 'password="%s"\n' "$ESCAPED"
+        printf 'password='
+        printf '%s' "$PASSWORD" | python3 -c 'import sys; p=sys.stdin.read(); print(chr(34)+p.replace(chr(92),chr(92)*2).replace(chr(34),chr(92)+chr(34))+chr(34))'
         printf 'default-character-set=utf8mb4\n'
         printf 'connect-timeout=5\n'
     } > "$CONF"
     chmod 600 "$CONF"
-    unset PASSWORD ESCAPED USERNAME
+    unset PASSWORD USERNAME
 fi
 
 [[ -f "$CONF" && ! -L "$CONF" &&
