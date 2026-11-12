@@ -239,8 +239,8 @@ class SeoEditorialWorkflowTest extends TestCase
         $this->assertSame((int)$image->id,(int)$post->fresh()->featured_media_id);
         $this->assertSame((int)$image->id,(int)$post->fresh()->seo->og_media_id);
         $this->get(route('dashboard.editorial.show',$post))->assertOk()
-            ->assertSee('Featured image &amp; social image',false)
-            ->assertSee('SEO &amp; content review',false);
+            ->assertSee('Featured image & social image',false)
+            ->assertSee('SEO & content review',false);
 
         $this->post(route('dashboard.editorial.submit',$post))->assertRedirect();
         $this->post(route('dashboard.editorial.assign',$post),['reviewer_id'=>$admin->id])->assertRedirect();
