@@ -104,7 +104,7 @@ import hashlib,json,os,sys,tarfile
 from pathlib import Path
 archive,work=Path(sys.argv[1]),Path(sys.argv[2])
 allowed={'mysql.sql.gz','application-state.tar.gz',
-         'inventory-before.json','inventory-after.json','earlier-inventory-v2.json','SHA256SUMS'}
+         'inventory-before.json','inventory-after.json','SHA256SUMS'}
 with tarfile.open(archive,'r:') as tar:
     members=tar.getmembers()
     file_members=[m for m in members if m.isfile()]
@@ -213,6 +213,37 @@ required={k for k,v in expected.items() if v.get('present')}
 if required-seen:
     raise SystemExit('BLOCKED=RESTORED_TABLES_MISSING')
 print('INDEPENDENT_RESTORED_TABLES_PRESENT=PASS')
+PY
+
+# Compare exact row counts, never information_schema InnoDB estimates.
+python3 - "$WORK/inventory-before.json" "$WORK/counts.sql" <<'PY'
+import json,re,sys
+snapshot=json.load(open(sys.argv[1]))
+items=snapshot.get('tables',{})
+sql=[]
+for name,details in sorted(items.items()):
+    if not re.fullmatch(r'[a-z][a-z0-9_]{0,63}',name):
+        raise SystemExit('BLOCKED=UNSAFE_BACKUP_TABLE_IDENTIFIER')
+    if details.get('present') is True:
+        sql.append(f"SELECT '{name}' AS tbl, COUNT(*) AS rows FROM `{name}`")
+if not sql:
+    raise SystemExit('BLOCKED=NO_EXPECTED_TABLES')
+with open(sys.argv[2],'w') as fh:
+    fh.write(" UNION ALL ".join(sql)+";\n")
+PY
+"$MYSQL" --defaults-extra-file="$QACNF" --batch --skip-column-names     "$QA_DB" < "$WORK/counts.sql" > "$WORK/qa-exact-counts.tsv" ||
+    stop "Exact QA row count query failed"
+python3 - "$WORK/inventory-before.json" "$WORK/qa-exact-counts.tsv" <<'PY'
+import json,sys
+expected=json.load(open(sys.argv[1]))['tables']
+actual={}
+for line in open(sys.argv[2]):
+    name,rows=line.rstrip('\n').split('\t')
+    actual[name]=int(rows)
+for name,data in expected.items():
+    if data.get('present') is True and data.get('count')!=actual.get(name):
+        raise SystemExit('BLOCKED=QA_ROW_COUNT_MISMATCH:'+name)
+print('INDEPENDENT_RESTORED_EXACT_ROW_COUNTS=PASS')
 PY
 
 echo "INDEPENDENT_MYSQL_IMPORT=SUCCESS"
