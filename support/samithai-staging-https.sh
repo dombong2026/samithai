@@ -7,8 +7,8 @@ umask 077
 
 [[ $# == 1 ]] || { echo 'Usage: script --start|--stop|--status|--candidate|--rollback' >&2; exit 2; }
 MODE="$1"
-[[ "$MODE" =~ ^(--start|--stop|--status|--candidate|--rollback)$ ]] ||
-    { echo 'Unknown staging action' >&2; exit 2; }
+[[ "$MODE" =~ ^(--start|--stop|--status)$ ]] ||
+    { echo 'Switch staged releases only with samithai-staging-activate-reviewed.sh' >&2; exit 2; }
 
 LAB="/var/lib/samithai-editorial-staging-20261112"
 PROXY="$LAB/proxy"
@@ -25,9 +25,32 @@ fail() { echo "BLOCKED=$*" >&2; exit 3; }
    -f "$LAB/shared/staging.sqlite" && -f "$LAB/shared/.env" ]] ||
     fail "The isolated staging release has not been prepared"
 
-[[ "$(realpath -e "$CURRENT")" == "$LAB/releases/candidate" ||
-   "$(realpath -e "$CURRENT")" == "$LAB/releases/rollback" ]] ||
+ACTIVE_RELEASE="$(realpath -e "$CURRENT")"
+if [[ "$ACTIVE_RELEASE" == "$LAB/releases/candidate" ||
+      "$ACTIVE_RELEASE" == "$LAB/releases/rollback" ]]; then
+    :
+elif [[ "$ACTIVE_RELEASE" == "$LAB/releases/pr6-"* &&
+        -d "$ACTIVE_RELEASE" && ! -L "$ACTIVE_RELEASE" &&
+        -f "$ACTIVE_RELEASE/staging-release.json" ]]; then
+    command -v git >/dev/null || fail "Git is required for reviewed release identity"
+    command -v python3 >/dev/null || fail "Python is required for reviewed release manifest"
+    ACTIVE_SHA="$(git -C "$ACTIVE_RELEASE" rev-parse HEAD)" ||
+        fail "Reviewed release SHA unavailable"
+    EXPECTED_RELEASE="$LAB/releases/pr6-${ACTIVE_SHA:0:12}"
+    [[ "$ACTIVE_RELEASE" == "$EXPECTED_RELEASE" ]] ||
+        fail "Reviewed release name does not match commit SHA"
+    python3 - "$ACTIVE_RELEASE/staging-release.json" "$ACTIVE_SHA" <<'PY'
+import json,sys
+with open(sys.argv[1]) as fh: data=json.load(fh)
+if (data.get('format')!='samithai/pr6-staged/v1'
+    or data.get('commit')!=sys.argv[2]
+    or data.get('status')!='STAGED_ONLY'
+    or data.get('production_mutations') is not False):
+    raise SystemExit('BLOCKED=UNVERIFIED_REVIEWED_STAGING_RELEASE')
+PY
+else
     fail "Unexpected staging active release target"
+fi
 
 if [[ "$MODE" == --status ]]; then
     echo "STAGING_RELEASE=$(basename "$(realpath -e "$CURRENT")")"
@@ -44,22 +67,6 @@ fi
 
 exec 9>/run/lock/samithai-editorial-staging-https.lock
 flock -n 9 || fail "Concurrent staging action"
-
-if [[ "$MODE" == --candidate || "$MODE" == --rollback ]]; then
-    [[ ! -e "$LAB/server.pid" ]] ||
-        fail "Stop staging HTTP before changing release pointer"
-    target="$LAB/releases/candidate"
-    [[ "$MODE" == --rollback ]] && target="$LAB/releases/rollback"
-    next="$LAB/current.next.$$"
-    [[ ! -e "$next" && ! -L "$next" ]] || fail "Unexpected pending staging pointer"
-    ln -s "$target" "$next"
-    mv -Tf "$next" "$CURRENT"
-    [[ "$(realpath -e "$CURRENT")" == "$target" ]] || fail "Pointer move failed"
-    echo "STAGING_POINTER=$(basename "$target")"
-    echo "PERSISTENT_DATA=UNCHANGED"
-    echo "PRODUCTION_POINTER=UNCHANGED"
-    exit 0
-fi
 
 if [[ "$MODE" == --stop ]]; then
     if [[ -f "$LAB/tls-proxy.pid" && ! -L "$LAB/tls-proxy.pid" ]]; then
