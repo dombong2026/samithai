@@ -134,7 +134,11 @@ for line in (work/'SHA256SUMS').read_text().splitlines():
 if set(manifest)!=allowed-{'SHA256SUMS'}:
     raise SystemExit('BLOCKED=INCOMPLETE_MANIFEST')
 for name,h in manifest.items():
-    digest=hashlib.file_digest(open(work/name,'rb'),'sha256').hexdigest()
+    digestor=hashlib.sha256()
+    with open(work/name,'rb') as fh:
+        while block:=fh.read(1024*1024):
+            digestor.update(block)
+    digest=digestor.hexdigest()
     if digest!=h: raise SystemExit('BLOCKED=SNAPSHOT_CHECKSUM_MISMATCH')
 a=json.loads((work/'inventory-before.json').read_text())
 b=json.loads((work/'inventory-after.json').read_text())
