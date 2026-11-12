@@ -6,6 +6,8 @@ for script in \
   support/samithai-staging-inherited-lock-recover.sh \
   support/samithai-staging-activate-reviewed.sh \
   support/samithai-independent-restore-rehearsal.sh \
+  support/samithai-versioned-encrypted-backup.sh \
+  support/samithai-versioned-independent-restore.sh \
   support/samithai-staging-https.sh; do
   test -s "$script" || { echo "MISSING=$script"; exit 1; }
   bash -n "$script"
@@ -48,6 +50,15 @@ if grep -Fq '[[ "$MODE" == --candidate || "$MODE" == --rollback ]]' support/sami
 fi
 grep -Fq 'DISTINCT' support/samithai-independent-restore-rehearsal.sh
 grep -Fq 'PRODUCTION_MYSQL_AND_MEDIA=UNCHANGED' support/samithai-independent-restore-rehearsal.sh
+grep -Fq 'LIVE_PRODUCTION_INVENTORY=' support/samithai-versioned-encrypted-backup.sh
+grep -Fq 'samith-recovery-inventory/v2' support/samithai-versioned-encrypted-backup.sh
+grep -Fq 'samith-recovery-inventory/v3' support/samithai-versioned-encrypted-backup.sh
+grep -Fq 'samith-recovery-inventory/v4' support/samithai-versioned-encrypted-backup.sh
+grep -Fq 'LIVE_INVENTORY_BEFORE_AFTER=IDENTICAL' support/samithai-versioned-encrypted-backup.sh
+grep -Fq 'INDEPENDENT_RESTORED_EXACT_ROW_COUNTS=PASS' support/samithai-versioned-independent-restore.sh
+grep -Fq 'QA_MYSQL_DIFFERENT_SERVER_UUID=PASS' support/samithai-versioned-independent-restore.sh
+grep -Fq 'SQL_DUMP_SCHEMA_SELECTION=REJECTED' support/samithai-versioned-independent-restore.sh
+grep -Fq 'REAL_PRIVATE_MEDIA_CHECKSUMS=PASS' support/samithai-versioned-independent-restore.sh
 grep -Fq 'READ_ONLY' support/samithai-production-six-draft-guard.php
 grep -Fq 'TLS_SOURCE="$CURRENT/support/samithai-staging-tls-proxy.py"' \
     support/samithai-staging-https.sh
