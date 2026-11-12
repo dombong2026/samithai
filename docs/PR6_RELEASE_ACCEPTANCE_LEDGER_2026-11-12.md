@@ -27,6 +27,17 @@ Six articles must remain drafts until individual authorizations. The two introdu
 
 ## 2. Fresh production recovery protection — not yet executed
 
+**2026-11-12 version compatibility correction.** GitHub's original pinned production commit (`3c9bf3f`) declares recovery inventory `samith-recovery-inventory/v2`, whereas the draft branch's `current-v3-encrypted-backup.sh` requires v3 and newer branch source declares v4. The *actual installed* schema must be measured at the pinned production release before any snapshot; do not infer it from PR code. The new `support/samithai-versioned-encrypted-backup.sh` supports healthy v2/v3/v4 with strict table-count and media checks, and encrypts a snapshot without installing or deploying code to the live application.
+
+**Operator next steps:**
+1. Download `support/samithai-versioned-encrypted-backup.sh` from the approved PR commit and verify its Git blob ID. Run `--check` first. This writes no production database data and reports the running `LIVE_PRODUCTION_INVENTORY`.
+2. On a restricted TTY, after confirming adequate protected backup space, run `--snapshot`. Supply and separately retain a strong backup passphrase. The utility checks inventory before and after, captures transactional SQL and private media plus the app environment, AES-256 encrypts the archive, verifies decryption and SHA-256, and removes its temporary plaintext. **Production reads happen; no Nginx/cron/config updates.**
+3. Copy ciphertext and checksum manifest to independently managed protected storage. Do **not** share the unencrypted `.env`, passwords, or backup contents in a chat.
+4. Provision a **different MySQL instance** (distinct `@@server_uuid`, restricted access, `event_scheduler=OFF`) and run `support/samithai-versioned-independent-restore.sh --check BACKUP QA_CNF`; then use `--restore` only after restricting and documenting the QA instance. It restores a distinct QA schema and checks exact table counts and referenced private media hashes. It does not provision a complete application clone, test every HMAC value, validate logins, or replace human recovery acceptance.
+5. A second operator must independently verify the isolated application recovery, secret-handling, retention policy and restoration evidence before a production cutover. This gate remains **NO-GO** until those checks complete.
+
+
+
 Current source contains `support/current-v3-encrypted-backup.sh`; that script is designed to snapshot live MySQL + private application state, validate source inventories and AES-256 ciphertext, and retain an SHA-256 manifest. It does **not** independently test restoration.
 
 Recommended operator sequence with code provenance verified and passphrase never logged:
