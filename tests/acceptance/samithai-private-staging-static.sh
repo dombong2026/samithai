@@ -19,7 +19,7 @@ from pathlib import Path
 ast.parse(Path('support/samithai-staging-tls-proxy.py').read_text())
 print('STAGING_PYTHON_TLS_PROXY_SYNTAX=PASS')
 PY
-grep -Fq 'TLS_SOURCE="$CAND/support/samithai-staging-tls-proxy.py"' support/samithai-staging-https.sh
+grep -Fq 'TLS_SOURCE="$CURRENT/support/samithai-staging-tls-proxy.py"' support/samithai-staging-https.sh
 grep -Fq 'LISTEN_HOST = "127.0.0.1"' support/samithai-staging-tls-proxy.py
 grep -Fq 'BACKEND_HOST = "127.0.0.1"' support/samithai-staging-tls-proxy.py
 grep -Fq 'STAGING_TLS_RECOVERY=PASS' support/samithai-staging-https-recover.sh
