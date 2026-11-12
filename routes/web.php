@@ -177,6 +177,7 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/dashboard/seo/{kind}/{id}', [SeoManagerController::class, 'update'])->whereIn('kind',['post','page','prompt'])->whereNumber('id')->middleware('throttle:30,1')->name('dashboard.seo.update');
     Route::get('/dashboard/editorial', [EditorialWorkflowController::class, 'index'])->name('dashboard.editorial');
     Route::get('/dashboard/editorial/{entry}', [EditorialWorkflowController::class, 'show'])->name('dashboard.editorial.show');
+    Route::post('/dashboard/editorial/{entry}/media', [EditorialWorkflowController::class, 'media'])->middleware('throttle:12,1')->name('dashboard.editorial.media');
     Route::post('/dashboard/editorial/{entry}/submit', [EditorialWorkflowController::class, 'submit'])->middleware('throttle:20,1')->name('dashboard.editorial.submit');
     Route::post('/dashboard/editorial/{entry}/assign', [EditorialWorkflowController::class, 'assign'])->middleware('throttle:20,1')->name('dashboard.editorial.assign');
     Route::post('/dashboard/editorial/{entry}/decide', [EditorialWorkflowController::class, 'decide'])->middleware('throttle:12,1')->name('dashboard.editorial.decide');

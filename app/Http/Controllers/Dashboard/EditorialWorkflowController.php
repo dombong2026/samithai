@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContentEntry;
+use App\Models\MediaAsset;
+use App\Models\SeoMetadata;
 use App\Models\ContentEditorialRevision;
 use App\Support\SafeHtml;
 use App\Models\User;
@@ -53,11 +55,60 @@ class EditorialWorkflowController extends Controller
         $this->editable($entry);
 
         return view('dashboard.editorial.show', [
-            'entry' => $entry->load(['reviewer','author','media']),
+            'entry' => $entry->load(['reviewer','author','media','seo.ogMedia']),
+            'availableImages' => MediaAsset::query()->where('kind','image')->latest('id')->limit(200)->get(),
             'reviewers' => User::query()->where('role','admin')->orderBy('name')->get(['id','name','email']),
             'revisions' => $entry->editorialRevisions()->with('actor')->latest('id')->limit(30)->get(),
             'approvedCurrent' => EditorialGate::approved($entry),
         ]);
+    }
+
+
+    /**
+     * Let the assigned editorial team choose private, reviewed images without
+     * changing published pages or exposing unapproved drafts.
+     */
+    public function media(Request $request, ContentEntry $entry): RedirectResponse
+    {
+        $this->authorizeAdmin($request);
+        $this->editable($entry);
+
+        $image = Rule::exists('media_assets', 'id')->where('kind', 'image');
+        $data = $request->validate([
+            'featured_media_id' => ['nullable', 'integer', $image],
+            'og_media_id' => ['nullable', 'integer', Rule::exists('media_assets', 'id')->where('kind', 'image')],
+        ]);
+
+        DB::transaction(function () use ($request, $entry, $data): void {
+            $current = ContentEntry::query()->lockForUpdate()->findOrFail($entry->getKey());
+            if ($current->status !== 'draft') {
+                throw \\Illuminate\\Validation\\ValidationException::withMessages([
+                    'featured_media_id' => 'Unpublish first. Published images cannot be changed without a fresh editorial review.',
+                ]);
+            }
+            $current->load('seo');
+            $featured = $data['featured_media_id'] ?? null;
+            $social = $data['og_media_id'] ?? null;
+            $changed = (int) ($current->featured_media_id ?? 0) !== (int) ($featured ?? 0)
+                || (int) ($current->seo?->og_media_id ?? 0) !== (int) ($social ?? 0);
+            if (! $changed) return;
+
+            EditorialGate::revision($current, $request->user()->id, 'before_media_edit');
+            $current->update(['featured_media_id' => $featured]);
+            if ((int) ($current->seo?->og_media_id ?? 0) !== (int) ($social ?? 0)) {
+                $current->seo()->updateOrCreate([], ['og_media_id' => $social]);
+            }
+            $current->unsetRelation('seo');
+            EditorialGate::invalidate($current);
+            EditorialGate::revision($current, $request->user()->id, 'after_media_edit');
+            AuditTrail::record($request, 'content.editorial.media', $current, [
+                'featured_media_id' => $featured,
+                'og_media_id' => $social,
+                'approval_invalidated' => true,
+            ]);
+        }, 3);
+
+        return back()->with('success', 'Images saved. The draft needs a fresh human review before publication.');
     }
 
     public function submit(Request $request, ContentEntry $entry): RedirectResponse
@@ -112,6 +163,15 @@ class EditorialWorkflowController extends Controller
             abort(403,'The assigned reviewer must record this decision.');
         }
         $approved = $data['decision'] === 'approve';
+        if ($approved) {
+            $request->validate([
+                'review_checks' => ['required', 'array'],
+                'review_checks.accuracy' => ['accepted'],
+                'review_checks.seo' => ['accepted'],
+                'review_checks.media' => ['accepted'],
+                'review_checks.rights' => ['accepted'],
+            ]);
+        }
         $entry->update([
             'editorial_status' => $approved ? 'approved' : 'changes_requested',
             'editorial_approved_at' => $approved ? now() : null,
@@ -125,6 +185,7 @@ class EditorialWorkflowController extends Controller
             'decision' => $data['decision'],
             'notes' => $data['notes'],
             'self_review' => (int)$entry->user_id === (int)$request->user()->id,
+            'review_checks' => $approved ? ['accuracy','seo','media','rights'] : [],
         ]);
         return back()->with('success',$approved ? 'Approval recorded.' : 'Revisions requested.');
     }

@@ -144,7 +144,7 @@ class SeoEditorialWorkflowTest extends TestCase
         $this->assertSame('in_review',$post->fresh()->editorial_status);
         $this->post(route('dashboard.editorial.assign',$post),['reviewer_id'=>$admin->id])->assertRedirect();
         $this->post(route('dashboard.editorial.decide',$post),[
-            'decision'=>'approve','notes'=>'I checked the original full article and verified the sources.',
+            'decision'=>'approve','review_checks'=>['accuracy'=>'1','seo'=>'1','media'=>'1','rights'=>'1'],'notes'=>'I checked the original full article and verified the sources.',
         ])->assertRedirect()->assertSessionHas('success');
         $this->assertTrue(EditorialGate::approved($post->fresh()));
         $this->post(route('dashboard.content.publish',$post),['status'=>'published'])->assertRedirect();
@@ -161,10 +161,10 @@ class SeoEditorialWorkflowTest extends TestCase
         $this->actingAs($owner)->post(route('dashboard.editorial.submit',$post))->assertRedirect();
         $this->post(route('dashboard.editorial.assign',$post),['reviewer_id'=>$reviewer->id])->assertRedirect();
         $this->post(route('dashboard.editorial.decide',$post),[
-            'decision'=>'approve','notes'=>'Human reviewer verified the draft content.',
+            'decision'=>'approve','review_checks'=>['accuracy'=>'1','seo'=>'1','media'=>'1','rights'=>'1'],'notes'=>'Human reviewer verified the draft content.',
         ])->assertForbidden();
         $this->actingAs($reviewer)->post(route('dashboard.editorial.decide',$post),[
-            'decision'=>'approve','notes'=>'I inspected the text and source facts for clarity, accuracy and privacy.',
+            'decision'=>'approve','review_checks'=>['accuracy'=>'1','seo'=>'1','media'=>'1','rights'=>'1'],'notes'=>'I inspected the text and source facts for clarity, accuracy and privacy.',
         ])->assertRedirect();
         $this->assertTrue(EditorialGate::approved($post->fresh()));
 
@@ -189,7 +189,7 @@ class SeoEditorialWorkflowTest extends TestCase
         $this->actingAs($admin)->post(route('dashboard.editorial.submit',$post))->assertRedirect();
         $this->post(route('dashboard.editorial.assign',$post),['reviewer_id'=>$admin->id])->assertRedirect();
         $this->post(route('dashboard.editorial.decide',$post),[
-            'decision'=>'approve','notes'=>'Editorial review completed against the latest full draft.',
+            'decision'=>'approve','review_checks'=>['accuracy'=>'1','seo'=>'1','media'=>'1','rights'=>'1'],'notes'=>'Editorial review completed against the latest full draft.',
         ])->assertRedirect();
         $this->post(route('dashboard.editorial.schedule',$post),[
             'scheduled_for'=>'2026-11-11 10:00:00',
@@ -218,4 +218,55 @@ class SeoEditorialWorkflowTest extends TestCase
         $this->assertSame('draft',$post->fresh()->status);
         $this->assertSame('draft',$prompt->fresh()->status);
     }
+
+    public function test_editorial_image_assignment_and_human_checklist_are_enforced(): void
+    {
+        $admin=$this->user();
+        $customer=$this->user('customer');
+        $post=$this->page($admin);
+        $image=MediaAsset::query()->create([
+            'user_id'=>$admin->id,'title'=>'Reviewed concept','kind'=>'image',
+            'mime'=>'image/webp','file_path'=>'media/test-image.webp',
+            'bytes'=>1234,'checksum'=>str_repeat('b',64),
+        ]);
+        $mediaUrl=route('dashboard.editorial.media',$post);
+        $this->actingAs($customer)->post($mediaUrl,[
+            'featured_media_id'=>$image->id,'og_media_id'=>$image->id,
+        ])->assertForbidden();
+        $this->actingAs($admin)->post($mediaUrl,[
+            'featured_media_id'=>$image->id,'og_media_id'=>$image->id,
+        ])->assertRedirect()->assertSessionHas('success');
+        $this->assertSame((int)$image->id,(int)$post->fresh()->featured_media_id);
+        $this->assertSame((int)$image->id,(int)$post->fresh()->seo->og_media_id);
+        $this->get(route('dashboard.editorial.show',$post))->assertOk()
+            ->assertSee('Featured image &amp; social image',false)
+            ->assertSee('SEO &amp; content review',false);
+
+        $this->post(route('dashboard.editorial.submit',$post))->assertRedirect();
+        $this->post(route('dashboard.editorial.assign',$post),['reviewer_id'=>$admin->id])->assertRedirect();
+        $decision=route('dashboard.editorial.decide',$post);
+        $this->post($decision,[
+            'decision'=>'approve','notes'=>'Reviewed the draft text and originality rights.',
+        ])->assertSessionHasErrors('review_checks.accuracy');
+        $this->assertSame('in_review',$post->fresh()->editorial_status);
+        $this->post($decision,[
+            'decision'=>'approve','notes'=>'Reviewed the draft text, SEO, image and licensing evidence.',
+            'review_checks'=>['accuracy'=>'1','seo'=>'1','media'=>'1','rights'=>'1'],
+        ])->assertRedirect()->assertSessionHas('success');
+        $this->assertTrue(EditorialGate::approved($post->fresh()));
+
+        $this->post($mediaUrl,[
+            'featured_media_id'=>'','og_media_id'=>'',
+        ])->assertRedirect()->assertSessionHas('success');
+        $this->assertSame('draft',$post->fresh()->editorial_status);
+        $this->assertFalse(EditorialGate::approved($post->fresh()));
+
+        $post->update(['status'=>'published','published_at'=>now()]);
+        $this->post($mediaUrl,[
+            'featured_media_id'=>$image->id,'og_media_id'=>$image->id,
+        ])->assertSessionHasErrors('featured_media_id');
+        $this->assertNull($post->fresh()->featured_media_id);
+    }
+
+
 }
