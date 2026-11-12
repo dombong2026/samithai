@@ -104,10 +104,45 @@ echo "PRIVATE_STAGING_PROCESSES=IDENTITY_VERIFIED"
 echo "PRIVATE_HTTPS_LOGIN=200_PASS"
 
 # It is safe to *check* the old lock without acquiring/holding it.
+LOCK_HELD=0
 if (exec 8>"$HTTPS_LOCK"; flock -n 8); then
     echo "STAGING_HTTPS_OPERATOR_LOCK=AVAILABLE"
 else
+    LOCK_HELD=1
     echo "STAGING_HTTPS_OPERATOR_LOCK=HELD"
+fi
+if [[ "$LOCK_HELD" == 1 ]]; then
+    # Fail closed when the file description belongs to another operator,
+    # rather than interrupting a concurrent release operation.
+    python3 - "$HTTPS_LOCK" "$HTTP_PGID" "$TLS_PID" <<'PY'
+import os,sys
+lock=os.stat(sys.argv[1])
+approved={int(sys.argv[2]),int(sys.argv[3])}
+holders=[]
+for name in os.listdir('/proc'):
+    if not name.isdigit(): continue
+    pid=int(name)
+    try:
+        entries=os.listdir('/proc/'+name+'/fd')
+    except (OSError,PermissionError):
+        continue
+    for fd in entries:
+        try:
+            current=os.stat('/proc/'+name+'/fd/'+fd)
+        except (OSError,PermissionError):
+            continue
+        if (current.st_dev,current.st_ino)!=(lock.st_dev,lock.st_ino):
+            continue
+        try: pgid=os.getpgid(pid)
+        except ProcessLookupError: continue
+        if pgid not in approved:
+            raise SystemExit('BLOCKED=HTTPS_LOCK_HELD_BY_UNEXPECTED_PROCESS')
+        holders.append(pid)
+        break
+if not holders:
+    raise SystemExit('BLOCKED=HTTPS_LOCK_OWNER_NOT_VERIFIED')
+print('HTTPS_LOCK_HOLDERS=VERIFIED_PRIVATE_STAGING_PROCESSES')
+PY
 fi
 
 if [[ "$MODE" == --inspect ]]; then
