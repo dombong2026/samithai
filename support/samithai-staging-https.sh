@@ -62,6 +62,17 @@ if [[ "$MODE" == --candidate || "$MODE" == --rollback ]]; then
 fi
 
 if [[ "$MODE" == --stop ]]; then
+    if [[ -f "$LAB/tls-proxy.pid" && ! -L "$LAB/tls-proxy.pid" ]]; then
+        tls_pid="$(cat "$LAB/tls-proxy.pid")"
+        [[ "$tls_pid" =~ ^[0-9]+$ ]] || fail "Invalid private TLS PID"
+        if kill -0 "$tls_pid" 2>/dev/null; then
+            tls_args="$(ps -p "$tls_pid" -o args= 2>/dev/null || true)"
+            [[ "$tls_args" == *"$LAB/tls-proxy.py"* ]] ||
+                fail "Refusing to stop unrelated TLS process"
+            kill -TERM "$tls_pid" || fail "Unable to stop private TLS process"
+        fi
+        rm -f -- "$LAB/tls-proxy.pid"
+    fi
     if [[ -f "$PROXY/nginx.conf" && -f "$PROXY/nginx.pid" ]]; then
         "$NGINX" -p "$PROXY/" -c "$PROXY/nginx.conf" -s quit ||
             fail "Private Nginx quit failed"
@@ -87,11 +98,11 @@ if [[ "$MODE" == --stop ]]; then
 fi
 
 [[ "$MODE" == --start ]] || fail "Unsupported mode"
-[[ -x "$NGINX" ]] || fail "aaPanel Nginx unavailable"
+echo "STAGING_TLS_ENGINE=PYTHON_STDLIB_NO_OPENRESTY"
 for name in openssl curl setsid flock python3 runuser; do
     command -v "$name" >/dev/null || fail "Missing $name"
 done
-[[ ! -e "$LAB/server.pid" && ! -e "$PROXY/nginx.pid" ]] ||
+[[ ! -e "$LAB/server.pid" && ! -e "$PROXY/nginx.pid" && ! -e "$LAB/tls-proxy.pid" ]] ||
     fail "Staging servers may already be running"
 
 python3 - "$PORT_HTTP" "$PORT_HTTPS" <<'PY'
@@ -155,41 +166,26 @@ for i in $(seq 1 60); do
 done
 [[ "$ready" == 1 ]] || fail "Private PHP HTTP bootstrap failed"
 
-cat > "$PROXY/nginx.conf" <<EOF
-worker_processes 1;
-pid $PROXY/nginx.pid;
-error_log $PROXY/error.log notice;
-events { worker_connections 256; }
-http {
-    access_log $PROXY/access.log;
-    server {
-        listen 127.0.0.1:$PORT_HTTPS ssl;
-        server_name 127.0.0.1;
-        ssl_certificate $LAB/tls/cert.pem;
-        ssl_certificate_key $LAB/tls/key.pem;
-        ssl_protocols TLSv1.2 TLSv1.3;
-        add_header X-Content-Type-Options nosniff always;
-        client_max_body_size 12m;
-        location / {
-            proxy_pass http://127.0.0.1:$PORT_HTTP;
-            proxy_set_header Host \$http_host;
-            proxy_set_header X-Forwarded-Proto https;
-            proxy_set_header X-Forwarded-Host \$http_host;
-            proxy_read_timeout 30s;
-        }
-    }
-}
-EOF
-chmod 600 "$PROXY/nginx.conf"
-"$NGINX" -t -p "$PROXY/" -c "$PROXY/nginx.conf" ||
-    fail "Private HTTPS Nginx syntax failure"
-"$NGINX" -p "$PROXY/" -c "$PROXY/nginx.conf" ||
-    fail "Private HTTPS Nginx launch failed"
+# No standalone OpenResty process: its Lua module paths depend on the
+# aaPanel global Nginx prefix. Use a disposable loopback-only TLS gateway.
+TLS_SOURCE="$CAND/support/samithai-staging-tls-proxy.py"
+[[ -f "$TLS_SOURCE" && ! -L "$TLS_SOURCE" && ! -L "$LAB/tls-proxy.py" ]] ||
+    fail "Versioned private TLS source missing or unsafe"
+install -o root -g root -m 600 "$TLS_SOURCE" "$LAB/tls-proxy.py"
+setsid python3 "$LAB/tls-proxy.py" > "$LAB/tls-proxy.log" 2>&1 </dev/null &
+tls_pid="$!"
+printf '%s\n' "$tls_pid" > "$LAB/tls-proxy.pid"
+chmod 600 "$LAB/tls-proxy.pid"
 
-response="$(curl --noproxy '*' -ks -o /dev/null -w '%{http_code}' \
-    --max-time 10 "https://127.0.0.1:$PORT_HTTPS/login")" ||
-    fail "Private HTTPS login failed"
-[[ "$response" == 200 ]] || fail "HTTPS login returned $response"
+ready=0
+for i in $(seq 1 50); do
+    response="$(curl --noproxy '*' -ks --max-time 3 -o /dev/null \
+        -w '%{http_code}' "https://127.0.0.1:$PORT_HTTPS/login" 2>/dev/null || true)"
+    if [[ "$response" == 200 ]]; then ready=1; break; fi
+    kill -0 "$tls_pid" 2>/dev/null || break
+    sleep 0.2
+done
+[[ "$ready" == 1 ]] || fail "Isolated Python TLS gateway failed"
 
 echo "STAGING_HTTPS_LOGIN=200_PASS"
 echo "PRIVATE_HTTPS_BIND=127.0.0.1:$PORT_HTTPS"
@@ -199,4 +195,5 @@ echo "STAGING_CREDENTIALS=$LAB/shared/storage/app/staging-credentials.json"
 echo "PREVIEW_URL=https://127.0.0.1:$PORT_HTTPS/login"
 echo "SSH_TUNNEL=ssh -N -L $PORT_HTTPS:127.0.0.1:$PORT_HTTPS root@YOUR_SERVER"
 echo "GLOBAL_NGINX_CONFIG=UNCHANGED"
+echo "STAGING_TLS_ENGINE=PYTHON_STDLIB"
 echo "PRODUCTION_DATABASE_CRON_AND_VHOST=UNCHANGED"
