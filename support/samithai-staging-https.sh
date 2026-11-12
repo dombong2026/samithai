@@ -159,7 +159,7 @@ chmod 640 "$LAB/router.php"
         HOME="$LAB" \
         "$PHP" -S "127.0.0.1:$PORT_HTTP" \
         -t "$CURRENT/public" "$LAB/router.php"
-) > "$LAB/http-server.log" 2>&1 < /dev/null &
+) 9>&- > "$LAB/http-server.log" 2>&1 < /dev/null &
 pid="$!"
 printf '%s\n' "$pid" > "$LAB/server.pid"
 
@@ -179,7 +179,8 @@ TLS_SOURCE="$CURRENT/support/samithai-staging-tls-proxy.py"
 [[ -f "$TLS_SOURCE" && ! -L "$TLS_SOURCE" && ! -L "$LAB/tls-proxy.py" ]] ||
     fail "Versioned private TLS source missing or unsafe"
 install -o root -g root -m 600 "$TLS_SOURCE" "$LAB/tls-proxy.py"
-setsid python3 "$LAB/tls-proxy.py" > "$LAB/tls-proxy.log" 2>&1 </dev/null &
+# Close the operator flock FD in the long-lived child or --stop will deadlock.
+setsid python3 "$LAB/tls-proxy.py" 9>&- > "$LAB/tls-proxy.log" 2>&1 </dev/null &
 tls_pid="$!"
 printf '%s\n' "$tls_pid" > "$LAB/tls-proxy.pid"
 chmod 600 "$LAB/tls-proxy.pid"
