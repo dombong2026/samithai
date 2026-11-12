@@ -82,6 +82,25 @@
 </div>
 </div>
 </div>
+
+@if($sourceReviewBrief)
+<div class="panel" style="padding:22px">
+<h3>Source editorial checklist</h3>
+<p class="tiny muted">Article-specific guidance from the original content source, not an approval. Verify the live text, links and image rights before making a decision.</p>
+<div class="stack">
+<div><strong>Primary keyword</strong><p class="tiny muted">{{ $sourceReviewBrief['primary_keyword'] }}</p></div>
+<div><strong>Intended audience</strong><p class="tiny muted">{{ $sourceReviewBrief['audience'] }}</p></div>
+<div><strong>Comparison with imported draft</strong>
+<p class="tiny muted">{{ $sourceReviewBrief['matches_original_source'] ? 'Current text matches the original source. Human accuracy review is still required.' : 'Content has changed since import. Review all modifications and claims.' }}</p></div>
+<div><strong>Article-specific points for human review</strong>
+<ul style="padding-left:20px;margin:10px 0">
+@foreach($sourceReviewBrief['review_notes'] as $note)
+<li style="margin:7px 0">{{ $note }}</li>
+@endforeach
+</ul></div>
+</div>
+</div>
+@endif
 <div class="panel" style="padding:22px">
 <h3>Review and editorial decision</h3>
 <p class="muted tiny">Record an actual human review. A passing decision is not an AI model test or independent certification.</p>
