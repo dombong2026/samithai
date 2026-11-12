@@ -166,7 +166,7 @@ try {
         ];
     });
 
-    $destination = $expectedRoot.'/shared/credentials.json';
+    $destination = $expectedRoot.'/shared/storage/app/staging-credentials.json';
     if (file_exists($destination) || is_link($destination)) {
         throw new RuntimeException('CREDENTIALS_DESTINATION_EXISTS');
     }
