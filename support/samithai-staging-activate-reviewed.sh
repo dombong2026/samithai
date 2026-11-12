@@ -4,7 +4,7 @@
 set -Eeuo pipefail
 set +x
 umask 077
-if [[ $# != 4 || ( "$1" != --check && "$1" != --activate && "$1" != --rollback ) ||
+if [[ $# != 3 || ( "$1" != --check && "$1" != --activate && "$1" != --rollback ) ||
    ! "$2" =~ ^[a-f0-9]{40}$ || ! "$3" =~ ^[a-f0-9]{40}$ ]]; then
   echo "Usage: script.sh --check|--activate|--rollback PR6_SHA BASE_SHA" >&2
   exit 2
