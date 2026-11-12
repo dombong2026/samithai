@@ -15,6 +15,12 @@ php -l support/samithai-production-six-draft-guard.php >/dev/null
 grep -Fq 'NEW_RELEASE=NOT_YET_CREATED' support/samithai-staging-stage-latest.sh
 grep -Fq 'STAGING_POINTER=UNCHANGED' support/samithai-staging-stage-latest.sh
 grep -Fq 'STAGING_POINTER_ROLLED_BACK=OLD_CANDIDATE' support/samithai-staging-activate-reviewed.sh
+grep -Fq 'samithai/pr6-staged/v1' support/samithai-staging-https.sh
+grep -Fq 'Reviewed release name does not match commit SHA' support/samithai-staging-https.sh
+if grep -Fq '[[ "$MODE" == --candidate || "$MODE" == --rollback ]]' support/samithai-staging-https.sh; then
+    echo "BLOCKED=UNREVIEWED_STAGING_POINTER_SWITCH"
+    exit 1
+fi
 grep -Fq 'DISTINCT' support/samithai-independent-restore-rehearsal.sh
 grep -Fq 'PRODUCTION_MYSQL_AND_MEDIA=UNCHANGED' support/samithai-independent-restore-rehearsal.sh
 grep -Fq 'READ_ONLY' support/samithai-production-six-draft-guard.php
