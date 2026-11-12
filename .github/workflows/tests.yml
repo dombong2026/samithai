@@ -65,6 +65,8 @@ jobs:
         run: bash tests/acceptance/frontend-pages-feedback-deploy-syntax.sh
       - name: Validate safe isolated editorial release staging utilities
         run: bash tests/acceptance/samithai-private-staging-static.sh
+      - name: Validate production release preparation utilities
+        run: bash tests/acceptance/samithai-production-release-prep-static.sh
       - name: PHP syntax validation
         run: find app bootstrap config database routes tests -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Compile all Laravel Blade templates and inspect routes
