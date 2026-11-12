@@ -17,6 +17,7 @@ grep -Fq 'NEW_RELEASE=NOT_YET_CREATED' support/samithai-staging-stage-latest.sh
 grep -Fq 'STAGING_POINTER=UNCHANGED' support/samithai-staging-stage-latest.sh
 grep -Fq 'STAGING_HTTPS_OPERATOR_FLOCK=RELEASED' support/samithai-staging-inherited-lock-recover.sh
 grep -Fq 'HTTP_LISTENER_NOT_IN_STAGING_PROCESS_GROUP' support/samithai-staging-inherited-lock-recover.sh
+grep -Fq 'HTTPS_LOCK_HELD_BY_UNEXPECTED_PROCESS' support/samithai-staging-inherited-lock-recover.sh
 grep -Fq 'STAGING_ACTIVE_POINTER=OLD_CANDIDATE_UNCHANGED' support/samithai-staging-inherited-lock-recover.sh
 grep -Fq ') 9>&- > "$LAB/http-server.log"' support/samithai-staging-https.sh
 grep -Fq 'python3 "$LAB/tls-proxy.py" 9>&-' support/samithai-staging-https.sh
