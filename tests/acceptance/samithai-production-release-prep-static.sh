@@ -3,6 +3,7 @@
 set -Eeuo pipefail
 for script in \
   support/samithai-staging-stage-latest.sh \
+  support/samithai-staging-inherited-lock-recover.sh \
   support/samithai-staging-activate-reviewed.sh \
   support/samithai-independent-restore-rehearsal.sh \
   support/samithai-staging-https.sh; do
@@ -14,6 +15,11 @@ php -l support/samithai-production-six-draft-guard.php >/dev/null
 
 grep -Fq 'NEW_RELEASE=NOT_YET_CREATED' support/samithai-staging-stage-latest.sh
 grep -Fq 'STAGING_POINTER=UNCHANGED' support/samithai-staging-stage-latest.sh
+grep -Fq 'STAGING_HTTPS_OPERATOR_FLOCK=RELEASED' support/samithai-staging-inherited-lock-recover.sh
+grep -Fq 'HTTP_LISTENER_NOT_IN_STAGING_PROCESS_GROUP' support/samithai-staging-inherited-lock-recover.sh
+grep -Fq 'STAGING_ACTIVE_POINTER=OLD_CANDIDATE_UNCHANGED' support/samithai-staging-inherited-lock-recover.sh
+grep -Fq ') 9>&- > "$LAB/http-server.log"' support/samithai-staging-https.sh
+grep -Fq 'python3 "$LAB/tls-proxy.py" 9>&-' support/samithai-staging-https.sh
 grep -Fq 'STAGING_POINTER_ROLLED_BACK=OLD_CANDIDATE' support/samithai-staging-activate-reviewed.sh
 grep -Fq 'samithai/pr6-staged/v1' support/samithai-staging-https.sh
 grep -Fq 'Reviewed release name does not match commit SHA' support/samithai-staging-https.sh
