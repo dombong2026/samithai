@@ -9,6 +9,7 @@ for script in \
   support/samithai-versioned-encrypted-backup.sh \
   support/samithai-versioned-independent-restore.sh \
   support/samithai-pr6-independent-restore-readiness.sh \
+  support/samithai-pr6-remote-qa-tunnel.sh \
   support/samithai-staging-https.sh; do
   test -s "$script" || { echo "MISSING=$script"; exit 1; }
   bash -n "$script"
@@ -60,6 +61,10 @@ grep -Fq 'INDEPENDENT_RESTORED_EXACT_ROW_COUNTS=PASS' support/samithai-versioned
 grep -Fq 'QA_MYSQL_DIFFERENT_SERVER_UUID=PASS' support/samithai-versioned-independent-restore.sh
 grep -Fq 'PROTECTED_BACKUP_SHA256=PASS' support/samithai-pr6-independent-restore-readiness.sh
 grep -Fq 'INDEPENDENT_RESTORE_PREFLIGHT=PASS' support/samithai-pr6-independent-restore-readiness.sh
+grep -Fq 'REMOTE_QA_SSH_TUNNEL=NOT_CONNECTED' support/samithai-pr6-remote-qa-tunnel.sh
+grep -Fq 'QA_TUNNEL_NOT_OPENSSH' support/samithai-pr6-remote-qa-tunnel.sh
+grep -Fq 'RESTORE_BLOB=' support/samithai-pr6-remote-qa-tunnel.sh
+grep -Fq 'DISTINCT_QA_MYSQL_INSTANCE=PASS' support/samithai-pr6-remote-qa-tunnel.sh
 grep -Fq 'RESTORE_EXECUTION=NOT_PERFORMED' support/samithai-pr6-independent-restore-readiness.sh
 grep -Fq 'ENCRYPTED_BACKUP_AND_PRODUCTION=PRESERVED' support/samithai-pr6-independent-restore-readiness.sh
 grep -Fq 'SQL_DUMP_SCHEMA_SELECTION=REJECTED' support/samithai-versioned-independent-restore.sh
