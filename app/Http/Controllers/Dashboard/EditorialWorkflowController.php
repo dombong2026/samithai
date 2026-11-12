@@ -11,6 +11,7 @@ use App\Support\SafeHtml;
 use App\Models\User;
 use App\Support\AuditTrail;
 use App\Support\EditorialGate;
+use App\Support\EducationalDraftNotes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -60,6 +61,7 @@ class EditorialWorkflowController extends Controller
             'reviewers' => User::query()->where('role','admin')->orderBy('name')->get(['id','name','email']),
             'revisions' => $entry->editorialRevisions()->with('actor')->latest('id')->limit(30)->get(),
             'approvedCurrent' => EditorialGate::approved($entry),
+            'sourceReviewBrief' => EducationalDraftNotes::forEntry($entry),
         ]);
     }
 
