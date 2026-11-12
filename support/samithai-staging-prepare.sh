@@ -106,7 +106,9 @@ for RELEASE in "$CAND" "$ROLL"; do
 done
 
 echo "========== CREATE PROTECTED SHARED STATE =========="
-install -d -m 750 -o root -g www "$SHARED"
+# SQLite creates journal/transaction files alongside its database. This
+# is a disposable staging-only root; never apply these permissions to live data.
+install -d -m 770 -o root -g www "$SHARED"
 install -d -m 700 -o www -g www "$SHARED/storage"
 for sub in app framework/sessions framework/cache/data framework/cache/locks logs; do
     install -d -m 700 -o www -g www "$SHARED/storage/$sub"
