@@ -123,6 +123,12 @@ class EducationalSeoSeedTest extends TestCase
         $this->assertSame($before,ContentEntry::query()->orderBy('id')
             ->get(['id','status','featured_media_id','editorial_status'])->toJson());
         $this->assertDatabaseCount('seo_metadata',8);
+        $post=ContentEntry::query()->where('kind','post')
+            ->where('slug','20-practical-ai-prompts-for-small-businesses')->firstOrFail();
+        $this->actingAs($owner)->get(route('dashboard.editorial.show',$post))->assertOk()
+            ->assertSee('Source editorial checklist')
+            ->assertSee('No invented marketing metrics or policy promises')
+            ->assertSee('Current text matches the original source');
     }
 
 
