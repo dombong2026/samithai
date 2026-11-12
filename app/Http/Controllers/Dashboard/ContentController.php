@@ -7,6 +7,7 @@ use App\Models\ContentEntry;
 use App\Models\MediaAsset;
 use App\Support\AuditTrail;
 use App\Support\SafeHtml;
+use App\Support\EditorialGate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -34,7 +35,7 @@ class ContentController extends Controller
         return view('dashboard.content', [
             'section' => $section,
             'kind' => self::KINDS[$section],
-            'entries' => $query->latest()->paginate(10)->withQueryString(),
+            'entries' => $query->with('reviewer')->latest()->paginate(10)->withQueryString(),
             'mediaAssets' => MediaAsset::orderByDesc('id')->limit(100)->get(),
         ]);
     }
@@ -66,7 +67,9 @@ class ContentController extends Controller
             'kind' => $kind,
             'user_id' => $request->user()->id,
             'status' => 'draft',
+            'editorial_status' => 'draft',
         ]);
+        EditorialGate::revision($entry,$request->user()->id,'create');
         AuditTrail::record($request, 'content.create', $entry, ['kind'=>$kind]);
 
         return back()->with('success', 'Draft created.');
@@ -76,7 +79,25 @@ class ContentController extends Controller
     {
         $this->admin($request);
         $data = $this->validateContent($request);
-        $entry->update([...$data, 'body_html' => SafeHtml::clean($data['body_html'])]);
+        $sanitized = SafeHtml::clean($data['body_html']);
+        $next = [...$data, 'body_html' => $sanitized];
+        $changed = $entry->title !== $next['title']
+            || $entry->excerpt !== ($next['excerpt'] ?? null)
+            || $entry->body_html !== $sanitized
+            || (int)($entry->featured_media_id ?? 0) !== (int)($next['featured_media_id'] ?? 0);
+        if (EditorialGate::requiresReview($entry) && $entry->status === 'published' && $changed) {
+            return back()->withErrors(['body_html' =>
+                'Unpublish this page or post before making substantive edits; the revised draft needs new editorial approval.']);
+        }
+        if ($changed) {
+            // Preserve the prior version before changing public or private content.
+            EditorialGate::revision($entry,$request->user()->id,'before_edit');
+            $entry->update($next);
+            if (EditorialGate::requiresReview($entry) && $entry->status === 'draft') {
+                EditorialGate::invalidate($entry);
+            }
+            EditorialGate::revision($entry,$request->user()->id,'after_edit');
+        }
         AuditTrail::record($request, 'content.update', $entry);
 
         return back()->with('success', 'Content updated.');
@@ -86,10 +107,19 @@ class ContentController extends Controller
     {
         $this->admin($request);
         $data = $request->validate(['status' => ['required', Rule::in(['draft','published'])]]);
+        if ($data['status'] === 'published' && $entry->status !== 'published'
+            && EditorialGate::requiresReview($entry) && !EditorialGate::approved($entry)) {
+            return back()->withErrors(['status' =>
+                'A current human editorial approval is required. Open Editorial Workflow first.']);
+        }
         $entry->update([
             'status' => $data['status'],
             'published_at' => $data['status'] === 'published' ? now() : null,
+            'scheduled_for' => null,
+            'editorial_status' => $data['status'] === 'published' && $entry->editorial_status === 'scheduled'
+                ? 'approved' : $entry->editorial_status,
         ]);
+        EditorialGate::revision($entry,$request->user()->id,'publication_status');
         AuditTrail::record($request, 'content.status', $entry, ['status'=>$data['status']]);
 
         return back()->with('success', 'Publication status updated.');
@@ -107,6 +137,10 @@ class ContentController extends Controller
     public function preview(Request $request, ContentEntry $entry): View
     {
         $this->admin($request);
-        return view('marketplace.content', ['entry' => $entry->load('media'), 'preview' => true]);
+        return view('marketplace.content', [
+            'entry' => $entry->load(['media','seo.ogMedia','author']),
+            'preview' => true,
+            'seo' => \App\Support\SeoHead::content($entry, null, true),
+        ]);
     }
 }

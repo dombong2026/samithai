@@ -23,6 +23,8 @@ final class WorkspaceLaunchpad
                 'tasks' => ['label' => 'My tasks', 'description' => 'Manage personal priorities', 'icon' => 'list-todo', 'url' => route('workspace.tasks')],
                 'support' => ['label' => 'Support inbox', 'description' => 'Reply to customer tickets', 'icon' => 'support', 'url' => route('dashboard.support')],
                 'content' => ['label' => 'Content Manager', 'description' => 'Posts, pages and drafts', 'icon' => 'posts', 'url' => route('dashboard.content', 'posts')],
+                'editorial' => ['label' => 'Editorial Workflow', 'description' => 'Review and schedule content', 'icon' => 'review', 'url' => route('dashboard.editorial')],
+                'seo' => ['label' => 'SEO Manager', 'description' => 'Search and social metadata', 'icon' => 'insights', 'url' => route('dashboard.seo')],
                 'users' => ['label' => 'Users & roles', 'description' => 'Manage account access', 'icon' => 'users', 'url' => route('dashboard.users')],
                 'categories' => ['label' => 'Categories', 'description' => 'Organize the catalog', 'icon' => 'categories', 'url' => route('dashboard.categories')],
                 'media' => ['label' => 'Media Library', 'description' => 'Manage uploads', 'icon' => 'media', 'url' => route('dashboard.media')],

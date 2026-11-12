@@ -14,7 +14,7 @@
   $adminWorkspace = auth()->user()->isAdmin();
   $creatorWorkspace = auth()->user()->isCreator();
   $marketplaceGroup = request()->routeIs('dashboard.prompts', 'dashboard.prompt-quality', 'dashboard.categories', 'dashboard.users');
-  $contentGroup = request()->routeIs('dashboard.media', 'dashboard.translations*') || request()->is('dashboard/posts','dashboard/pages','dashboard/policies','dashboard/knowledge');
+  $contentGroup = request()->routeIs('dashboard.media', 'dashboard.translations*', 'dashboard.seo*', 'dashboard.editorial*') || request()->is('dashboard/posts','dashboard/pages','dashboard/policies','dashboard/knowledge');
   $commerceGroup = request()->routeIs('dashboard.finance', 'dashboard.legal', 'dashboard.support');
   $appearanceGroup = request()->routeIs('dashboard.appearance', 'dashboard.footer', 'dashboard.languages');
   $systemGroup = request()->routeIs('dashboard.security', 'dashboard.system');
@@ -49,6 +49,8 @@
 <div class="workspace-nav-items">
 <a href="{{ route('dashboard.content','posts') }}" class="side-link {{ request()->is('dashboard/posts') ? 'active' : '' }}" @if(request()->is('dashboard/posts')) aria-current="page" @endif><x-nav-icon name="posts"/><span>Post Manager</span></a>
 <a href="{{ route('dashboard.content','pages') }}" class="side-link {{ request()->is('dashboard/pages') ? 'active' : '' }}" @if(request()->is('dashboard/pages')) aria-current="page" @endif><x-nav-icon name="pages"/><span>Page Manager</span></a>
+<a href="{{ route('dashboard.editorial') }}" class="side-link {{ request()->routeIs('dashboard.editorial*') ? 'active' : '' }}"><x-nav-icon name="review"/><span>Editorial Workflow</span></a>
+<a href="{{ route('dashboard.seo') }}" class="side-link {{ request()->routeIs('dashboard.seo*') ? 'active' : '' }}"><x-nav-icon name="insights"/><span>SEO Manager</span></a>
 <a href="{{ route('dashboard.content','policies') }}" class="side-link {{ request()->is('dashboard/policies') ? 'active' : '' }}" @if(request()->is('dashboard/policies')) aria-current="page" @endif><x-nav-icon name="policies"/><span>Policy Center</span></a>
 <a href="{{ route('dashboard.content','knowledge') }}" class="side-link {{ request()->is('dashboard/knowledge') ? 'active' : '' }}" @if(request()->is('dashboard/knowledge')) aria-current="page" @endif><x-nav-icon name="knowledge"/><span>Knowledge Base</span></a>
 <a href="{{ route('dashboard.media') }}" class="side-link {{ request()->routeIs('dashboard.media') ? 'active' : '' }}" @if(request()->routeIs('dashboard.media')) aria-current="page" @endif><x-nav-icon name="media"/><span>Media Library</span></a>

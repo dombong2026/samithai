@@ -33,6 +33,8 @@ class Prompt extends Model
 
     public function featuredMedia() { return $this->belongsTo(MediaAsset::class, 'featured_media_id'); }
 
+    public function seo() { return $this->hasOne(SeoMetadata::class); }
+
     public function reviewEvents()
     {
         return $this->hasMany(PromptReview::class);
