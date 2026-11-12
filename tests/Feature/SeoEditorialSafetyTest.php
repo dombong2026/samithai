@@ -113,6 +113,7 @@ class SeoEditorialSafetyTest extends TestCase
         ])->assertRedirect();
         $this->post(route('dashboard.editorial.decide',$post),[
             'decision'=>'approve',
+            'review_checks'=>['accuracy'=>'1','seo'=>'1','media'=>'1','rights'=>'1'],
             'notes'=>'I checked the text, all source claims, the rights, and the outgoing links.',
         ])->assertRedirect();
         $this->assertTrue(EditorialGate::approved($post->fresh()));
@@ -169,7 +170,8 @@ class SeoEditorialSafetyTest extends TestCase
         $this->actingAs($admin)->post(route('dashboard.editorial.submit',$post))->assertRedirect();
         $this->post(route('dashboard.editorial.assign',$post),['reviewer_id'=>$admin->getKey()])->assertRedirect();
         $this->post(route('dashboard.editorial.decide',$post),[
-            'decision'=>'approve','notes'=>'I have reviewed the complete current draft for accuracy and rights.',
+            'decision'=>'approve',
+            'review_checks'=>['accuracy'=>'1','seo'=>'1','media'=>'1','rights'=>'1'],'notes'=>'I have reviewed the complete current draft for accuracy and rights.',
         ])->assertRedirect();
         $this->post(route('dashboard.editorial.schedule',$post),[
             'scheduled_for'=>now()->addDay()->format('Y-m-d H:i:s'),
@@ -245,6 +247,7 @@ class SeoEditorialSafetyTest extends TestCase
         ])->assertRedirect();
         $this->post(route('dashboard.editorial.decide', $post), [
             'decision' => 'approve',
+            'review_checks'=>['accuracy'=>'1','seo'=>'1','media'=>'1','rights'=>'1'],
             'notes' => 'Current article reviewed for claims, rights, links and publication readiness.',
         ])->assertRedirect();
         $this->assertTrue(EditorialGate::approved($post->fresh()));
@@ -272,6 +275,7 @@ class SeoEditorialSafetyTest extends TestCase
         $this->post(route('dashboard.editorial.submit', $post))->assertRedirect();
         $this->post(route('dashboard.editorial.decide', $post), [
             'decision' => 'approve',
+            'review_checks'=>['accuracy'=>'1','seo'=>'1','media'=>'1','rights'=>'1'],
             'notes' => 'The updated sharing image and its usage rights were reviewed independently.',
         ])->assertRedirect();
         $this->assertTrue(EditorialGate::approved($post->fresh()));
