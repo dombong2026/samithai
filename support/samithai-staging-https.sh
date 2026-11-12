@@ -168,7 +168,7 @@ done
 
 # No standalone OpenResty process: its Lua module paths depend on the
 # aaPanel global Nginx prefix. Use a disposable loopback-only TLS gateway.
-TLS_SOURCE="$CAND/support/samithai-staging-tls-proxy.py"
+TLS_SOURCE="$CURRENT/support/samithai-staging-tls-proxy.py"
 [[ -f "$TLS_SOURCE" && ! -L "$TLS_SOURCE" && ! -L "$LAB/tls-proxy.py" ]] ||
     fail "Versioned private TLS source missing or unsafe"
 install -o root -g root -m 600 "$TLS_SOURCE" "$LAB/tls-proxy.py"
