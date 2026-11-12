@@ -75,9 +75,11 @@ gh repo clone "$REPO" "$NEW" -- --branch "$BRANCH" --single-branch --depth 1 --q
     blocked "Failed to clone new candidate; partial release preserved for inspection"
 [[ "$(git -C "$NEW" rev-parse HEAD)" == "$HEAD" ]] ||
     blocked "New candidate SHA mismatch"
-[[ -f "$NEW/composer.lock" &&
-   "$(sha256sum "$NEW/composer.lock" | cut -d' ' -f1)" ==
-   "$(sha256sum "$QA/composer.lock" | cut -d' ' -f1)" ]] ||
+[[ -f "$NEW/composer.lock" ]] ||
+    blocked "New candidate dependency lock is missing"
+NEW_LOCK="$(sha256sum "$NEW/composer.lock" | cut -d' ' -f1)"
+QA_LOCK="$(sha256sum "$QA/composer.lock" | cut -d' ' -f1)"
+[[ "$NEW_LOCK" == "$QA_LOCK" ]] ||
     blocked "Composer dependencies changed; a fresh isolated vendor build is required"
 [[ ! -e "$NEW/.env" && ! -L "$NEW/.env" &&
    ! -L "$NEW/storage" && -d "$NEW/storage" &&
