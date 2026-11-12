@@ -26,7 +26,22 @@
 <div class="field-group"><label for="seo-media">Social sharing image</label>
 <select class="field" name="og_media_id" id="seo-media"><option value="">Use featured image if available</option>
 @foreach($assets as $asset)<option value="{{ $asset->id }}" @selected((string)old('og_media_id',$item->seo?->og_media_id)===(string)$asset->id)>{{ $asset->title }}</option>@endforeach
-</select><a href="{{ route('dashboard.media') }}" class="tiny">Manage original images in Media Library</a></div>
+</select><a href="{{ route('dashboard.media') }}" class="tiny">Manage original images in Media Library</a>
+@php($featuredForSocial = $kind === 'prompt' ? $item->featuredMedia : $item->media)
+<div class="panel" style="padding:12px;margin-top:10px;background:var(--soft)">
+<div class="tiny muted">Effective social image (read-only preview)</div>
+@if($seo['image'])
+<div class="flex wrap" style="align-items:center;gap:14px;margin-top:8px">
+<img src="{{ $seo['image'] }}" alt="Social image preview for {{ $item->title }}" style="width:160px;aspect-ratio:16/9;object-fit:cover;border-radius:10px">
+<div>
+<strong>{{ $item->seo?->ogMedia?->kind === 'image' ? 'Custom social image' : 'Assigned featured image — automatic fallback' }}</strong>
+<p class="tiny muted">Used for Open Graph, Twitter cards and article structured data when published. No second upload is required.</p>
+</div>
+</div>
+@else
+<p class="tiny muted">No featured or social image is assigned yet. Attach an original licensed image to the content to enable social previews.</p>
+@endif
+</div></div>
 <div class="field-group"><label for="seo-schema">Structured data for published content</label>
 <select class="field" id="seo-schema" name="structured_data_enabled">
 <option value="1" @selected((string)old('structured_data_enabled',$item->seo?->structured_data_enabled ?? true)==='1')>Enabled — safe generated schema</option>

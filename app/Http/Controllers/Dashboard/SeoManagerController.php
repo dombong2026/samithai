@@ -54,7 +54,8 @@ class SeoManagerController extends Controller
     public function edit(Request $request, string $kind, int $id): View
     {
         $this->authorizeAdmin($request);
-        $item = $this->resolve($kind, $id)->load(['seo.ogMedia']);
+        $item = $this->resolve($kind, $id)->load($kind === 'prompt'
+            ? ['seo.ogMedia','featuredMedia'] : ['seo.ogMedia','media']);
         $seo = $item instanceof Prompt ? SeoHead::prompt($item) :
             SeoHead::content($item, null, true);
         return view('dashboard.seo.edit', [

@@ -269,4 +269,38 @@ class SeoEditorialWorkflowTest extends TestCase
     }
 
 
+
+    public function test_existing_featured_image_becomes_open_graph_default_without_duplicate_upload(): void
+    {
+        $owner=$this->user();
+        $entry=$this->page($owner,'post','draft','editorial-social-fallback');
+        $featured=MediaAsset::query()->create([
+            'user_id'=>$owner->id,'kind'=>'image','title'=>'Original reviewed image',
+            'mime'=>'image/webp','file_path'=>'media/qa/featured.webp',
+            'bytes'=>1200,'checksum'=>str_repeat('c',64),
+        ]);
+        $entry->update(['featured_media_id'=>$featured->id]);
+        $default=\App\Support\SeoHead::content($entry->fresh());
+        $this->assertSame(route('media.serve',$featured),$default['image']);
+        $this->assertFalse($default['index']);
+        $this->assertNull($default['schema']);
+        $this->actingAs($owner)->get(route('dashboard.seo.edit',[
+            'kind'=>'post','id'=>$entry->id,
+        ]))->assertOk()->assertSee('Assigned featured image — automatic fallback');
+        $entry->update(['status'=>'published','published_at'=>now()]);
+        $this->get(route('blog.show',$entry->slug))->assertOk()
+            ->assertSee('property="og:image" content="'.route('media.serve',$featured).'"',false)
+            ->assertSee('name="twitter:image" content="'.route('media.serve',$featured).'"',false)
+            ->assertSee('"image":"'.route('media.serve',$featured).'"',false);
+        $override=MediaAsset::query()->create([
+            'user_id'=>$owner->id,'kind'=>'image','title'=>'Custom approved sharing image',
+            'mime'=>'image/webp','file_path'=>'media/qa/social.webp',
+        ]);
+        $entry->seo()->create(['og_media_id'=>$override->id]);
+        $custom=\App\Support\SeoHead::content($entry->fresh());
+        $this->assertSame(route('media.serve',$override),$custom['image']);
+        $this->assertNotSame(route('media.serve',$featured),$custom['image']);
+    }
+
+
 }
