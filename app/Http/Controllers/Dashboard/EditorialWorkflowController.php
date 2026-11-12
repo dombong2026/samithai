@@ -82,7 +82,7 @@ class EditorialWorkflowController extends Controller
         DB::transaction(function () use ($request, $entry, $data): void {
             $current = ContentEntry::query()->lockForUpdate()->findOrFail($entry->getKey());
             if ($current->status !== 'draft') {
-                throw \\Illuminate\\Validation\\ValidationException::withMessages([
+                throw \Illuminate\Validation\ValidationException::withMessages([
                     'featured_media_id' => 'Unpublish first. Published images cannot be changed without a fresh editorial review.',
                 ]);
             }
