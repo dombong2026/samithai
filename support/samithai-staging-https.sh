@@ -5,7 +5,7 @@ set -Eeuo pipefail
 set +x
 umask 077
 
-[[ $# == 1 ]] || { echo 'Usage: script --start|--stop|--status|--candidate|--rollback' >&2; exit 2; }
+[[ $# == 1 ]] || { echo 'Usage: script --start|--stop|--status' >&2; exit 2; }
 MODE="$1"
 [[ "$MODE" =~ ^(--start|--stop|--status)$ ]] ||
     { echo 'Switch staged releases only with samithai-staging-activate-reviewed.sh' >&2; exit 2; }
