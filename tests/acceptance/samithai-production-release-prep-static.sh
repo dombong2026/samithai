@@ -10,6 +10,24 @@ for script in \
   test -s "$script" || { echo "MISSING=$script"; exit 1; }
   bash -n "$script"
 done
+test -s support/samithai-staging-post-stop-reconcile.py
+python3 - <<'PY'
+import ast
+from pathlib import Path
+s=Path('support/samithai-staging-post-stop-reconcile.py').read_text()
+ast.parse(s)
+required=[
+    "HTTPS_FLOCK_STILL_HELD_AFTER_VERIFIED_CHILD_SHUTDOWN",
+    "LOCK_FD_HELD_BY_UNRELATED_OR_UNVERIFIED_PROCESS",
+    "READY_FOR_EXISTING_OFFLINE_ACTIVATE_SCRIPT=YES",
+    "STAGING_PORTS_ARE_NOT_BOTH_FREE",
+    "ORIGINAL_STAGING_POINTER_MUST_REMAIN_ACTIVE",
+]
+assert all(item in s for item in required)
+assert 'os.unlink(HTTPS_LOCK)' not in s
+assert 'os.remove(HTTPS_LOCK)' not in s
+print('POST_STOP_FLOCK_RECONCILE_STATIC=PASS')
+PY
 test -s support/samithai-production-six-draft-guard.php
 php -l support/samithai-production-six-draft-guard.php >/dev/null
 
